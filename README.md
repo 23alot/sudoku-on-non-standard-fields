@@ -7,5 +7,8 @@
 В качестве алгоритма будет взят алгоритм Dancing Links. Там вроде как ничего сложного относительно обычного судоку, зато работает быстро
 
 Теперь по поводу генерации. Здесь всё намного забавнее. Надо плюхнуть формочку где можно выбирать область фигуры выделением:
-![При выделении](/images/chosenfield.png) ![После выделения](/images/afterchosenfield.png)
+
+![alt При выделении](/images/chosenfield.png) ![alt После выделения](/images/afterchosenfield.png)
+
+<img src="/images/chosenfield.png"> <img src="/images/afterchosenfield.png">
 
