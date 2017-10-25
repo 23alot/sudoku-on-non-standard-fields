@@ -8,7 +8,5 @@
 
 Теперь по поводу генерации. Здесь всё намного забавнее. Надо плюхнуть формочку где можно выбирать область фигуры выделением:
 
-![alt При выделении](/images/chosenfield.png) ![alt После выделения](/images/afterchosenfield.png)
-
-<img src="/images/chosenfield.png"> <img src="/images/afterchosenfield.png">
+<img src="/images/chosenfield.png" width="250px" height="250px" alt="При выделении"> <img src="/images/afterchosenfield.png" width="250px" height="250px" alt="После выделения">
 
