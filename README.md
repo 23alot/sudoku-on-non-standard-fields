@@ -26,7 +26,7 @@ For the algorithm I have to choose *demands*. And here it is:
 
 
 
-##Traveler's Diary##
+## Traveler's Diary ##
 
 **14.11.2017 9:30** Woke up with a thought that I don't know how to generate game field and I must to think about this problem if I don't like to be murdered on the defense of course work (and I don't like : D). The game begins...
 
