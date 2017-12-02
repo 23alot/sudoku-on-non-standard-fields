@@ -12,3 +12,17 @@ public class Node {
         this.right = right;
     }
 }
+
+class HeadNode extends Node{
+    /**
+     * Value that contains number of nodes in line or in column
+     */
+    byte currentNumber;
+    /**
+     * Position of HeadNode
+     */
+    byte position;
+    HeadNode(){
+        super(null,null,null,null);
+    }
+}
