@@ -7,7 +7,7 @@ public class Structure {
     /**
      * Reference to start node of structure
      */
-    private HeadNode root;
+    private HeadNode root = new HeadNode();
     /**
      * Current width of structure
      */
