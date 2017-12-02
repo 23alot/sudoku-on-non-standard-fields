@@ -60,23 +60,27 @@ public class Structure {
             rowNode = (HeadNode)rowNode.down;
         }
     }
-    void insertNode(HeadNode colNode, HeadNode rowNode,byte start,byte value,byte end){
+    void insertNode(HeadNode currentColumn, HeadNode currentRow,byte start,byte value,byte end){
         byte z = start;
         for(; z < value; ++z)
-            colNode = (HeadNode)colNode.right;
-        // TODO: make a method
-        Node newNode = new Node(colNode.top,colNode,rowNode.top,rowNode);
-        if(colNode.top == null)
-            colNode.top = colNode;
-        if(rowNode.top == null)
-            rowNode.top = rowNode;
-        colNode.top.down = newNode;
-        rowNode.top.right = newNode;
-        colNode.top = newNode;
-        rowNode.top = newNode;
-        //
+            currentColumn = (HeadNode)currentColumn.right;
+
+        insertAfter(currentColumn,currentRow);
+
         for(; z < end; ++z)
-            colNode = (HeadNode)colNode.right;
+            currentColumn = (HeadNode)currentColumn.right;
+    }
+    void insertAfter(HeadNode currentColumn, HeadNode currentRow){
+        if(currentColumn.top == null)
+            currentColumn.top = currentColumn;
+        if(currentRow.top == null)
+            currentRow.top = currentRow;
+
+        Node newNode = new Node(currentColumn.top,currentColumn,currentRow.top,currentRow);
+        currentColumn.top.down = newNode;
+        currentRow.top.right = newNode;
+        currentRow.top = newNode;
+        currentColumn.top = newNode;
     }
     /**
      * Copy constructor
@@ -104,18 +108,9 @@ public class Structure {
                 // searchRow.left.position is row position
                 while(currentRow.position != ((HeadNode) searchRow.left).position)
                     currentRow = (HeadNode)currentRow.down;
-                // TODO: make a method
-                if(currentColumn.top == null)
-                    currentColumn.top = currentColumn;
-                if(currentRow.top == null)
-                    currentRow.top = currentRow;
 
-                Node newNode = new Node(currentColumn.top,currentColumn,currentRow.top,currentRow);
-                currentColumn.top.down = newNode;
-                currentRow.top.right = newNode;
-                currentRow.top = newNode;
-                currentColumn.top = newNode;
-                //
+                insertAfter(currentColumn,currentRow);
+
                 temp = temp.down;
             }
             title = (HeadNode)title.right;
