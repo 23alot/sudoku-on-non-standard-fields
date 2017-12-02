@@ -21,6 +21,11 @@ public class Node {
     }
 
     /**
+     * Default constructor
+     */
+    Node(){}
+
+    /**
      * Copy constructor
      * @param other node to copy
      */
@@ -47,5 +52,14 @@ class HeadNode extends Node{
     Node top;
     HeadNode(){
         super(null,null,null,null);
+    }
+    HeadNode(HeadNode up, HeadNode down, HeadNode left, HeadNode right, byte position, byte currentNumber){
+        this.up = up;
+        this.down = down;
+        this.left = left;
+        this.right = right;
+        this.position = position;
+        this.currentNumber = currentNumber;
+        this.top = this;
     }
 }
