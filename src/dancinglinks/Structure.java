@@ -36,9 +36,48 @@ public class Structure {
     Structure(byte N, byte[] areas){
         width = 4*N*N;
         height = N*N*N;
+        createStructureTitles(N);
+        byte row,column,area;
 
+        HeadNode rowNode = (HeadNode)root.down;
+        for(byte i = 0; i < height; ++i){
+            HeadNode colNode = (HeadNode)root.right;
+            row = (byte)(i / (N*N));
+            column = (byte)((i/N)%N);
+            area = areas[(byte)(row*N+column)];
+            // Insert cell node
+            insertNode(colNode,rowNode,(byte)0,
+                    (byte)(N*row + column),(byte)(N*N));
+            // Insert row node
+            insertNode(colNode,rowNode,(byte)(N*N),
+                    (byte)(N*N + i%N + N*row),(byte)(2*N*N));
+            // Insert column node
+            insertNode(colNode,rowNode,(byte)(2*N*N),
+                    (byte)(2*N*N + i%N + N*column),(byte)(3*N*N));
+            // Insert area node
+            insertNode(colNode,rowNode,(byte)(3*N*N),
+                    (byte)(3*N*N + i%N + N*area),(byte)(3*N*N + i%N + N*area));
+            rowNode = (HeadNode)rowNode.down;
+        }
     }
-
+    void insertNode(HeadNode colNode, HeadNode rowNode,byte start,byte value,byte end){
+        byte z = start;
+        for(; z < value; ++z)
+            colNode = (HeadNode)colNode.right;
+        // TODO: make a method
+        Node newNode = new Node(colNode.top,colNode,rowNode.top,rowNode);
+        if(colNode.top == null)
+            colNode.top = colNode;
+        if(rowNode.top == null)
+            rowNode.top = rowNode;
+        colNode.top.down = newNode;
+        rowNode.top.right = newNode;
+        colNode.top = newNode;
+        rowNode.top = newNode;
+        //
+        for(; z < end; ++z)
+            colNode = (HeadNode)colNode.right;
+    }
     /**
      * Copy constructor
      * @param cur structure to copy
@@ -65,13 +104,18 @@ public class Structure {
                 // searchRow.left.position is row position
                 while(currentRow.position != ((HeadNode) searchRow.left).position)
                     currentRow = (HeadNode)currentRow.down;
+                // TODO: make a method
                 if(currentColumn.top == null)
                     currentColumn.top = currentColumn;
                 if(currentRow.top == null)
                     currentRow.top = currentRow;
+
                 Node newNode = new Node(currentColumn.top,currentColumn,currentRow.top,currentRow);
+                currentColumn.top.down = newNode;
+                currentRow.top.right = newNode;
                 currentRow.top = newNode;
                 currentColumn.top = newNode;
+                //
                 temp = temp.down;
             }
             title = (HeadNode)title.right;
