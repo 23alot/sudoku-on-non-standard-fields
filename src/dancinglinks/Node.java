@@ -41,6 +41,10 @@ class HeadNode extends Node{
      * Position of HeadNode
      */
     byte position;
+    /**
+     * Last inserted node
+     */
+    Node top;
     HeadNode(){
         super(null,null,null,null);
     }
