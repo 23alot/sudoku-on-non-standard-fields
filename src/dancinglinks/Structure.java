@@ -36,7 +36,7 @@ public class Structure {
         // Current column head node
         HeadNode title = (HeadNode)cur.root.right;
         // Current node
-        Node temp = cur.root.right.down;
+        Node temp;
         Node searchRow;
         // Current row head node of new structure
         HeadNode currentRow = (HeadNode)root.down;
@@ -44,6 +44,7 @@ public class Structure {
         HeadNode currentColumn = (HeadNode)root.right;
 
         while(title != cur.root){
+            temp = title.down;
             while(temp != title){
                 // Find row position of node
                 searchRow = new Node(temp);
@@ -55,7 +56,9 @@ public class Structure {
                 Node newNode = new Node(currentColumn.top,currentColumn,currentRow.top,currentRow);
                 currentRow.top = newNode;
                 currentColumn.top = newNode;
+                temp = temp.down;
             }
+            title = (HeadNode)title.right;
         }
     }
 
