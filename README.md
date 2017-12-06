@@ -31,3 +31,12 @@ For the algorithm I have to choose *demands*. And here it is:
 **14.11.2017 9:30** Woke up with a thought that I don't know how to generate game field and I must to think about this problem if I don't like to be murdered on the defense of course work (and I don't like : D). The game begins...
 
 **20.11.2017 16:05** Must introduce a concept *cell's potential*. We have to write number in *cell* with highest *cell's potential*. Also, it dawned on me that I can parallelize solution to cells with the same *cell's potential*.
+
+**02.12.2017** Create base structures for algorithm.
+
+**06.12.2017 17:06** Already done most part of structure implementation. Have to code only structure-to-array method.
+
+​		**17:19** Completed structure-to-array method. Ready to test!
+
+
+
