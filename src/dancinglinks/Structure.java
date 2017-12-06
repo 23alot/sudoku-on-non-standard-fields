@@ -1,9 +1,16 @@
 package dancinglinks;
 
+import sudoku.Board;
+import sudoku.Cell;
+
 /**
  * Created by boscatov on 02.12.2017.
  */
 public class Structure {
+    /**
+     * Define borders of areas
+     */
+    private byte[] areas;
     /**
      * Reference to start node of structure
      */
@@ -30,8 +37,8 @@ public class Structure {
     /**
      * Constructor with number of dimensions
      * and areas
-     * @param N
-     * @param areas
+     * @param N number of dimensions
+     * @param areas board separation
      */
     Structure(byte N, byte[] areas){
         width = 4*N*N;
@@ -164,5 +171,26 @@ public class Structure {
      */
     Structure copy(){
         return new Structure(this);
+    }
+
+    /**
+     * Convert array of nodes to Board
+     * @param nodes complete array of result nodes
+     * @return filled sudoku Board
+     */
+    Board toBoard(Node[] nodes){
+        byte len = (byte)Math.sqrt(nodes.length);
+        Board result = new Board(len);
+        Node cur; // Current Node
+        byte t; // Position variable
+        for(Node nd: nodes)
+        {
+            cur = nd.left;
+            while(!(cur instanceof HeadNode))
+                cur = cur.left;
+            t = ((HeadNode) cur).position;
+            result.cells[t/(nodes.length)][(t/len)%len] = new Cell((byte)(t%len),areas[t/(nodes.length)*len+(t/len)%len]);
+        }
+        return result;
     }
 }
