@@ -1,10 +1,15 @@
 package dancinglinks;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by boscatov on 02.12.2017.
  */
 public class Algorithm {
     Structure structure;
+    LinkedList<Node> solution = new LinkedList<>();
 
     /**
      *
@@ -21,9 +26,12 @@ public class Algorithm {
         HeadNode deleted = structure.minNode;
         Node temp = deleted.down;
         for(byte i = 0; i < deleted.currentNumber; ++i){
+            solution.add(temp);
             delete(temp);
             solve();
             cover(temp);
+            solution.poll();
+            temp = temp.down;
         }
     }
     void cover(Node nd){
