@@ -53,13 +53,13 @@ public class Structure {
             column = (byte)((i/N)%N);
             area = areas[(byte)(row*N+column)];
             // Insert cell node
-            insertNode(colNode,rowNode,(byte)0,
+            colNode = insertNode(colNode,rowNode,(byte)0,
                     (byte)(N*row + column),(byte)(N*N));
             // Insert row node
-            insertNode(colNode,rowNode,(byte)(N*N),
+            colNode = insertNode(colNode,rowNode,(byte)(N*N),
                     (byte)(N*N + i%N + N*row),(byte)(2*N*N));
             // Insert column node
-            insertNode(colNode,rowNode,(byte)(2*N*N),
+            colNode = insertNode(colNode,rowNode,(byte)(2*N*N),
                     (byte)(2*N*N + i%N + N*column),(byte)(3*N*N));
             // Insert area node
             insertNode(colNode,rowNode,(byte)(3*N*N),
@@ -67,7 +67,7 @@ public class Structure {
             rowNode = (HeadNode)rowNode.down;
         }
     }
-    void insertNode(HeadNode currentColumn, HeadNode currentRow,byte start,byte value,byte end){
+    HeadNode insertNode(HeadNode currentColumn, HeadNode currentRow,byte start,byte value,byte end){
         byte z = start;
         for(; z < value; ++z)
             currentColumn = (HeadNode)currentColumn.right;
@@ -76,6 +76,7 @@ public class Structure {
 
         for(; z < end; ++z)
             currentColumn = (HeadNode)currentColumn.right;
+        return currentColumn;
     }
     void insertAfter(HeadNode currentColumn, HeadNode currentRow){
         if(currentColumn.top == null)
@@ -83,7 +84,7 @@ public class Structure {
         if(currentRow.top == null)
             currentRow.top = currentRow;
 
-        Node newNode = new Node(currentColumn.top,currentColumn,currentRow.top,currentRow);
+        Node newNode = new Node(currentColumn.top,currentColumn,currentRow.top,currentRow,currentColumn,currentRow);
         currentColumn.top.down = newNode;
         currentRow.top.right = newNode;
         currentRow.top = newNode;
