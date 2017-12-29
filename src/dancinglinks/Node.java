@@ -5,7 +5,7 @@ package dancinglinks;
  */
 public class Node {
     Node up,down,left,right;
-
+    HeadNode upHead;
     /**
      * Initialization constructor
      * @param up Reference to upper node
@@ -13,11 +13,12 @@ public class Node {
      * @param left Reference to left node
      * @param right Reference to right node
      */
-    Node(Node up, Node down, Node left, Node right){
+    Node(Node up, Node down, Node left, Node right, HeadNode upHead){
         this.up = up;
         this.down = down;
         this.left = left;
         this.right = right;
+        this.upHead = upHead;
     }
 
     /**
@@ -34,6 +35,7 @@ public class Node {
         this.down = other.down;
         this.left = other.left;
         this.right = other.right;
+        this.upHead = other.upHead;
     }
 }
 
@@ -51,7 +53,7 @@ class HeadNode extends Node{
      */
     Node top;
     HeadNode(){
-        super(null,null,null,null);
+        super(null,null,null,null,null);
     }
     HeadNode(HeadNode up, HeadNode down, HeadNode left, HeadNode right, byte position, byte currentNumber){
         this.up = up;
