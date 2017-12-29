@@ -64,5 +64,7 @@ class HeadNode extends Node{
         this.position = position;
         this.currentNumber = currentNumber;
         this.top = this;
+        this.upHead = this;
+        this.leftHead = this;
     }
 }
