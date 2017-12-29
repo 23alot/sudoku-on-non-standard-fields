@@ -7,6 +7,9 @@ import sudoku.Cell;
  * Created by boscatov on 02.12.2017.
  */
 public class Structure {
+
+    byte minLength;
+    HeadNode minNode;
     /**
      * Define borders of areas
      */
