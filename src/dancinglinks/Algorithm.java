@@ -34,20 +34,58 @@ public class Algorithm {
             temp = temp.down;
         }
     }
-    void cover(Node nd){
 
+    /**
+     * Return a solution back to the structure
+     * @param nd node of a column to return
+     */
+    void cover(Node nd){
+        Node temp = nd;
+        HeadNode head = nd.upHead;
+        for(byte i = 0; i < head.currentNumber; ++i){
+            temp.left.right = temp;
+            temp.right.left = temp;
+            temp.leftHead.currentNumber++;
+            temp = temp.down;
+        }
+        coverRow(nd);
+    }
+
+    /**
+     * Return the node row back to the structure
+     * @param nd back node
+     */
+    void coverRow(Node nd){
+        HeadNode head = nd.leftHead;
+        // Cover in head nodes
+        head.up.down = head;
+        head.down.up = head;
+        Node temp = head.right;
+        for(byte i = 0; i < head.currentNumber; ++i){
+            temp.up.upHead.currentNumber++;
+            if(temp.up.upHead.currentNumber < structure.minLength){
+                structure.minLength = temp.up.upHead.currentNumber;
+                structure.minNode = temp.up.upHead;
+            }
+            temp.up.down = temp;
+            temp.down.up = temp;
+            temp = temp.right;
+        }
     }
     /**
      * Deletes from structure each solution
-     * @param nd head node of column to delete
+     * @param nd node of a column to delete
      */
     void delete(Node nd){
-        Node temp = nd.down;
+        Node temp = nd;
         HeadNode head = nd.upHead;
         for(byte i = 0; i < head.currentNumber; ++i){
-            deleteRow(temp);
+            temp.left.right = temp.right.left;
+            temp.right.left = temp.left.right;
+            temp.leftHead.currentNumber--;
             temp = temp.down;
         }
+        deleteRow(nd);
     }
 
     /**
