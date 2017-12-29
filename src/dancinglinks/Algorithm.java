@@ -19,17 +19,21 @@ public class Algorithm {
 
     /**
      * Deletes from structure each solution
-     * @param nd
+     * @param nd head node of column to delete
      */
     void delete(HeadNode nd){
-
+        Node temp = nd.down;
+        for(byte i = 0; i < nd.currentNumber; ++i){
+            deleteRow(temp);
+            temp = temp.down;
+        }
     }
 
     /**
      * Deletes row which contains node
      * @param nd node to delete
      */
-    void deleteRow(Node nd){
+    private void deleteRow(Node nd){
         HeadNode head = nd.leftHead;
         // Deletion in head nodes
         head.up.down = head.down.up;
