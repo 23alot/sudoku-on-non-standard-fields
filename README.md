@@ -38,5 +38,5 @@ For the algorithm I have to choose *demands*. And here it is:
 
 ​		**17:19** Completed structure-to-array method. Ready to test!
 
-
+**29.12.2017 14:00** Start working on the algorithmic part of the solution. 
 
