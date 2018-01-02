@@ -22,23 +22,31 @@ public class Algorithm {
     /**
      * Recursive function that finds solution
      */
-    void solve(){
-        byte currentSolutionsNumber = 0;
+    Solution solve(){
+        Solution sol = null;
+        ArrayList<Solution> solutions = new ArrayList<>();
         // TODO: check for multiple solutions
         if(solution.size() == structure.N)
-            return;
-        //TODO: add bad end condition
+            return new Solution((byte)33,solution,false); // Check copy send or not
+        if(isBadEnd())
+            return null;
         HeadNode deleted = structure.minNode;
         Node temp = deleted.down;
         for(byte i = 0; i < deleted.currentNumber; ++i){
             solution.add(temp);
             delete(temp);
-            solve();
-            currentSolutionsNumber++;
+            Solution tempSol = solve();
+            // If solution has already exist then we have
+            // multiple solutions and that is impossible for sudoku
+            if(sol == null)
+                sol = tempSol;
+            else
+                return null;
             cover(temp);
             solution.poll();
             temp = temp.down;
         }
+        return sol;
     }
 
     /**
