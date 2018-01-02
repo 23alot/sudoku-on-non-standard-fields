@@ -23,12 +23,18 @@ public class Algorithm {
      * Recursive function that finds solution
      */
     void solve(){
+        byte currentSolutionsNumber = 0;
+        // TODO: check for multiple solutions
+        if(solution.size() == structure.N)
+            return;
+        //TODO: add bad end condition
         HeadNode deleted = structure.minNode;
         Node temp = deleted.down;
         for(byte i = 0; i < deleted.currentNumber; ++i){
             solution.add(temp);
             delete(temp);
             solve();
+            currentSolutionsNumber++;
             cover(temp);
             solution.poll();
             temp = temp.down;
@@ -71,6 +77,17 @@ public class Algorithm {
             temp.down.up = temp;
             temp = temp.right;
         }
+    }
+    boolean isBadEnd(){
+        if(solution.size() < structure.N)
+            return false;
+        HeadNode temp = (HeadNode)structure.root.right;
+        for(int i = 0; i < structure.width - solution.size();++i){
+            if(temp.currentNumber != 0)
+                return false;
+            temp = (HeadNode)temp.right;
+        }
+        return true;
     }
     /**
      * Deletes from structure each solution
