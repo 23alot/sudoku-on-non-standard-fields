@@ -50,8 +50,7 @@ public class Algorithm {
             solution.poll();
             temp = temp.down;
         }
-        for(Solution i: solutions)
-            result.add(i);
+        result.addAll(solutions);
         return sol;
     }
 
