@@ -7,9 +7,11 @@ import java.util.LinkedList;
  */
 public class Solution {
     byte depth;
+    boolean isMultiple = false;
     LinkedList<Node> solution;
-    Solution(byte depth,LinkedList<Node> solution){
+    Solution(byte depth,LinkedList<Node> solution, boolean isMultiple){
         this.depth = depth;
         this.solution = solution;
+        this.isMultiple = isMultiple;
     }
 }
