@@ -10,7 +10,7 @@ import java.util.List;
 public class Algorithm {
     Structure structure;
     LinkedList<Node> solution = new LinkedList<>();
-
+    LinkedList<Solution> result = new LinkedList<>();
     /**
      *
      * @param N dimension of Sudoku
@@ -22,12 +22,13 @@ public class Algorithm {
     /**
      * Recursive function that finds solution
      */
-    Solution solve(){
-        Solution sol = null;
+    LinkedList<Node> solve(byte depth){
+        byte curDepth = (byte)(depth + 1);
+        LinkedList<Node> sol = null;
         ArrayList<Solution> solutions = new ArrayList<>();
         // TODO: check for multiple solutions
         if(solution.size() == structure.N)
-            return new Solution((byte)33,solution,false); // Check copy send or not
+            return solution; // Check copy send or not
         if(isBadEnd())
             return null;
         HeadNode deleted = structure.minNode;
@@ -35,17 +36,22 @@ public class Algorithm {
         for(byte i = 0; i < deleted.currentNumber; ++i){
             solution.add(temp);
             delete(temp);
-            Solution tempSol = solve();
+            sol = solve(curDepth);
             // If solution has already exist then we have
             // multiple solutions and that is impossible for sudoku
-            if(sol == null)
-                sol = tempSol;
-            else
-                return null;
+            if(solutions.isEmpty())
+                solutions.add(new Solution(curDepth,sol,false));
+            else{
+                solutions.get(0).isMultiple = true;
+                solutions.add(new Solution(curDepth,sol,false));
+            }
+
             cover(temp);
             solution.poll();
             temp = temp.down;
         }
+        for(Solution i: solutions)
+            result.add(i);
         return sol;
     }
 
