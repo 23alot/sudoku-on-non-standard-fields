@@ -17,7 +17,11 @@ public class Structure {
     /**
      * Reference to start node of structure
      */
-    private HeadNode root = new HeadNode();
+    HeadNode root = new HeadNode();
+    /**
+     * Dimension of the structure
+     */
+    byte N;
     /**
      * Current width of structure
      */
@@ -44,6 +48,7 @@ public class Structure {
      * @param areas board separation
      */
     Structure(byte N, byte[] areas){
+        this.N = N;
         width = 4*N*N;
         height = N*N*N;
         createStructureTitles(N);
