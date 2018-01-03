@@ -5,7 +5,7 @@ package dancinglinks;
  */
 public class Node {
     Node up,down,left,right;
-    HeadNode upHead,leftHead;
+    public HeadNode upHead,leftHead;
     /**
      * Initialization constructor
      * @param up Reference to upper node
@@ -48,7 +48,7 @@ class HeadNode extends Node{
     /**
      * Position of HeadNode
      */
-    byte position;
+    public byte position;
     /**
      * Last inserted node
      */

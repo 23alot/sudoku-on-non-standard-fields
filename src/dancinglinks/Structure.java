@@ -47,7 +47,7 @@ public class Structure {
      * @param N number of dimensions
      * @param areas board separation
      */
-    Structure(byte N, byte[] areas){
+    public Structure(byte N, byte[] areas){
         this.N = N;
         width = 4*N*N;
         height = N*N*N;
@@ -74,6 +74,8 @@ public class Structure {
                     (byte)(3*N*N + i%N + N*area),(byte)(3*N*N + i%N + N*area));
             rowNode = (HeadNode)rowNode.down;
         }
+        minNode = (HeadNode)root.right;
+        minLength = N;
     }
     HeadNode insertNode(HeadNode currentColumn, HeadNode currentRow,byte start,byte value,byte end){
         byte z = start;
@@ -167,6 +169,7 @@ public class Structure {
             temp.right = new HeadNode(null, null, temp, root, i, N);
             temp = (HeadNode) temp.right;
         }
+        temp = root;
         for(i = 0; i < height; ++i){
             temp.down = new HeadNode(temp, root, null, null, i, N);
             temp = (HeadNode) temp.down;
@@ -198,7 +201,7 @@ public class Structure {
             while(!(cur instanceof HeadNode))
                 cur = cur.left;
             t = ((HeadNode) cur).position;
-            result.cells[t/(nodes.length)][(t/len)%len] = new Cell((byte)(t%len),areas[t/(nodes.length)*len+(t/len)%len]);
+            result.cells[t/(nodes.length)][(t/len)%len] = new Cell((byte)(t/len),areas[t/(nodes.length)*len+(t/len)%len]);
         }
         return result;
     }
