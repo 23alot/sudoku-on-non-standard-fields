@@ -21,9 +21,11 @@ public class Algorithm {
     HeadNode findMinNode(){
         HeadNode min = (HeadNode)structure.root.right;
         HeadNode temp = (HeadNode)min.right;
-        for(int i = 1;i < structure.width - solution.size(); ++i)
-            if(temp.currentNumber < min.currentNumber)
+        while(temp!=structure.root) {
+            if (temp.currentNumber < min.currentNumber)
                 min = temp;
+            temp = (HeadNode)temp.right;
+        }
         return min;
     }
     /**
@@ -33,8 +35,6 @@ public class Algorithm {
         if(result.size()!=0)
             return;
         byte curDepth = (byte)(depth + 1);
-        LinkedList<Node> sol = null;
-        ArrayList<Solution> solutions = new ArrayList<>();
         // TODO: check for multiple solutions
         if(solution.size() == structure.N*structure.N) {
             result.add(new Solution(depth, solution, false)); // Check copy send or not
@@ -43,12 +43,15 @@ public class Algorithm {
         if(isBadEnd())
             return;
         HeadNode deleted = findMinNode();
+
         Node temp = deleted.down;
         for(byte i = 0; i < deleted.currentNumber; ++i){
-
             delete(temp);
+
             solution.add(temp);
+
             solve(curDepth);
+
             // If solution has already exist then we have
             // multiple solutions and that is impossible for sudoku
 //            if(solutions.isEmpty())
@@ -57,7 +60,6 @@ public class Algorithm {
 //                solutions.get(0).isMultiple = true;
 //                solutions.add(new Solution(curDepth,sol,true));
 //            }
-
             cover(temp);
             solution.poll();
             temp = temp.down;
@@ -67,53 +69,14 @@ public class Algorithm {
 //        return sol;
     }
 
-    /**
-     * Return a solution back to the structure
-     * @param nd node of a column to return
-     */
-    void cover(Node nd){
-        HeadNode head = nd.upHead;
-        head.left.right = head;
-        head.right.left = head;
-        Node temp = head.down;
-        for(byte i = 0; i < head.currentNumber; ++i){
-            temp.left.right = temp;
-            temp.right.left = temp;
-            temp.leftHead.currentNumber++;
-            temp = temp.down;
-        }
-        nd.upHead.currentNumber--;
-        coverRow(nd);
-    }
-
-    /**
-     * Return the node row back to the structure
-     * @param nd back node
-     */
-    void coverRow(Node nd){
-        HeadNode head = nd.leftHead;
-        // Cover in head nodes
-        head.up.down = head;
-        head.down.up = head;
-        Node temp = head.right;
-        for(byte i = 0; i < head.currentNumber; ++i){
-            temp.up.upHead.currentNumber++;
-            if(temp.up.upHead.currentNumber < structure.minLength){
-                structure.minLength = temp.up.upHead.currentNumber;
-                structure.minNode = temp.up.upHead;
-            }
-            temp.up.down = temp;
-            temp.down.up = temp;
-            temp = temp.right;
-        }
-    }
     boolean isBadEnd(){
-        if(solution.size() == structure.N)
+        if(solution.size() == structure.N*structure.N)
             return false;
         HeadNode temp = (HeadNode)structure.root.right;
-        for(int i = 0; i < structure.width - solution.size();++i){
-            if(temp.currentNumber == 0)
+        while(temp!=structure.root){
+            if(temp.currentNumber == 0) {
                 return true;
+            }
             temp = (HeadNode)temp.right;
         }
         return false;
@@ -123,40 +86,141 @@ public class Algorithm {
      * @param nd node of a column to delete
      */
     void delete(Node nd){
+        HeadNode head = nd.leftHead;
+        Node temp = head.right;
+        head.up.down = head.down;
+        head.down.up = head.up;
+        for(byte i = 0; i < head.currentNumber; ++i) {
+            deleteColumn(temp);
+            temp = temp.right;
+        }
+        temp = head.right;
+        for(byte i = 0; i < head.currentNumber; ++i) {
+            deleteRows(temp);
+            temp = temp.right;
+        }
+
+//        HeadNode head = nd.upHead;
+//        head.left.right = head.right;
+//        head.right.left = head.left;
+//        Node temp = head.down;
+//        for(byte i = 0; i < head.currentNumber; ++i){
+//            if(temp.leftHead.position != nd.leftHead.position) {
+//                temp.left.right = temp.right;
+//                temp.right.left = temp.left;
+//                temp.leftHead.currentNumber--;
+//            }
+//            temp = temp.down;
+//        }
+
+    }
+    void cover(Node nd){
+        HeadNode head = nd.leftHead;
+        Node temp = head.right;
+        for(byte i = 0; i < head.currentNumber; ++i) {
+            coverRows(temp);
+            temp = temp.right;
+        }
+        temp = head.right;
+        for(byte i = 0; i < head.currentNumber; ++i) {
+            coverColumn(temp);
+            temp = temp.right;
+        }
+    }
+    void deleteRows(Node nd){
+        HeadNode head = nd.upHead;
+        Node temp = head.down;
+        for(byte i = 0; i < head.currentNumber; ++i){
+            if(temp.leftHead.position != nd.leftHead.position)
+                deleteRow(temp);
+            temp = temp.down;
+        }
+    }
+    void coverRows(Node nd){
+        HeadNode head = nd.upHead;
+        Node temp = head.down;
+        for(byte i = 0; i < head.currentNumber; ++i){
+            if(nd.leftHead.position!=temp.leftHead.position)
+                coverRow(temp);
+            temp = temp.down;
+        }
+    }
+    void deleteColumn(Node nd){
         HeadNode head = nd.upHead;
         head.left.right = head.right;
         head.right.left = head.left;
         Node temp = head.down;
+
         for(byte i = 0; i < head.currentNumber; ++i){
-            temp.left.right = temp.right;
-            temp.right.left = temp.left;
-            temp.leftHead.currentNumber--;
+            if(nd.leftHead.position!=temp.leftHead.position) {
+                temp.left.right = temp.right;
+                temp.right.left = temp.left;
+                temp.leftHead.currentNumber--;
+            }
             temp = temp.down;
         }
-        deleteRow(nd);
-    }
 
-    /**
-     * Deletes row which contains node
-     * @param nd node to delete
-     */
-    private void deleteRow(Node nd){
+    }
+    void coverColumn(Node nd){
+
+        HeadNode head = nd.upHead;
+        head.left.right = head;
+        head.right.left = head;
+        Node temp = head.down;
+        for(byte i = 0; i < head.currentNumber; ++i){
+            if(nd.leftHead.position!=temp.leftHead.position) {
+                temp.left.right = temp;
+                temp.right.left = temp;
+                temp.leftHead.currentNumber++;
+            }
+            temp = temp.down;
+        }
+    }
+    void deleteRow(Node nd){
         HeadNode head = nd.leftHead;
-        // Deletion in head nodes
         head.up.down = head.down;
         head.down.up = head.up;
         Node temp = head.right;
         for(byte i = 0; i < head.currentNumber; ++i){
-            if(temp.up.upHead == null)
-                System.out.println(temp);
-            temp.up.upHead.currentNumber--;
-            if(temp.up.upHead.currentNumber < structure.minLength){
-                structure.minLength = temp.up.upHead.currentNumber;
-                structure.minNode = temp.up.upHead;
+            if(temp.up.down == temp) {
+                temp.up.down = temp.down;
+                temp.down.up = temp.up;
+                temp.upHead.currentNumber--;
             }
-            temp.up.down = temp.down;
-            temp.down.up = temp.up;
             temp = temp.right;
         }
     }
+    void coverRow(Node nd){
+        HeadNode head = nd.leftHead;
+        head.up.down = head;
+        head.down.up = head;
+        Node temp = head.right;
+        for(byte i = 0; i < head.currentNumber; ++i){
+            if(temp.up.down != temp) {
+                temp.up.down = temp;
+                temp.down.up = temp;
+                temp.upHead.currentNumber++;
+            }
+            temp = temp.right;
+        }
+    }
+    /**
+     * Deletes row which contains node
+     * @param nd node to delete
+     */
+//    private void deleteRow(Node nd){
+//        HeadNode head = nd.leftHead;
+//        // Deletion in head nodes
+//        head.up.down = head.down;
+//        head.down.up = head.up;
+//        Node temp = head.right;
+//        for(byte i = 0; i < head.currentNumber; ++i){
+//            delete(temp);
+//            //temp.up.upHead.currentNumber--;
+//
+////            temp.up.down = temp.down;
+////            temp.down.up = temp.up;
+//            temp = temp.right;
+//        }
+//    }
 }

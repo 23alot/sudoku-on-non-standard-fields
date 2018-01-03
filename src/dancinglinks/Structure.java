@@ -95,6 +95,7 @@ public class Structure {
             currentRow.top = currentRow;
 
         Node newNode = new Node(currentColumn.top,currentColumn,currentRow.top,currentRow,currentColumn,currentRow);
+
         currentColumn.top.down = newNode;
         currentRow.top.right = newNode;
         currentRow.top = newNode;
