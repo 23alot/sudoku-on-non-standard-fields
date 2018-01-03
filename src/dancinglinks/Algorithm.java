@@ -100,19 +100,6 @@ public class Algorithm {
             temp = temp.right;
         }
 
-//        HeadNode head = nd.upHead;
-//        head.left.right = head.right;
-//        head.right.left = head.left;
-//        Node temp = head.down;
-//        for(byte i = 0; i < head.currentNumber; ++i){
-//            if(temp.leftHead.position != nd.leftHead.position) {
-//                temp.left.right = temp.right;
-//                temp.right.left = temp.left;
-//                temp.leftHead.currentNumber--;
-//            }
-//            temp = temp.down;
-//        }
-
     }
     void cover(Node nd){
         HeadNode head = nd.leftHead;
@@ -131,7 +118,7 @@ public class Algorithm {
         HeadNode head = nd.upHead;
         Node temp = head.down;
         for(byte i = 0; i < head.currentNumber; ++i){
-            if(temp.leftHead.position != nd.leftHead.position)
+            if(temp.leftHead != nd.leftHead && !(temp instanceof HeadNode))
                 deleteRow(temp);
             temp = temp.down;
         }
@@ -139,8 +126,9 @@ public class Algorithm {
     void coverRows(Node nd){
         HeadNode head = nd.upHead;
         Node temp = head.down;
+
         for(byte i = 0; i < head.currentNumber; ++i){
-            if(nd.leftHead.position!=temp.leftHead.position)
+            if(nd.leftHead!=temp.leftHead && !(temp instanceof HeadNode))
                 coverRow(temp);
             temp = temp.down;
         }
@@ -152,7 +140,7 @@ public class Algorithm {
         Node temp = head.down;
 
         for(byte i = 0; i < head.currentNumber; ++i){
-            if(nd.leftHead.position!=temp.leftHead.position) {
+            if(temp.left.right == temp && nd.leftHead != temp.leftHead) {
                 temp.left.right = temp.right;
                 temp.right.left = temp.left;
                 temp.leftHead.currentNumber--;
@@ -168,7 +156,7 @@ public class Algorithm {
         head.right.left = head;
         Node temp = head.down;
         for(byte i = 0; i < head.currentNumber; ++i){
-            if(nd.leftHead.position!=temp.leftHead.position) {
+            if(temp.left.right == temp && nd.leftHead != temp.leftHead) {
                 temp.left.right = temp;
                 temp.right.left = temp;
                 temp.leftHead.currentNumber++;
@@ -204,23 +192,4 @@ public class Algorithm {
             temp = temp.right;
         }
     }
-    /**
-     * Deletes row which contains node
-     * @param nd node to delete
-     */
-//    private void deleteRow(Node nd){
-//        HeadNode head = nd.leftHead;
-//        // Deletion in head nodes
-//        head.up.down = head.down;
-//        head.down.up = head.up;
-//        Node temp = head.right;
-//        for(byte i = 0; i < head.currentNumber; ++i){
-//            delete(temp);
-//            //temp.up.upHead.currentNumber--;
-//
-////            temp.up.down = temp.down;
-////            temp.down.up = temp.up;
-//            temp = temp.right;
-//        }
-//    }
 }

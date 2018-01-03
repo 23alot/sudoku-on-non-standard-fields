@@ -8,7 +8,7 @@ import sudoku.Cell;
  */
 public class Structure {
 
-    byte minLength;
+    int minLength;
     HeadNode minNode;
     /**
      * Define borders of areas
@@ -52,33 +52,33 @@ public class Structure {
         width = 4*N*N;
         height = N*N*N;
         createStructureTitles(N);
-        byte row,column,area;
+        int row,column,area;
 
         HeadNode rowNode = (HeadNode)root.down;
-        for(byte i = 0; i < height; ++i){
+        for(int i = 0; i < height; ++i){
             HeadNode colNode = (HeadNode)root.right;
-            row = (byte)(i / (N*N));
-            column = (byte)((i/N)%N);
-            area = areas[(byte)(row*N+column)];
+            row = (i / (N*N));
+            column = ((i/N)%N);
+            area = areas[(row*N+column)];
             // Insert cell node
-            colNode = insertNode(colNode,rowNode,(byte)0,
-                    (byte)(N*row + column),(byte)(N*N));
+            colNode = insertNode(colNode,rowNode,0,
+                    (N*row + column),(N*N));
             // Insert row node
-            colNode = insertNode(colNode,rowNode,(byte)(N*N),
-                    (byte)(N*N + i%N + N*row),(byte)(2*N*N));
+            colNode = insertNode(colNode,rowNode,(N*N),
+                    (N*N + i%N + N*row),(2*N*N));
             // Insert column node
-            colNode = insertNode(colNode,rowNode,(byte)(2*N*N),
-                    (byte)(2*N*N + i%N + N*column),(byte)(3*N*N));
+            colNode = insertNode(colNode,rowNode,(2*N*N),
+                    (2*N*N + i%N + N*column),(3*N*N));
             // Insert area node
-            insertNode(colNode,rowNode,(byte)(3*N*N),
-                    (byte)(3*N*N + i%N + N*area),(byte)(3*N*N + i%N + N*area));
+            insertNode(colNode,rowNode,(3*N*N),
+                    (3*N*N + i%N + N*area),(3*N*N + i%N + N*area));
             rowNode = (HeadNode)rowNode.down;
         }
         minNode = (HeadNode)root.right;
         minLength = N;
     }
-    HeadNode insertNode(HeadNode currentColumn, HeadNode currentRow,byte start,byte value,byte end){
-        byte z = start;
+    HeadNode insertNode(HeadNode currentColumn, HeadNode currentRow,int start,int value,int end){
+        int z = start;
         for(; z < value; ++z)
             currentColumn = (HeadNode)currentColumn.right;
 
@@ -125,7 +125,7 @@ public class Structure {
                 while(!(searchRow.left instanceof HeadNode))
                     searchRow.left = searchRow.left.left;
                 // searchRow.left.position is row position
-                while(currentRow.position != ((HeadNode) searchRow.left).position)
+                while(currentRow != searchRow.left)
                     currentRow = (HeadNode)currentRow.down;
 
                 insertAfter(currentColumn,currentRow);
@@ -144,14 +144,14 @@ public class Structure {
         HeadNode temp = root;
         HeadNode curTemp = (HeadNode)cur.root.right;
         while(curTemp != cur.root) {
-            temp.right = new HeadNode(null, null, temp, root, curTemp.position, curTemp.currentNumber);
+            temp.right = new HeadNode(null, null, temp, root, curTemp.currentNumber);
             curTemp = (HeadNode) curTemp.right;
             temp = (HeadNode)temp.right;
         }
         curTemp = (HeadNode)cur.root.down;
         temp = root;
         while(curTemp != cur.root) {
-            temp.down = new HeadNode(temp, root, null, null, curTemp.position, curTemp.currentNumber);
+            temp.down = new HeadNode(temp, root, null, null, curTemp.currentNumber);
             curTemp = (HeadNode) curTemp.down;
             temp = (HeadNode)temp.right;
         }
@@ -165,14 +165,14 @@ public class Structure {
      */
     void createStructureTitles(byte N){
         HeadNode temp = root;
-        byte i;
+        int i;
         for(i = 0; i < width; ++i) {
-            temp.right = new HeadNode(null, null, temp, root, i, N);
+            temp.right = new HeadNode(null, null, temp, root, N);
             temp = (HeadNode) temp.right;
         }
         temp = root;
         for(i = 0; i < height; ++i){
-            temp.down = new HeadNode(temp, root, null, null, i, N);
+            temp.down = new HeadNode(temp, root, null, null, (byte)4);
             temp = (HeadNode) temp.down;
         }
         temp = null;
@@ -186,24 +186,4 @@ public class Structure {
         return new Structure(this);
     }
 
-    /**
-     * Convert array of nodes to Board
-     * @param nodes complete array of result nodes
-     * @return filled sudoku Board
-     */
-    Board toBoard(Node[] nodes){
-        byte len = (byte)Math.sqrt(nodes.length);
-        Board result = new Board(len);
-        Node cur; // Current Node
-        byte t; // Position variable
-        for(Node nd: nodes)
-        {
-            cur = nd.left;
-            while(!(cur instanceof HeadNode))
-                cur = cur.left;
-            t = ((HeadNode) cur).position;
-            result.cells[t/(nodes.length)][(t/len)%len] = new Cell((byte)(t/len),areas[t/(nodes.length)*len+(t/len)%len]);
-        }
-        return result;
-    }
 }

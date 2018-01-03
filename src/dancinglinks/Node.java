@@ -46,22 +46,15 @@ class HeadNode extends Node{
      */
     byte currentNumber;
     /**
-     * Position of HeadNode
-     */
-    public byte position;
-    /**
      * Last inserted node
      */
     Node top;
-    HeadNode(){
-        super(null,null,null,null,null,null);
-    }
-    HeadNode(HeadNode up, HeadNode down, HeadNode left, HeadNode right, byte position, byte currentNumber){
+    HeadNode(){}
+    HeadNode(HeadNode up, HeadNode down, HeadNode left, HeadNode right, byte currentNumber){
         this.up = up;
         this.down = down;
         this.left = left;
         this.right = right;
-        this.position = position;
         this.currentNumber = currentNumber;
         this.top = this;
         this.upHead = this;
