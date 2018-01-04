@@ -95,11 +95,37 @@ public class Structure {
             currentRow.top = currentRow;
 
         Node newNode = new Node(currentColumn.top,currentColumn,currentRow.top,currentRow,currentColumn,currentRow);
-
+        currentColumn.up = newNode;
+        currentRow.left = newNode;
         currentColumn.top.down = newNode;
         currentRow.top.right = newNode;
         currentRow.top = newNode;
         currentColumn.top = newNode;
+    }
+    void dump(){
+        byte[][] arr = new byte[N][N];
+
+        for(int i = 0; i < N; ++i)
+            for(int z = 0; z < N; ++z)
+                arr[i][z] = 0;
+
+        Node temp = root.right;
+        while(temp!=root){
+            if(!temp.upHead.deleted) {
+                Node nd = temp.down;
+                while(nd!=temp) {
+                    arr[nd.leftHead.position][nd.upHead.position] = 1;
+                    nd = nd.down;
+                }
+            }
+            temp= temp.right;
+        }
+        System.out.println("dump start");
+        for(int i = 0; i < N; ++i){
+            for(int z = 0; z < N; ++z)
+                System.out.print(arr[i][z]);
+            System.out.println();
+        }
     }
     /**
      * Copy constructor
@@ -144,14 +170,14 @@ public class Structure {
         HeadNode temp = root;
         HeadNode curTemp = (HeadNode)cur.root.right;
         while(curTemp != cur.root) {
-            temp.right = new HeadNode(null, null, temp, root, curTemp.currentNumber);
+            temp.right = new HeadNode(null, null, temp, root, curTemp.currentNumber,0);
             curTemp = (HeadNode) curTemp.right;
             temp = (HeadNode)temp.right;
         }
         curTemp = (HeadNode)cur.root.down;
         temp = root;
-        while(curTemp != cur.root) {
-            temp.down = new HeadNode(temp, root, null, null, curTemp.currentNumber);
+        for(int i = 0; i < height;++i) {
+            temp.down = new HeadNode(temp, root, null, null, curTemp.currentNumber,i);
             curTemp = (HeadNode) curTemp.down;
             temp = (HeadNode)temp.right;
         }
@@ -167,12 +193,12 @@ public class Structure {
         HeadNode temp = root;
         int i;
         for(i = 0; i < width; ++i) {
-            temp.right = new HeadNode(null, null, temp, root, N);
+            temp.right = new HeadNode(null, null, temp, root, N,i);
             temp = (HeadNode) temp.right;
         }
         temp = root;
         for(i = 0; i < height; ++i){
-            temp.down = new HeadNode(temp, root, null, null, (byte)4);
+            temp.down = new HeadNode(temp, root, null, null, (byte)4,i);
             temp = (HeadNode) temp.down;
         }
         temp = null;
