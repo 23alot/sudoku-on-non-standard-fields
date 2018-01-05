@@ -89,18 +89,17 @@ public class Structure {
         return currentColumn;
     }
     void insertAfter(HeadNode currentColumn, HeadNode currentRow){
-        if(currentColumn.top == null)
-            currentColumn.top = currentColumn;
-        if(currentRow.top == null)
-            currentRow.top = currentRow;
+        if(currentColumn.up == null)
+            currentColumn.up = currentColumn;
+        if(currentRow.left == null)
+            currentRow.left = currentRow;
 
-        Node newNode = new Node(currentColumn.top,currentColumn,currentRow.top,currentRow,currentColumn,currentRow);
+        Node newNode = new Node(currentColumn.up,currentColumn,currentRow.left,currentRow,currentColumn,currentRow);
+
+        currentColumn.up.down = newNode;
+        currentRow.left.right = newNode;
         currentColumn.up = newNode;
         currentRow.left = newNode;
-        currentColumn.top.down = newNode;
-        currentRow.top.right = newNode;
-        currentRow.top = newNode;
-        currentColumn.top = newNode;
     }
     void dump(){
         byte[][] arr = new byte[N*N*N][4*N*N];

@@ -45,10 +45,7 @@ class HeadNode extends Node{
      * Value that contains number of nodes in line or in column
      */
     byte currentNumber;
-    /**
-     * Last inserted node
-     */
-    Node top;
+
     boolean deleted = false;
     int position;
     HeadNode(){}
@@ -58,7 +55,6 @@ class HeadNode extends Node{
         this.left = left;
         this.right = right;
         this.currentNumber = currentNumber;
-        this.top = this;
         this.upHead = this;
         this.leftHead = this;
         this.position = position;
