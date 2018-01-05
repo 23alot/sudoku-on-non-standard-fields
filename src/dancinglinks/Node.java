@@ -49,8 +49,10 @@ class HeadNode extends Node{
      * Last inserted node
      */
     Node top;
+    boolean deleted = false;
+    int position;
     HeadNode(){}
-    HeadNode(HeadNode up, HeadNode down, HeadNode left, HeadNode right, byte currentNumber){
+    HeadNode(HeadNode up, HeadNode down, HeadNode left, HeadNode right, byte currentNumber,int position){
         this.up = up;
         this.down = down;
         this.left = left;
@@ -59,5 +61,6 @@ class HeadNode extends Node{
         this.top = this;
         this.upHead = this;
         this.leftHead = this;
+        this.position = position;
     }
 }

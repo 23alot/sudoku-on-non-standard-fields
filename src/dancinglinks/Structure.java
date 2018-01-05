@@ -103,10 +103,10 @@ public class Structure {
         currentColumn.top = newNode;
     }
     void dump(){
-        byte[][] arr = new byte[N][N];
+        byte[][] arr = new byte[N*N*N][4*N*N];
 
-        for(int i = 0; i < N; ++i)
-            for(int z = 0; z < N; ++z)
+        for(int i = 0; i < N*N*N; ++i)
+            for(int z = 0; z < 4*N*N; ++z)
                 arr[i][z] = 0;
 
         Node temp = root.right;
@@ -121,11 +121,12 @@ public class Structure {
             temp= temp.right;
         }
         System.out.println("dump start");
-        for(int i = 0; i < N; ++i){
-            for(int z = 0; z < N; ++z)
+        for(int i = 0; i < N*N*N; ++i){
+            for(int z = 0; z < 4*N*N; ++z)
                 System.out.print(arr[i][z]);
             System.out.println();
         }
+        System.out.println("dump end");
     }
     /**
      * Copy constructor

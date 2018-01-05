@@ -8,10 +8,11 @@ import java.util.LinkedList;
 public class Solution {
     byte depth;
     boolean isMultiple = false;
-    public LinkedList<Node> solution;
-    Solution(byte depth,LinkedList<Node> solution, boolean isMultiple){
+    int[] solution;
+
+    Solution(byte depth,int[] solution, boolean isMultiple){
         this.depth = depth;
-        this.solution = new LinkedList<>(solution);
+        this.solution = solution.clone();
         this.isMultiple = isMultiple;
     }
 }
