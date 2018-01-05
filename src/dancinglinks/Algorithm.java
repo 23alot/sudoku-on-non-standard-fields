@@ -1,8 +1,6 @@
 package dancinglinks;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by boscatov on 02.12.2017.
@@ -24,7 +22,7 @@ public class Algorithm {
         this.solutionCounter = 0;
         moves = 0;
     }
-    int length(HeadNode nd){
+    private int length(HeadNode nd){
         int t = 0;
         Node temp = nd.down;
         while(temp!=nd){
@@ -33,7 +31,7 @@ public class Algorithm {
         }
         return t;
     }
-    HeadNode findMinNode(){
+    private HeadNode findMinNode(){
         HeadNode min = structure.root;
         int d = structure.N + 1;
         HeadNode temp = (HeadNode)min.right;
@@ -46,10 +44,7 @@ public class Algorithm {
         }
         return min;
     }
-    /**
-     * Recursive function that finds solution
-     */
-    boolean isEnd(){
+    private boolean isEnd(){
         HeadNode temp = (HeadNode)structure.root.right;
         int t = 0;
         while(temp!=structure.root) {
@@ -61,13 +56,22 @@ public class Algorithm {
         }
         return t==0;
     }
-    public void solve(){
+    private void refresh(){
+        solutionCounter = 0;
+        moves = 0;
+    }
+    public void start(){
+        refresh();
+        solve();
+    }
+    private void solve(){
 
         if(isBadEnd())
             return;
         if(isEnd()) {
             if(result.size() != 0) {
-                result.get(0).isMultiple = true;
+                if(!result.get(0).isMultiple)
+                    result.get(0).isMultiple = true;
                 result.add(new Solution(moves, solution, true));
             }
             return;
@@ -87,7 +91,7 @@ public class Algorithm {
 
     }
 
-    boolean isBadEnd(){
+    private boolean isBadEnd(){
         if(solutionCounter == structure.N*structure.N)
             return false;
         HeadNode temp = (HeadNode)structure.root.right;
@@ -103,7 +107,7 @@ public class Algorithm {
      * Deletes from structure each solution
      * @param nd node of a column to delete
      */
-    void delete(Node nd){
+    private void delete(Node nd){
         HeadNode head = nd.leftHead;
         Node temp = head.right;
         while(temp!=head){
@@ -118,7 +122,7 @@ public class Algorithm {
         }
 
     }
-    void cover(Node nd){
+    private void cover(Node nd){
         HeadNode head = nd.leftHead;
         Node temp = head.left;
         while(temp!=head){
@@ -132,7 +136,7 @@ public class Algorithm {
             temp = temp.left;
         }
     }
-    void deleteRows(Node nd){
+    private void deleteRows(Node nd){
         HeadNode head = nd.upHead;
         Node temp = head.down;
         while(temp!=head){
@@ -141,7 +145,7 @@ public class Algorithm {
             temp = temp.down;
         }
     }
-    void coverRows(Node nd){
+    private void coverRows(Node nd){
         HeadNode head = nd.upHead;
         Node temp = head.up;
         while(temp!=head){
@@ -150,7 +154,7 @@ public class Algorithm {
             temp = temp.up;
         }
     }
-    void deleteColumn(Node nd){
+    private void deleteColumn(Node nd){
         HeadNode head = nd.upHead;
         Node temp = head.down;
         while(temp!=head){
@@ -162,7 +166,7 @@ public class Algorithm {
         }
 
     }
-    void coverColumn(Node nd){
+    private void coverColumn(Node nd){
         HeadNode head = nd.upHead;
         Node temp = head.up;
         while(temp!=head){
@@ -173,7 +177,7 @@ public class Algorithm {
             temp = temp.up;
         }
     }
-    void deleteRow(Node nd){
+    private void deleteRow(Node nd){
         HeadNode head = nd.leftHead;
         Node temp = head.right;
 
@@ -185,7 +189,7 @@ public class Algorithm {
             temp = temp.right;
         }
     }
-    void coverRow(Node nd){
+    private void coverRow(Node nd){
         HeadNode head = nd.leftHead;
         Node temp = head.left;
         while(temp!=head){
