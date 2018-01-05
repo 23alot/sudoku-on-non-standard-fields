@@ -6,12 +6,12 @@ import java.util.LinkedList;
  * Created by boscatov on 02.01.2018.
  */
 public class Solution {
-    byte depth;
+    int moves;
     boolean isMultiple = false;
     int[] solution;
 
-    Solution(byte depth,int[] solution, boolean isMultiple){
-        this.depth = depth;
+    Solution(int moves,int[] solution, boolean isMultiple){
+        this.moves = moves;
         this.solution = solution.clone();
         this.isMultiple = isMultiple;
     }

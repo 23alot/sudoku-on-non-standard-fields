@@ -8,9 +8,10 @@ import java.util.List;
  * Created by boscatov on 02.12.2017.
  */
 public class Algorithm {
-    Structure structure;
-    int[] solution;
-    int solutionCounter;
+    private int moves;
+    private Structure structure;
+    private int[] solution;
+    private int solutionCounter;
     //LinkedList<Integer> solution = new LinkedList<>();
     public LinkedList<Solution> result = new LinkedList<>();
     /**
@@ -21,6 +22,7 @@ public class Algorithm {
         this.structure = structure;
         this.solution = new int[structure.N*structure.N];
         this.solutionCounter = 0;
+        moves = 0;
     }
     int length(HeadNode nd){
         int t = 0;
@@ -59,15 +61,15 @@ public class Algorithm {
         }
         return t==0;
     }
-    public void solve(byte depth){
-        if(result.size()==100)
-            return;
-        byte curDepth = (byte)(depth + 1);
+    public void solve(){
+
         if(isBadEnd())
             return;
         if(isEnd()) {
-            System.out.println("gratz");
-            result.add(new Solution(depth, solution, false)); // Check copy send or not
+            if(result.size() != 0) {
+                result.get(0).isMultiple = true;
+                result.add(new Solution(moves, solution, true));
+            }
             return;
         }
 
@@ -75,15 +77,14 @@ public class Algorithm {
         Node temp = deleted.down;
         while(temp!=deleted){
             delete(temp);
+            moves++;
             solution[solutionCounter++] = temp.leftHead.position;
-            solve(curDepth);
+            solve();
             cover(temp);
             solutionCounter--;
             temp = temp.down;
         }
-//        if(!solutions.isEmpty())
-//            result.addAll(solutions);
-//        return sol;
+
     }
 
     boolean isBadEnd(){
