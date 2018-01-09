@@ -17,6 +17,7 @@ public class Board {
     public Board(Byte N, byte[] areas, byte[] input){
         this(N,areas);
         for(int i = 0; i < input.length; ++i){
+            cells[i/N][i%N].isInput = true;
             cells[i/N][i%N].value = input[i];
             emptyCells--;
         }
