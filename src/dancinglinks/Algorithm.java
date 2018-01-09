@@ -1,5 +1,8 @@
 package dancinglinks;
 
+import sudoku.Board;
+import sudoku.Cell;
+
 import java.util.LinkedList;
 
 /**
@@ -10,8 +13,7 @@ public class Algorithm {
     private Structure structure;
     private int[] solution;
     private int solutionCounter;
-    //LinkedList<Integer> solution = new LinkedList<>();
-    public LinkedList<Solution> result = new LinkedList<>();
+    private LinkedList<Solution> result = new LinkedList<>();
     /**
      * Main constructor
      * @param structure of sudoku
@@ -21,6 +23,14 @@ public class Algorithm {
         this.solution = new int[structure.N*structure.N];
         this.solutionCounter = 0;
         moves = 0;
+    }
+    public Algorithm(Board bd){
+        this(new Structure(bd.N,bd.areas));
+        for(int i = 0; i < bd.N; ++i)
+            for(int z = 0; z < bd.N; ++z){
+            // Could be null from getNode
+                delete(structure.getNode(bd.N*bd.N*i + bd.N*z + bd.cells[i][z].value));
+            }
     }
     private int length(HeadNode nd){
         int t = 0;
@@ -199,5 +209,8 @@ public class Algorithm {
             }
             temp = temp.left;
         }
+    }
+    public LinkedList<Solution> getSolution(){
+        return result;
     }
 }
