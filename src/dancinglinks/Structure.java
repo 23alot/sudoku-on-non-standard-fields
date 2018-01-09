@@ -161,7 +161,15 @@ public class Structure {
             title = (HeadNode)title.right;
         }
     }
-
+    public Node getNode(int i){
+        HeadNode temp = (HeadNode)root.down;
+        while(temp!=root){
+            if(temp.position == i)
+                return temp.right==temp?null:temp.right;
+            temp = (HeadNode)temp.down;
+        }
+        return null;
+    }
     /**
      * Copy skeleton of structure
      * @param cur structure to copy
@@ -189,7 +197,7 @@ public class Structure {
      * Create skeleton of structure
      * @param N dimension of Sudoku
      */
-    void createStructureTitles(byte N){
+    private void createStructureTitles(byte N){
         HeadNode temp = root;
         int i;
         for(i = 0; i < width; ++i) {

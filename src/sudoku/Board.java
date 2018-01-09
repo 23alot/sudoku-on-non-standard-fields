@@ -5,7 +5,11 @@ package sudoku;
  */
 public class Board {
     public Cell[][] cells;
-    public Board(byte N){
-        cells = new Cell[N][N];
+    public byte[] areas;
+    public byte N;
+    public Board(byte N, byte[] areas){
+        this.N = N;
+        this.areas = areas;
+        this.cells = new Cell[N][N];
     }
 }
