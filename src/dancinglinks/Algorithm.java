@@ -13,7 +13,7 @@ public class Algorithm {
     private Structure structure;
     private int[] solution;
     private int solutionCounter;
-    private LinkedList<Solution> result = new LinkedList<>();
+    private Solution result = null;
     /**
      * Main constructor
      * @param structure of sudoku
@@ -78,15 +78,15 @@ public class Algorithm {
         solve();
     }
     private void solve(){
-
+        if(result!=null && !result.isMultiple)
+            return;
         if(isBadEnd())
             return;
         if(isEnd()) {
-            if(result.size() != 0) {
-                if(!result.get(0).isMultiple)
-                    result.get(0).isMultiple = true;
-                result.add(new Solution(moves, solution, true));
-            }
+            if(result == null)
+                result = new Solution(moves,solution,false);
+            else
+                result.isMultiple = true;
             return;
         }
 
@@ -213,7 +213,7 @@ public class Algorithm {
             temp = temp.left;
         }
     }
-    public LinkedList<Solution> getSolution(){
+    public Solution getSolution(){
         return result;
     }
 }
