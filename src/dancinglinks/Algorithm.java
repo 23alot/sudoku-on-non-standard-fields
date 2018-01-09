@@ -25,7 +25,10 @@ public class Algorithm {
         moves = 0;
     }
     public Algorithm(Board bd){
-        this(new Structure(bd.N,bd.areas));
+        this.structure = new Structure(bd.N,bd.areas);
+        this.solution = new int[bd.emptyCells];
+        this.solutionCounter = 0;
+        moves = 0;
         for(int i = 0; i < bd.N; ++i)
             for(int z = 0; z < bd.N; ++z){
             // Could be null from getNode
