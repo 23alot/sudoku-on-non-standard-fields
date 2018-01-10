@@ -32,7 +32,8 @@ public class Algorithm {
         for(int i = 0; i < bd.N; ++i)
             for(int z = 0; z < bd.N; ++z){
             // Could be null from getNode
-                delete(structure.getNode(bd.N*bd.N*i + bd.N*z + bd.cells[i][z].value));
+                if(bd.cells[i][z].isInput)
+                    delete(structure.getNode(bd.N*bd.N*i + bd.N*z + bd.cells[i][z].value - 1));
             }
     }
     private int length(HeadNode nd){

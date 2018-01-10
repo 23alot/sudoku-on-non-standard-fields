@@ -12,14 +12,19 @@ public class Board {
         this.N = N;
         this.areas = areas;
         this.cells = new Cell[N][N];
+        for(int i = 0; i < N; ++i)
+            for(int z = 0; z < N; ++z)
+                cells[i][z] = new Cell();
         this.emptyCells = (byte)(N*N);
     }
-    public Board(Byte N, byte[] areas, byte[] input){
+    public Board(byte N, byte[] areas, byte[] input){
         this(N,areas);
         for(int i = 0; i < input.length; ++i){
-            cells[i/N][i%N].isInput = true;
-            cells[i/N][i%N].value = input[i];
-            emptyCells--;
+            if(input[i]!=0) {
+                cells[i / N][i % N].isInput = true;
+                cells[i / N][i % N].value = input[i];
+                emptyCells--;
+            }
         }
     }
 }
