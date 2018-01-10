@@ -4,6 +4,7 @@ package sudoku;
  * Created by boscatov on 06.12.2017.
  */
 public class Board {
+    public int[][] solution;
     public Cell[][] cells;
     public byte[] areas;
     public byte N;
@@ -17,13 +18,15 @@ public class Board {
                 cells[i][z] = new Cell();
         this.emptyCells = (byte)(N*N);
     }
-    public Board(byte N, byte[] areas, byte[] input){
+    public Board(byte N, byte[] areas, int[] input,int[][] solution){
         this(N,areas);
-        for(int i = 0; i < input.length; ++i){
-            if(input[i]!=0) {
-                cells[i / N][i % N].isInput = true;
-                cells[i / N][i % N].value = input[i];
-                emptyCells--;
+        this.solution = solution;
+        for(int a: input){
+            int row = (a / (N * N));
+            int column = ((a / N) % N);
+            cells[row][column].value = (byte) (a % N + 1);
+            if(a!=-1) {
+                cells[row][column].isInput = true;
             }
         }
     }

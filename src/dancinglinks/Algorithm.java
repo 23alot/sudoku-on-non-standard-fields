@@ -4,6 +4,7 @@ import sudoku.Board;
 import sudoku.Cell;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 /**
  * Created by boscatov on 02.12.2017.
@@ -35,6 +36,12 @@ public class Algorithm {
                 if(bd.cells[i][z].isInput)
                     delete(structure.getNode(bd.N*bd.N*i + bd.N*z + bd.cells[i][z].value - 1));
             }
+    }
+    public void changeStructure(Structure st){
+        this.structure = st;
+        //this.solution = new int[emptyCells];
+        this.solutionCounter = 0;
+        moves = 0;
     }
     private int length(HeadNode nd){
         int t = 0;
@@ -121,7 +128,7 @@ public class Algorithm {
      * Deletes from structure each solution
      * @param nd node of a column to delete
      */
-    private void delete(Node nd){
+    public void delete(Node nd){
         HeadNode head = nd.leftHead;
         Node temp = head.right;
         while(temp!=head){
@@ -136,7 +143,7 @@ public class Algorithm {
         }
 
     }
-    private void cover(Node nd){
+    public void cover(Node nd){
         HeadNode head = nd.leftHead;
         Node temp = head.left;
         while(temp!=head){
@@ -213,6 +220,50 @@ public class Algorithm {
             }
             temp = temp.left;
         }
+    }
+    public Board create(int difficultyl, int difficultyr, byte[] areas){
+        start();
+        int[][] answer = toArray();
+        int[] finalSolution = result.solution.clone();
+        //changeStructure(str);
+        int empty = 0;
+        boolean[] isVisited= new boolean[structure.N*structure.N];
+        for(int i = 0; i < structure.N*structure.N; ++i)
+            isVisited[i] = false;
+        Random rnd = new Random();
+        int pos = rnd.nextInt(structure.N*structure.N);
+        while (!(moves <= difficultyr && moves > difficultyl)){
+            result = null;
+            while(isVisited[pos])
+                pos = rnd.nextInt(structure.N*structure.N);
+
+            isVisited[pos] = true;
+            for(int i = 0; i < isVisited.length;++i)
+                if(finalSolution[i]!=-1) {
+                    delete(structure.getNode(finalSolution[i]));
+                }
+            start();
+
+            for(int i = isVisited.length-1; i >= 0 ;--i)
+                if(finalSolution[i]!=-1)
+                    cover(structure.getNode(finalSolution[i]));
+
+            if(!result.isMultiple) {
+                finalSolution[pos] = -1;
+                empty++;
+            }
+
+        }
+        return new Board(structure.N,areas,finalSolution,answer);
+    }
+    private int[][] toArray(){
+        int[][] answer = new int[structure.N][structure.N];
+        for(int a: result.solution){
+            int row = (a / (structure.N * structure.N));
+            int column = ((a / structure.N) % structure.N);
+            answer[row][column] = (byte) (a % structure.N + 1);
+        }
+        return answer;
     }
     public Solution getSolution(){
         return result;

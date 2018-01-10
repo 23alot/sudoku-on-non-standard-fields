@@ -8,7 +8,7 @@ import java.util.LinkedList;
 public class Solution {
     int moves;
     boolean isMultiple = false;
-    int[] solution;
+    public int[] solution;
 
     Solution(int moves,int[] solution, boolean isMultiple){
         this.moves = moves;

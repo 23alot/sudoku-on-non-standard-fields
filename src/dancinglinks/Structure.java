@@ -21,7 +21,7 @@ public class Structure {
     /**
      * Dimension of the structure
      */
-    byte N;
+    public byte N;
     /**
      * Current width of structure
      */
@@ -89,10 +89,10 @@ public class Structure {
         return currentColumn;
     }
     void insertAfter(HeadNode currentColumn, HeadNode currentRow){
-        if(currentColumn.up == null)
-            currentColumn.up = currentColumn;
-        if(currentRow.left == null)
-            currentRow.left = currentRow;
+//        if(currentColumn.up == null)
+//            currentColumn.up = currentColumn;
+//        if(currentRow.left == null)
+//            currentRow.left = currentRow;
 
         Node newNode = new Node(currentColumn.up,currentColumn,currentRow.left,currentRow,currentColumn,currentRow);
 
@@ -132,32 +132,31 @@ public class Structure {
      * @param cur structure to copy
      */
     private Structure(Structure cur){
+        this.N = cur.N;
+        width = 4*N*N;
+        height = N*N*N;
         createStructureTitles(cur);
         // Current column head node
         HeadNode title = (HeadNode)cur.root.right;
         // Current node
         Node temp;
-        Node searchRow;
         // Current row head node of new structure
-        HeadNode currentRow = (HeadNode)root.down;
+        HeadNode currentRow;
         // Current column head node of new structure
         HeadNode currentColumn = (HeadNode)root.right;
 
         while(title != cur.root){
             temp = title.down;
+            currentRow = (HeadNode)root.down;
             while(temp != title){
-                // Find row position of node
-                searchRow = new Node(temp);
-                while(!(searchRow.left instanceof HeadNode))
-                    searchRow.left = searchRow.left.left;
-                // searchRow.left.position is row position
-                while(currentRow != searchRow.left)
+                while(currentRow.position != temp.leftHead.position)
                     currentRow = (HeadNode)currentRow.down;
 
                 insertAfter(currentColumn,currentRow);
 
                 temp = temp.down;
             }
+            currentColumn = (HeadNode)currentColumn.right;
             title = (HeadNode)title.right;
         }
     }
@@ -175,19 +174,26 @@ public class Structure {
      * @param cur structure to copy
      */
     private void createStructureTitles(Structure cur){
+        System.out.println(cur.root.right);
         HeadNode temp = root;
         HeadNode curTemp = (HeadNode)cur.root.right;
         while(curTemp != cur.root) {
             temp.right = new HeadNode(null, null, temp, root, curTemp.currentNumber,0);
+            root.left = temp.right;
+            temp.right.up = temp.right;
+            temp.right.down = temp.right;
             curTemp = (HeadNode) curTemp.right;
             temp = (HeadNode)temp.right;
         }
         curTemp = (HeadNode)cur.root.down;
         temp = root;
-        for(int i = 0; i < height;++i) {
+        for(int i = 0; i < cur.height;++i) {
             temp.down = new HeadNode(temp, root, null, null, curTemp.currentNumber,i);
+            root.up = temp.down;
+            temp.down.left = temp.down;
+            temp.down.right = temp.down;
             curTemp = (HeadNode) curTemp.down;
-            temp = (HeadNode)temp.right;
+            temp = (HeadNode)temp.down;
         }
         temp = null;
         curTemp = null;
@@ -202,11 +208,17 @@ public class Structure {
         int i;
         for(i = 0; i < width; ++i) {
             temp.right = new HeadNode(null, null, temp, root, N,i);
+            root.left = temp.right;
+            temp.right.up = temp.right;
+            temp.right.down = temp.right;
             temp = (HeadNode) temp.right;
         }
         temp = root;
         for(i = 0; i < height; ++i){
             temp.down = new HeadNode(temp, root, null, null, (byte)4,i);
+            root.up = temp.down;
+            temp.down.left = temp.down;
+            temp.down.right = temp.down;
             temp = (HeadNode) temp.down;
         }
         temp = null;
