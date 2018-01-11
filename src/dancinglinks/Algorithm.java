@@ -3,13 +3,16 @@ package dancinglinks;
 import sudoku.Board;
 import sudoku.Cell;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 /**
  * Created by boscatov on 02.12.2017.
  */
 public class Algorithm {
+    private Random rnd = new Random();
     private int moves;
     private Structure structure;
     private int[] solution;
@@ -53,17 +56,28 @@ public class Algorithm {
         return t;
     }
     private HeadNode findMinNode(){
-        HeadNode min = structure.root;
+        int d = findMinValue();
+        List<HeadNode> result = new ArrayList<>();
+        HeadNode temp = (HeadNode)structure.root.right;
+        while(temp!=structure.root) {
+            if (!temp.deleted && length(temp) == d) {
+                result.add(temp);
+            }
+            temp = (HeadNode)temp.right;
+        }
+
+        return result.get(rnd.nextInt(result.size()));
+    }
+    private int findMinValue(){
         int d = structure.N + 1;
-        HeadNode temp = (HeadNode)min.right;
+        HeadNode temp = (HeadNode)structure.root.right;
         while(temp!=structure.root) {
             if (!temp.deleted && length(temp) < d) {
-                min = temp;
                 d = length(temp);
             }
             temp = (HeadNode)temp.right;
         }
-        return min;
+        return d;
     }
     private boolean isEnd(){
         HeadNode temp = (HeadNode)structure.root.right;
@@ -225,12 +239,9 @@ public class Algorithm {
         start();
         int[][] answer = toArray();
         int[] finalSolution = result.solution.clone();
-        //changeStructure(str);
-        int empty = 0;
         boolean[] isVisited= new boolean[structure.N*structure.N];
         for(int i = 0; i < structure.N*structure.N; ++i)
             isVisited[i] = false;
-        Random rnd = new Random();
         int pos = rnd.nextInt(structure.N*structure.N);
         while (!(moves <= difficultyr && moves > difficultyl)){
             result = null;
@@ -250,7 +261,6 @@ public class Algorithm {
 
             if(!result.isMultiple) {
                 finalSolution[pos] = -1;
-                empty++;
             }
 
         }
