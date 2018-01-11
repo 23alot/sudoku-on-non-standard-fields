@@ -5,8 +5,14 @@ package sudoku;
  */
 public class Cell {
     public byte value;
+    public byte correctValue;
+    boolean[] possibleValues;
     public boolean isInput;
-    public Cell(){
+    public Cell(int N){
+        this.possibleValues = new boolean[N];
+        // TODO: replace to separate method
+        for(int i = 0; i < N; ++i)
+            possibleValues[i] = false;
         this.value = 0;
         this.isInput = false;
     }
