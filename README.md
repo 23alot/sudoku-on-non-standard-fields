@@ -40,3 +40,4 @@ For the algorithm I have to choose *demands*. And here it is:
 
 **29.12.2017 14:00** Start working on the algorithmic part of the solution. 
 
+**11.01.2018** Finish the algorithmic part and start thinking how to store and compare sudoku boards.
