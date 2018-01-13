@@ -1,6 +1,7 @@
 package sudoku.newgame.draw;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 import sudoku.newgame.sudoku.Board;
@@ -37,5 +38,6 @@ public class DrawBoard {
                     board[i][z].writeText(p,canvas,bd.cells[i][z].value);
             }
         }
+
     }
 }

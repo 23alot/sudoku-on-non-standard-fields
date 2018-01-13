@@ -21,8 +21,11 @@ import sudoku.newgame.sudoku.Board;
 
 public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder.Callback {
     public DrawBoardGeneratorView.DrawThread drawThread;
+    public DrawCell[][] board;
+    public Canvas canvas;
     int w;
     int h;
+
     Paint p;
     public DrawBoardGeneratorView(Context context) {
         super(context);
@@ -101,8 +104,6 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
 
         @Override
         public void run() {
-            Canvas canvas;
-
             while (running) {
                 canvas = null;
                 try {
@@ -110,7 +111,7 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
 
                     if (canvas == null)
                         continue;
-                    draw(canvas);
+                    draw();
                     break;
                 } finally {
                     if (canvas != null) {
@@ -119,7 +120,7 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
                 }
             }
         }
-        void draw(Canvas canvas){
+        void draw(){
             canvas.drawColor(Color.WHITE);
             p.setColor(Color.BLACK);
             int n = 9;
@@ -128,7 +129,7 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
                 prpr[i] = 0;
             float sizeY = 40;
             float length = (w-2*10)/n;
-            DrawCell[][] board = new DrawCell[n][n];
+            board = new DrawCell[n][n];
             for(int i = 0; i < n; ++i) {
                 float sizeX = 10;
                 for (int z = 0; z < n; ++z) {
@@ -144,7 +145,8 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
             for(int i = 0; i < n; ++i)
                 for(int z = 0; z < n; ++z)
                     board[i][z].drawBoard(p,canvas);
-
+            board[1][1].fillCell(p,canvas);
+            board[1][2].fillCell(p,canvas);
         }
     }
 }

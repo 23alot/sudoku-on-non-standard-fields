@@ -1,19 +1,30 @@
 package sudoku.newgame;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class MainActivity extends Activity {
+import sudoku.newgame.draw.DrawCell;
+
+public class MainActivity extends Activity implements View.OnTouchListener {
     private Button mbutton;
+    float x;
+    float y;
+    DrawBoardGeneratorView db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(new DrawView(this));
         //setContentView(R.layout.main);
         setContentView(R.layout.create_board);
+        db = findViewById(R.id.drawBoardGeneratorView);
+        db.setOnTouchListener(this);
+
 //        System.out.println(1);
 //        final DrawView drawView = findViewById(R.id.drawView);
 //        final EditText time = findViewById(R.id.editText);
@@ -31,6 +42,31 @@ public class MainActivity extends Activity {
 //            }
 //        };
 //        mbutton.setOnClickListener(oclmbutton);
+    }
+    void tutu(){
+        db.board[2][1].fillCell(db.p, db.canvas);
+        db.board[5][5].fillCell(db.p, db.canvas);
+        db.board[6][6].fillCell(db.p, db.canvas);
+
+    }
+    @Override
+    public boolean onTouch(View v, MotionEvent event){
+        x = event.getX();
+        y = event.getY();
+        tutu();
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN: // нажатие
+                tutu();
+                break;
+            case MotionEvent.ACTION_MOVE: // движение
+                //
+                break;
+            case MotionEvent.ACTION_UP: // отпускание
+            case MotionEvent.ACTION_CANCEL:
+                //
+                break;
+        }
+        return true;
     }
 
 }

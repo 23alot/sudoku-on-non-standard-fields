@@ -10,9 +10,11 @@ import android.graphics.Paint;
 
 public class DrawCell {
     Border border;
+    Paint p;
     float startX;
     float startY;
     float length;
+    Canvas canvas;
     public DrawCell(Border border, float startX, float startY, float length, Paint p, Canvas canvas){
         this.border = border;
         this.length = length;
@@ -41,6 +43,11 @@ public class DrawCell {
         }
 
 
+    }
+    public void fillCell(Paint p, Canvas canvas){
+        p.setColor(Color.RED);
+        p.setStrokeWidth(10);
+        canvas.drawRect(startX+1,startY+1,startX+length-1,startY+length-1,p);
     }
     public void drawBoard(Paint p, Canvas canvas){
         p.setStrokeWidth(4);
