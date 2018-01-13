@@ -42,7 +42,7 @@ public class DrawCell {
 
 
     }
-    void drawBoard(Paint p, Canvas canvas){
+    public void drawBoard(Paint p, Canvas canvas){
         p.setStrokeWidth(4);
         p.setColor(Color.BLACK);
         if(border.up){
