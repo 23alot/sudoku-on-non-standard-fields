@@ -32,9 +32,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         setContentView(R.layout.main);
         db = findViewById(R.id.drawView);
         db.setOnTouchListener(this);
-
-
-
         FrameLayout fl = (FrameLayout)findViewById(R.id.framelayout);
         //db.creation();
         //db.changeBoard(board);
@@ -53,7 +50,17 @@ public class MainActivity extends Activity implements View.OnTouchListener {
             bt.setOnClickListener(createOnClick());
             fl.addView(bt);
         }
-
+        Button button = findViewById(R.id.button20);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("Boardik",null);
+                editor.apply();
+                db.creation();
+            }
+        });
     }
     @Override
     protected void onPause() {
@@ -61,8 +68,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         DrawView dw = findViewById(R.id.drawView);
+        refresh(x,y);
         editor.putString("Boardik",dw.drawBoardtoJSON(dw.board));
-        editor.commit();
+        editor.apply();
     }
     View.OnClickListener createOnClick() {
         return new View.OnClickListener() {
