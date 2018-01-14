@@ -4,6 +4,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import sudoku.newgame.sudoku.Board;
 
 /**
@@ -11,10 +14,16 @@ import sudoku.newgame.sudoku.Board;
  */
 
 public class DrawBoard {
-    Board bd;
-    DrawCell[][] board;
-    byte[] structure;
-    public DrawBoard(float startX, float startY, Paint p, Canvas canvas, float length, byte[] structure, Board bd){
+    public Board bd;
+    public DrawCell[][] board;
+    public float startX;
+    public float startY;
+    public byte[] structure;
+    Paint p;
+    public DrawBoard(float startX, float startY, float length, byte[] structure, Board bd){
+        p = new Paint();
+        this.startX = startX;
+        this.startY = startY;
         this.bd = bd;
         this.structure = structure;
         float sizeY = startY;
@@ -26,18 +35,48 @@ public class DrawBoard {
                         z%9==8 || structure[9*i+z+1]!=structure[9*i+z],
                         i%9==0 || structure[9*i+z-9]!=structure[9*i+z],
                         i%9==8 || structure[9*i+z+9]!=structure[9*i+z]),
-                        sizeX,sizeY,length,p,canvas);
+                        sizeX,sizeY,length);
                 sizeX+=length;
             }
             sizeY+=length;
         }
+
+
+    }
+    public void draw(Canvas canvas, Paint paint){
+        int n = 9;
+
+        for(int i = 0; i < n; ++i)
+            for(int z = 0; z < n; ++z)
+                board[i][z].draw(paint,canvas);
+
         for(int i = 0; i < 9; ++i){
             for(int z = 0; z < 9;++z){
-                board[i][z].drawBoard(p,canvas);
+                board[i][z].drawBoard(paint,canvas);
                 if(bd.cells[i][z].isInput)
-                    board[i][z].writeText(p,canvas,bd.cells[i][z].value);
+                    board[i][z].writeText(paint,canvas,bd.cells[i][z].value,Color.BLACK);
+                else if(bd.cells[i][z].value!=-1)
+                    board[i][z].writeText(paint,canvas,bd.cells[i][z].value,Color.rgb(42,13,130));
             }
         }
+    }
 
+    public void focusOnCell(float x, float y, int w, int color){
+        x -= startX;
+        y -= startY;
+        int n = 9;
+        int posx = (int)x/((w-2*10)/n);
+        int posy = (int)y/((w-2*10)/n);
+        if(posy < n && posx < n)
+            board[posy][posx].changeFillColor(color);
+    }
+    public void setValue(float x, float y, String value, int w){
+        x -= startX;
+        y -= startY;
+        int n = 9;
+        int posx = (int)x/((w-2*10)/n);
+        int posy = (int)y/((w-2*10)/n);
+        if(posy < n && posx < n && !bd.cells[posy][posx].isInput)
+            bd.cells[posy][posx].value = Byte.valueOf(value);
     }
 }

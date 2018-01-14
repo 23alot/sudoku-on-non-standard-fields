@@ -25,35 +25,66 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
     public Canvas canvas;
     int w;
     int h;
-
+    float startY = 40;
+    float startX = 10;
     Paint p;
     public DrawBoardGeneratorView(Context context) {
         super(context);
         p = new Paint();
+
         getHolder().addCallback(this);
     }
     public DrawBoardGeneratorView(Context context, AttributeSet attrs){
         super(context,attrs);
-        System.out.println(1);
+
 
         p = new Paint();
         getHolder().addCallback(this);
     }
     public DrawBoardGeneratorView(Context context, AttributeSet attrs,int defStyleAttr){
         super(context,attrs,defStyleAttr);
-        System.out.println(1);
+
 
         p = new Paint();
         getHolder().addCallback(this);
     }
     public DrawBoardGeneratorView(Context context, AttributeSet attrs,int defStyleAttr, int defStyleRes){
         super(context,attrs,defStyleAttr,defStyleRes);
-        System.out.println(1);
+
 
         p = new Paint();
         getHolder().addCallback(this);
     }
-
+    public void creation(){
+        int n = 9;
+        byte[] prpr = new byte[n*n];
+        for(int i = 0; i < n*n;++i)
+            prpr[i] = 0;
+        float sizeY = startY;
+        float length = (w-2*10)/n;
+        board = new DrawCell[n][n];
+        for(int i = 0; i < n; ++i) {
+            float sizeX = startX;
+            for (int z = 0; z < n; ++z) {
+                board[i][z] = new DrawCell(new Border(z == 0,
+                        z == (n - 1),
+                        i == 0,
+                        i == (n - 1)),
+                        sizeX, sizeY, length);
+                sizeX += length;
+            }
+            sizeY += length;
+        }
+    }
+    public void focusOnCell(float x, float y, int color){
+        x -= startX;
+        y -= startY;
+        int n = 9;
+        int posx = (int)x/((w-2*10)/n);
+        int posy = (int)y/((w-2*10)/n);
+        if(posy < n && posx < n)
+            board[posy][posx].changeFillColor(color);
+    }
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         this.w = w;
@@ -64,15 +95,16 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
                                int height) {
-        drawThread = new DrawBoardGeneratorView.DrawThread(getHolder());
-        drawThread.setRunning(true);
-        drawThread.start();
+//        drawThread = new DrawBoardGeneratorView.DrawThread(getHolder());
+//        drawThread.setRunning(true);
+//        drawThread.start();
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         drawThread = new DrawBoardGeneratorView.DrawThread(getHolder());
         drawThread.setRunning(true);
+        creation();
         drawThread.start();
     }
 
@@ -92,7 +124,7 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
     public class DrawThread extends Thread {
 
         private boolean running = false;
-        private SurfaceHolder surfaceHolder;
+        public SurfaceHolder surfaceHolder;
 
         public DrawThread(SurfaceHolder surfaceHolder) {
             this.surfaceHolder = surfaceHolder;
@@ -112,7 +144,6 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
                     if (canvas == null)
                         continue;
                     draw();
-                    break;
                 } finally {
                     if (canvas != null) {
                         surfaceHolder.unlockCanvasAndPost(canvas);
@@ -120,33 +151,17 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
                 }
             }
         }
+
         void draw(){
             canvas.drawColor(Color.WHITE);
             p.setColor(Color.BLACK);
             int n = 9;
-            byte[] prpr = new byte[n*n];
-            for(int i = 0; i < n*n;++i)
-                prpr[i] = 0;
-            float sizeY = 40;
-            float length = (w-2*10)/n;
-            board = new DrawCell[n][n];
-            for(int i = 0; i < n; ++i) {
-                float sizeX = 10;
-                for (int z = 0; z < n; ++z) {
-                    board[i][z] = new DrawCell(new Border(z == 0,
-                            z == (n - 1),
-                            i == 0,
-                            i == (n - 1)),
-                            sizeX, sizeY, length, p, canvas);
-                    sizeX += length;
-                }
-                sizeY += length;
-            }
+            for(int i = 0; i < n; ++i)
+                for(int z = 0; z < n; ++z)
+                    board[i][z].draw(p,canvas);
             for(int i = 0; i < n; ++i)
                 for(int z = 0; z < n; ++z)
                     board[i][z].drawBoard(p,canvas);
-            board[1][1].fillCell(p,canvas);
-            board[1][2].fillCell(p,canvas);
         }
     }
 }
