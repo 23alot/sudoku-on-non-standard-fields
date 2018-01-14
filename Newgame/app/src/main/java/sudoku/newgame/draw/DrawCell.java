@@ -11,18 +11,19 @@ import android.graphics.Paint;
 public class DrawCell {
     Border border;
     Paint p;
+    int fillColor;
     float startX;
     float startY;
     float length;
     Canvas canvas;
-    public DrawCell(Border border, float startX, float startY, float length, Paint p, Canvas canvas){
+    public DrawCell(Border border, float startX, float startY, float length){
         this.border = border;
         this.length = length;
         this.startX = startX;
         this.startY = startY;
-        draw(p,canvas);
+        fillColor = Color.WHITE;
     }
-    void draw(Paint p, Canvas canvas){
+    public void draw(Paint p, Canvas canvas){
         p.setStrokeWidth(2);
         p.setColor(Color.GRAY);
         if(!border.up){
@@ -41,12 +42,14 @@ public class DrawCell {
         if(!border.right){
             canvas.drawLine(startX+length,startY,startX+length,startY+length,p);
         }
-
+        fillCell(p,canvas);
 
     }
+    public void changeFillColor(int fillColor){
+        this.fillColor = fillColor;
+    }
     public void fillCell(Paint p, Canvas canvas){
-        p.setColor(Color.RED);
-        p.setStrokeWidth(10);
+        p.setColor(fillColor);
         canvas.drawRect(startX+1,startY+1,startX+length-1,startY+length-1,p);
     }
     public void drawBoard(Paint p, Canvas canvas){

@@ -44,10 +44,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 //        mbutton.setOnClickListener(oclmbutton);
     }
     void tutu(){
-        db.board[2][1].fillCell(db.p, db.canvas);
-        db.board[5][5].fillCell(db.p, db.canvas);
-        db.board[6][6].fillCell(db.p, db.canvas);
-
+        db.focusOnCell(x,y,Color.BLUE);
     }
     @Override
     public boolean onTouch(View v, MotionEvent event){

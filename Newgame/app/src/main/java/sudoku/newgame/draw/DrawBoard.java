@@ -26,7 +26,7 @@ public class DrawBoard {
                         z%9==8 || structure[9*i+z+1]!=structure[9*i+z],
                         i%9==0 || structure[9*i+z-9]!=structure[9*i+z],
                         i%9==8 || structure[9*i+z+9]!=structure[9*i+z]),
-                        sizeX,sizeY,length,p,canvas);
+                        sizeX,sizeY,length);
                 sizeX+=length;
             }
             sizeY+=length;
