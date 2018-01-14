@@ -10,12 +10,10 @@ import android.graphics.Paint;
 
 public class DrawCell {
     Border border;
-    Paint p;
     int fillColor;
     float startX;
     float startY;
     float length;
-    Canvas canvas;
     public DrawCell(Border border, float startX, float startY, float length){
         this.border = border;
         this.length = length;
@@ -72,10 +70,16 @@ public class DrawCell {
             canvas.drawLine(startX+length,startY,startX+length,startY+length,p);
         }
     }
-    void writeText(Paint paint, Canvas canvas, Byte n){
-        paint.setColor(Color.BLACK);
+    void writeText(Paint paint, Canvas canvas, Byte n, int color){
+        paint.setColor(color);
         paint.setTextSize(length-20);
         paint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(n.toString(),startX+length/2,startY+length-20,paint);
+    }
+    void writeText(Paint paint, Canvas canvas, String value, int color){
+        paint.setColor(color);
+        paint.setTextSize(length-20);
+        paint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(value,startX+length/2,startY+length-20,paint);
     }
 }
