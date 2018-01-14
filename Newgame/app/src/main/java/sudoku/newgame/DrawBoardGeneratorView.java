@@ -95,9 +95,9 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
                                int height) {
-        drawThread = new DrawBoardGeneratorView.DrawThread(getHolder());
-        drawThread.setRunning(true);
-        drawThread.start();
+//        drawThread = new DrawBoardGeneratorView.DrawThread(getHolder());
+//        drawThread.setRunning(true);
+//        drawThread.start();
     }
 
     @Override
@@ -162,8 +162,6 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
             for(int i = 0; i < n; ++i)
                 for(int z = 0; z < n; ++z)
                     board[i][z].drawBoard(p,canvas);
-            board[1][1].fillCell(p,canvas);
-            board[1][2].fillCell(p,canvas);
         }
     }
 }
