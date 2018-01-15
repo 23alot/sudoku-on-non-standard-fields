@@ -84,7 +84,13 @@ public class DrawBoard {
             return;
         for(int i = 0; i < bd.N; ++i)
             for(int j = 0; j < bd.N; ++j)
-                if(bd.cells[i][j].value==value || i == y || j == x|| bd.areas[bd.N*y+x]==bd.areas[bd.N*i+j])
+                if(bd.cells[i][j].value==value){
+                    if((i == y && j != x)||(i != y && j == x) || (i != y && j != x && bd.areas[bd.N*y+x]==bd.areas[bd.N*i+j]))
+                        board[i][j].changeFillColor(Color.RED);
+                    else
+                        board[i][j].changeFillColor(highlightColor);
+                }
+                else if(i == y || j == x || bd.areas[bd.N*y+x]==bd.areas[bd.N*i+j])
                     board[i][j].changeFillColor(highlightColor);
     }
     public void setValue(float x, float y, String value, int w){
