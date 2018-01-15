@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -87,27 +88,27 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
             board = gson.fromJson(boardik,DrawBoard.class);
             return;
         }
-        //                byte[] prpr = {0,0,0,0,0,0,0,0,0,
-//                1,1,1,1,1,1,1,1,1,
-//                2,2,2,2,2,2,2,2,2,
-//                3,3,3,3,3,3,3,3,3,
-//                4,4,4,4,4,4,4,4,4,
-//                5,5,5,5,5,5,5,5,5,
-//                6,6,6,6,6,6,6,6,6,
-//                7,7,7,7,7,7,7,7,7,
-//                8,8,8,8,8,8,8,8,8};
-        byte[] prpr = {0,0,0,1,1,1,2,2,2,
-                0,0,0,1,1,1,2,2,2,
-                0,0,0,1,1,1,2,2,2,
-                3,3,3,4,4,4,5,5,5,
-                3,3,3,4,4,4,5,5,5,
-                3,3,3,4,4,4,5,5,5,
-                6,6,6,7,7,7,8,8,8,
-                6,6,6,7,7,7,8,8,8,
-                6,6,6,7,7,7,8,8,8};
+        byte[] prpr = {0,0,0,0,0,0,0,0,0,
+                1,1,1,1,1,1,1,1,1,
+                2,2,2,2,2,2,2,2,2,
+                3,3,3,3,3,3,3,3,3,
+                4,4,4,4,4,4,4,4,4,
+                5,5,5,5,5,5,5,5,5,
+                6,6,6,6,6,6,6,6,6,
+                7,7,7,7,7,7,7,7,7,
+                8,8,8,8,8,8,8,8,8};
+//        byte[] prpr = {0,0,0,1,1,1,2,2,2,
+//                0,0,0,1,1,1,2,2,2,
+//                0,0,0,1,1,1,2,2,2,
+//                3,3,3,4,4,4,5,5,5,
+//                3,3,3,4,4,4,5,5,5,
+//                3,3,3,4,4,4,5,5,5,
+//                6,6,6,7,7,7,8,8,8,
+//                6,6,6,7,7,7,8,8,8,
+//                6,6,6,7,7,7,8,8,8};
         int n = 9;
         Algorithm algo = new Algorithm(new Structure((byte) n, prpr));
-        Board bd = algo.create(10, 20, prpr);
+        Board bd = algo.create(50, 80, prpr);
         board = new DrawBoard(10,40,(w-2*10)/9,bd.areas,bd);
     }
     boolean checkSudoku(){

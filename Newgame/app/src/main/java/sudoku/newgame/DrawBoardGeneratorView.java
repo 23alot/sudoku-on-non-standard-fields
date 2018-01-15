@@ -83,7 +83,7 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
         if(posy < n && posx < n)
-            board[posy][posx].changeFillColor(color);
+            board[posy][posx].setFillColor(color);
     }
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {

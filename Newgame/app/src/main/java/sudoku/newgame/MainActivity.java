@@ -90,7 +90,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         db.focusOnCell(x,y,Color.WHITE,Color.WHITE);
     }
     void tutu(){
-        db.focusOnCell(x,y,Color.rgb(179,179,179),Color.rgb(153,204,255));
+        db.focusOnCell(x,y,Color.rgb(150,150,150),Color.rgb(153,204,255));
     }
     @Override
     public boolean onTouch(View v, MotionEvent event){
@@ -100,7 +100,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         y = event.getY();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN: // нажатие
-                refresh(a, b);
+                db.refreshAll();
                 tutu();
                 break;
             case MotionEvent.ACTION_MOVE: // движение
