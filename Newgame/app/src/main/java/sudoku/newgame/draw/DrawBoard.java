@@ -62,14 +62,30 @@ public class DrawBoard {
         }
     }
 
-    public void focusOnCell(float x, float y, int w, int color){
+    public void focusOnCell(float x, float y, int w, int color, int highlightColor){
         x -= startX;
         y -= startY;
         int n = 9;
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
-        if(posy < n && posx < n)
+        if(posy < n && posx < n) {
             board[posy][posx].changeFillColor(color);
+            highlightCell(posx,posy,highlightColor);
+        }
+    }
+    public void refreshAll(){
+        for(int i = 0; i < bd.N; ++i)
+            for(int j = 0; j < bd.N; ++j)
+                board[i][j].changeFillColor(Color.WHITE);
+    }
+    void highlightCell(int x, int y, int highlightColor){
+        int value = bd.cells[y][x].value;
+        if(value == -1)
+            return;
+        for(int i = 0; i < bd.N; ++i)
+            for(int j = 0; j < bd.N; ++j)
+                if(bd.cells[i][j].value==value || i == y || j == x|| bd.areas[bd.N*y+x]==bd.areas[bd.N*i+j])
+                    board[i][j].changeFillColor(highlightColor);
     }
     public void setValue(float x, float y, String value, int w){
         x -= startX;
@@ -77,7 +93,9 @@ public class DrawBoard {
         int n = 9;
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
-        if(posy < n && posx < n && !bd.cells[posy][posx].isInput)
+        if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
             bd.cells[posy][posx].value = Byte.valueOf(value);
+            highlightCell(posx,posy,Color.rgb(153,204,255));
+        }
     }
 }

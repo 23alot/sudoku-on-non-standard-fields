@@ -119,8 +119,11 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
             }
         return true;
     }
-    void focusOnCell(float x, float y, int color){
-        board.focusOnCell(x,y,w,color);
+    void refreshAll(){
+        board.refreshAll();
+    }
+    void focusOnCell(float x, float y, int color, int highlightColor){
+        board.focusOnCell(x,y,w,color,highlightColor);
     }
     void setValue(float x, float y, String value){
         board.setValue(x,y,value,w);
