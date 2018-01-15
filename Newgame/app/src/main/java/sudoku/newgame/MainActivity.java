@@ -63,7 +63,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         });
     }
     @Override
-    protected void onPause() {
+    protected void onStop() {
         super.onPause();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();

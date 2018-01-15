@@ -109,7 +109,15 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
         Algorithm algo = new Algorithm(new Structure((byte) n, prpr));
         Board bd = algo.create(10, 20, prpr);
         board = new DrawBoard(10,40,(w-2*10)/9,bd.areas,bd);
-
+    }
+    boolean checkSudoku(){
+        int n = 9;
+        for(int i = 0; i < n; ++i)
+            for(int j = 0; j < n; ++j) {
+                if(!board.bd.cells[i][j].isCorrect())
+                    return false;
+            }
+        return true;
     }
     void focusOnCell(float x, float y, int color){
         board.focusOnCell(x,y,w,color);
