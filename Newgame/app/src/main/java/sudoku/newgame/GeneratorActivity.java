@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 /**
  * Created by sanya on 14.01.2018.
@@ -19,6 +20,7 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toast.makeText(this, "Запущен генератор", Toast.LENGTH_LONG).show();
         setContentView(R.layout.create_board);
         db = findViewById(R.id.drawBoardGeneratorView);
         db.setOnTouchListener(this);

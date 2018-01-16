@@ -1,6 +1,7 @@
 package sudoku.newgame;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -60,6 +61,14 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 editor.putString("Boardik",null);
                 editor.apply();
                 db.creation();
+            }
+        });
+        button = findViewById(R.id.button21);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, GeneratorActivity.class);
+                startActivity(intent);
             }
         });
     }
