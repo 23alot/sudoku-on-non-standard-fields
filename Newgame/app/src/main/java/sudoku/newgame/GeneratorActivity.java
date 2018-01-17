@@ -21,7 +21,6 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toast.makeText(this, "Запущен генератор", Toast.LENGTH_LONG).show();
         setContentView(R.layout.create_board);
         db = findViewById(R.id.drawBoardGeneratorView);
         db.setOnTouchListener(this);
@@ -34,7 +33,6 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
     public boolean onTouch(View v, MotionEvent event){
         x = event.getX();
         y = event.getY();
-        tutu();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN: // нажатие
                 tutu();

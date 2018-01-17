@@ -27,10 +27,14 @@ public class DrawBoardGeneratorView extends View {
     public Canvas canvas;
     int w;
     int h;
+    int currentSize;
+    DrawCell[] currentHighlighted;
+    int counter;
     float startY = 40;
     float startX = 10;
     Paint p;
     Context context;
+    boolean[][] isVisited;
     public DrawBoardGeneratorView(Context context){
         super(context);
         this.context = context;
@@ -77,6 +81,9 @@ public class DrawBoardGeneratorView extends View {
     }
     public void creation(){
         int n = 9;
+        isVisited = new boolean[n][n];
+        currentHighlighted = new DrawCell[n];
+        currentSize = 0;
         byte[] prpr = new byte[n*n];
         for(int i = 0; i < n*n;++i)
             prpr[i] = 0;
@@ -104,7 +111,62 @@ public class DrawBoardGeneratorView extends View {
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
         if(posy < n && posx < n)
+        {
+            if(board[posy][posx].getFillColor()==color) {
+                deleteFromSequence(posx, posy);
+                invalidate();
+                return;
+            }
+            currentHighlighted[currentSize++] = board[posy][posx];
             board[posy][posx].setFillColor(color);
+        }
+        if(currentSize == n) {
+            currentSize = 0;
+            if(!checkCell())
+                Toast.makeText(context, "Такая себе поляна", Toast.LENGTH_LONG).show();
+        }
         invalidate();
+    }
+    void deleteFromSequence(int x, int y){
+        board[y][x].setFillColor(Color.WHITE);
+        for(int i = 0; i <= currentSize; ++i)
+            if(currentHighlighted[i].getFillColor()==Color.WHITE) {
+                currentHighlighted[i] = currentHighlighted[currentSize--];
+                return;
+            }
+    }
+    boolean checkCell(){
+        for(int i = 0; i < board.length; ++i)
+            for(int z = 0; z < board.length; ++z)
+                isVisited[i][z] = board[z][i].getFillColor()==Color.BLUE;
+        for(int i = 0; i < board.length; ++i)
+            for(int z = 0; z < board.length; ++z){
+                if(!isVisited[i][z]) {
+                    counter = 1;
+                    isFullArea(i, z);
+                    if(counter % board.length != 0)
+                        return false;
+                }
+            }
+        return true;
+    }
+    void isFullArea(int x, int y){
+        isVisited[x][y] = true;
+        if(x-1 >= 0 && board[y][x-1].getFillColor()!=Color.BLUE && !isVisited[x-1][y]){
+            counter++;
+            isFullArea(x-1, y);
+        }
+        if(x+1 < board.length && board[y][x+1].getFillColor()!=Color.BLUE && !isVisited[x+1][y]){
+            counter++;
+            isFullArea(x+1, y);
+        }
+        if(y-1 >= 0 && board[y-1][x].getFillColor()!=Color.BLUE && !isVisited[x][y-1]){
+            counter++;
+            isFullArea(x, y-1);
+        }
+        if(y+1 < board.length && board[y+1][x].getFillColor()!=Color.BLUE && !isVisited[x][y+1]){
+            counter++;
+            isFullArea(x, y+1);
+        }
     }
 }
