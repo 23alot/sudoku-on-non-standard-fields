@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -20,11 +21,19 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toast.makeText(this, "Запущен генератор", Toast.LENGTH_LONG).show();
         setContentView(R.layout.create_board);
         db = findViewById(R.id.drawBoardGeneratorView);
         db.setOnTouchListener(this);
-
+        mbutton = findViewById(R.id.button50);
+//        mbutton.setVisibility(View.INVISIBLE);
+        mbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.saveArea();
+                mbutton.setVisibility(View.INVISIBLE);
+                mbutton.setBackgroundColor(Color.WHITE);
+            }
+        });
     }
     void tutu(){
         db.focusOnCell(x,y, Color.BLUE);
@@ -33,7 +42,6 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
     public boolean onTouch(View v, MotionEvent event){
         x = event.getX();
         y = event.getY();
-        tutu();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN: // нажатие
                 tutu();

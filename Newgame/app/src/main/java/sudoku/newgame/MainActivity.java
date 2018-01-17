@@ -75,14 +75,14 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     @Override
     protected void onPause() {
         super.onPause();
-        if(!db.checkSudoku()) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            DrawView dw = findViewById(R.id.drawView);
-            db.refreshAll();
-            editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
-            editor.apply();
-        }
+//        if(!db.checkSudoku()) {
+//            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            DrawView dw = findViewById(R.id.drawView);
+//            db.refreshAll();
+//            editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
+//            editor.apply();
+//        }
     }
     View.OnClickListener createOnClick() {
         return new View.OnClickListener() {
@@ -109,6 +109,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         y = event.getY();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN: // нажатие
+                db.refreshAll();
                 db.refreshAll();
                 tutu();
                 break;
