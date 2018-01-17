@@ -5,8 +5,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -20,9 +22,7 @@ import sudoku.newgame.sudoku.Board;
 /**
  * Created by sanya on 13.01.2018.
  */
-
-public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder.Callback {
-    public DrawBoardGeneratorView.DrawThread drawThread;
+public class DrawBoardGeneratorView extends View {
     public DrawCell[][] board;
     public Canvas canvas;
     int w;
@@ -31,33 +31,49 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
     float startX = 10;
     Paint p;
     Context context;
-    public DrawBoardGeneratorView(Context context) {
+    public DrawBoardGeneratorView(Context context){
         super(context);
-        p = new Paint();
         this.context = context;
-        getHolder().addCallback(this);
+        p = new Paint();
+
     }
-    public DrawBoardGeneratorView(Context context, AttributeSet attrs){
+    public DrawBoardGeneratorView(Context context, AttributeSet attrs) {
         super(context,attrs);
         this.context = context;
-        Toast.makeText(context, "Lol", Toast.LENGTH_LONG).show();
-
         p = new Paint();
-        getHolder().addCallback(this);
     }
-    public DrawBoardGeneratorView(Context context, AttributeSet attrs,int defStyleAttr){
-        super(context,attrs,defStyleAttr);
-        this.context = context;
 
+    public DrawBoardGeneratorView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        this.context = context;
         p = new Paint();
-        getHolder().addCallback(this);
     }
-    public DrawBoardGeneratorView(Context context, AttributeSet attrs,int defStyleAttr, int defStyleRes){
-        super(context,attrs,defStyleAttr,defStyleRes);
-        this.context = context;
 
+    public DrawBoardGeneratorView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        Display display = getDisplay();
+        this.context = context;
         p = new Paint();
-        getHolder().addCallback(this);
+    }
+    @Override
+    protected void onDraw(Canvas canvas) {
+        canvas.drawColor(Color.WHITE);
+        p.setColor(Color.BLACK);
+        if(board == null)
+            creation();
+        int n = 9;
+        for(int i = 0; i < n; ++i)
+            for(int z = 0; z < n; ++z)
+                board[i][z].draw(p,canvas);
+        for(int i = 0; i < n; ++i)
+            for(int z = 0; z < n; ++z)
+                board[i][z].drawBoard(p,canvas);
+    }
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        this.w = w;
+        this.h = h;
+        super.onSizeChanged(w, h, oldw, oldh);
     }
     public void creation(){
         int n = 9;
@@ -89,86 +105,6 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
         int posy = (int)y/((w-2*10)/n);
         if(posy < n && posx < n)
             board[posy][posx].setFillColor(color);
-    }
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        this.w = w;
-        this.h = h;
-        super.onSizeChanged(w, h, oldw, oldh);
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
-//        drawThread = new DrawBoardGeneratorView.DrawThread(getHolder());
-//        drawThread.setRunning(true);
-//        drawThread.start();
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-
-        drawThread = new DrawBoardGeneratorView.DrawThread(getHolder());
-        drawThread.setRunning(true);
-
-        creation();
-        drawThread.start();
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        boolean retry = true;
-        drawThread.setRunning(false);
-        while (retry) {
-            try {
-                drawThread.join();
-                retry = false;
-            } catch (InterruptedException e) {
-            }
-        }
-    }
-
-    public class DrawThread extends Thread {
-
-        private boolean running = false;
-        public SurfaceHolder surfaceHolder;
-
-        public DrawThread(SurfaceHolder surfaceHolder) {
-            this.surfaceHolder = surfaceHolder;
-        }
-
-        public void setRunning(boolean running) {
-            this.running = running;
-        }
-
-        @Override
-        public void run() {
-            while (running) {
-                canvas = null;
-                try {
-                    canvas = surfaceHolder.lockCanvas(null);
-
-                    if (canvas == null)
-                        continue;
-                    draw();
-                } finally {
-                    if (canvas != null) {
-                        surfaceHolder.unlockCanvasAndPost(canvas);
-                    }
-                }
-            }
-        }
-
-        void draw(){
-            canvas.drawColor(Color.WHITE);
-            p.setColor(Color.BLACK);
-            int n = 9;
-            for(int i = 0; i < n; ++i)
-                for(int z = 0; z < n; ++z)
-                    board[i][z].draw(p,canvas);
-            for(int i = 0; i < n; ++i)
-                for(int z = 0; z < n; ++z)
-                    board[i][z].drawBoard(p,canvas);
-        }
+        invalidate();
     }
 }
