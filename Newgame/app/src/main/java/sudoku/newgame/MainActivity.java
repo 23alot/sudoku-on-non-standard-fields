@@ -110,6 +110,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN: // нажатие
                 db.refreshAll();
+                db.refreshAll();
                 tutu();
                 break;
             case MotionEvent.ACTION_MOVE: // движение
