@@ -24,7 +24,16 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
         setContentView(R.layout.create_board);
         db = findViewById(R.id.drawBoardGeneratorView);
         db.setOnTouchListener(this);
-
+        mbutton = findViewById(R.id.button50);
+//        mbutton.setVisibility(View.INVISIBLE);
+        mbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.saveArea();
+                mbutton.setVisibility(View.INVISIBLE);
+                mbutton.setBackgroundColor(Color.WHITE);
+            }
+        });
     }
     void tutu(){
         db.focusOnCell(x,y, Color.BLUE);
