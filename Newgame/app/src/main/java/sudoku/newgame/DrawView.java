@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -87,32 +88,43 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
             board = gson.fromJson(boardik,DrawBoard.class);
             return;
         }
-        //                byte[] prpr = {0,0,0,0,0,0,0,0,0,
-//                1,1,1,1,1,1,1,1,1,
-//                2,2,2,2,2,2,2,2,2,
-//                3,3,3,3,3,3,3,3,3,
-//                4,4,4,4,4,4,4,4,4,
-//                5,5,5,5,5,5,5,5,5,
-//                6,6,6,6,6,6,6,6,6,
-//                7,7,7,7,7,7,7,7,7,
-//                8,8,8,8,8,8,8,8,8};
-        byte[] prpr = {0,0,0,1,1,1,2,2,2,
-                0,0,0,1,1,1,2,2,2,
-                0,0,0,1,1,1,2,2,2,
-                3,3,3,4,4,4,5,5,5,
-                3,3,3,4,4,4,5,5,5,
-                3,3,3,4,4,4,5,5,5,
-                6,6,6,7,7,7,8,8,8,
-                6,6,6,7,7,7,8,8,8,
-                6,6,6,7,7,7,8,8,8};
+        byte[] prpr = {0,0,0,0,0,0,0,0,0,
+                1,1,1,1,1,1,1,1,1,
+                2,2,2,2,2,2,2,2,2,
+                3,3,3,3,3,3,3,3,3,
+                4,4,4,4,4,4,4,4,4,
+                5,5,5,5,5,5,5,5,5,
+                6,6,6,6,6,6,6,6,6,
+                7,7,7,7,7,7,7,7,7,
+                8,8,8,8,8,8,8,8,8};
+//        byte[] prpr = {0,0,0,1,1,1,2,2,2,
+//                0,0,0,1,1,1,2,2,2,
+//                0,0,0,1,1,1,2,2,2,
+//                3,3,3,4,4,4,5,5,5,
+//                3,3,3,4,4,4,5,5,5,
+//                3,3,3,4,4,4,5,5,5,
+//                6,6,6,7,7,7,8,8,8,
+//                6,6,6,7,7,7,8,8,8,
+//                6,6,6,7,7,7,8,8,8};
         int n = 9;
         Algorithm algo = new Algorithm(new Structure((byte) n, prpr));
-        Board bd = algo.create(10, 20, prpr);
+        Board bd = algo.create(50, 80, prpr);
         board = new DrawBoard(10,40,(w-2*10)/9,bd.areas,bd);
-
     }
-    void focusOnCell(float x, float y, int color){
-        board.focusOnCell(x,y,w,color);
+    boolean checkSudoku(){
+        int n = 9;
+        for(int i = 0; i < n; ++i)
+            for(int j = 0; j < n; ++j) {
+                if(!board.bd.cells[i][j].isCorrect())
+                    return false;
+            }
+        return true;
+    }
+    void refreshAll(){
+        board.refreshAll();
+    }
+    void focusOnCell(float x, float y, int color, int highlightColor){
+        board.focusOnCell(x,y,w,color,highlightColor);
     }
     void setValue(float x, float y, String value){
         board.setValue(x,y,value,w);

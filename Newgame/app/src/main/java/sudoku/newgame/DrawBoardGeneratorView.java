@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import sudoku.newgame.dancinglinks.Algorithm;
 import sudoku.newgame.dancinglinks.Structure;
@@ -28,29 +30,31 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
     float startY = 40;
     float startX = 10;
     Paint p;
+    Context context;
     public DrawBoardGeneratorView(Context context) {
         super(context);
         p = new Paint();
-
+        this.context = context;
         getHolder().addCallback(this);
     }
     public DrawBoardGeneratorView(Context context, AttributeSet attrs){
         super(context,attrs);
-
+        this.context = context;
+        Toast.makeText(context, "Lol", Toast.LENGTH_LONG).show();
 
         p = new Paint();
         getHolder().addCallback(this);
     }
     public DrawBoardGeneratorView(Context context, AttributeSet attrs,int defStyleAttr){
         super(context,attrs,defStyleAttr);
-
+        this.context = context;
 
         p = new Paint();
         getHolder().addCallback(this);
     }
     public DrawBoardGeneratorView(Context context, AttributeSet attrs,int defStyleAttr, int defStyleRes){
         super(context,attrs,defStyleAttr,defStyleRes);
-
+        this.context = context;
 
         p = new Paint();
         getHolder().addCallback(this);
@@ -75,6 +79,7 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
             }
             sizeY += length;
         }
+
     }
     public void focusOnCell(float x, float y, int color){
         x -= startX;
@@ -83,7 +88,7 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
         if(posy < n && posx < n)
-            board[posy][posx].changeFillColor(color);
+            board[posy][posx].setFillColor(color);
     }
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -102,8 +107,10 @@ public class DrawBoardGeneratorView extends SurfaceView implements SurfaceHolder
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+
         drawThread = new DrawBoardGeneratorView.DrawThread(getHolder());
         drawThread.setRunning(true);
+
         creation();
         drawThread.start();
     }

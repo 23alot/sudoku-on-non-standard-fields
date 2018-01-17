@@ -11,6 +11,7 @@ import android.graphics.Paint;
 public class DrawCell {
     Border border;
     int fillColor;
+    int textColor;
     float startX;
     float startY;
     float length;
@@ -20,6 +21,7 @@ public class DrawCell {
         this.startX = startX;
         this.startY = startY;
         fillColor = Color.WHITE;
+        textColor = Color.BLACK;
     }
     public void draw(Paint p, Canvas canvas){
         p.setStrokeWidth(2);
@@ -43,8 +45,11 @@ public class DrawCell {
         fillCell(p,canvas);
 
     }
-    public void changeFillColor(int fillColor){
+    public void setFillColor(int fillColor){
         this.fillColor = fillColor;
+    }
+    public void setTextColor(int textColor){
+        this.textColor = textColor;
     }
     public void fillCell(Paint p, Canvas canvas){
         p.setColor(fillColor);
@@ -70,8 +75,8 @@ public class DrawCell {
             canvas.drawLine(startX+length,startY,startX+length,startY+length,p);
         }
     }
-    void writeText(Paint paint, Canvas canvas, Byte n, int color){
-        paint.setColor(color);
+    void writeText(Paint paint, Canvas canvas, Byte n){
+        paint.setColor(textColor);
         paint.setTextSize(length-20);
         paint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(n.toString(),startX+length/2,startY+length-20,paint);

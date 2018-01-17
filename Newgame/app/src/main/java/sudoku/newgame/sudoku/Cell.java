@@ -16,4 +16,7 @@ public class Cell {
         this.value = -1;
         this.isInput = false;
     }
+    public boolean isCorrect(){
+        return value == correctValue;
+    }
 }

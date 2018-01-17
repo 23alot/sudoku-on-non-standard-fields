@@ -1,6 +1,7 @@
 package sudoku.newgame;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -61,30 +63,43 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 db.creation();
             }
         });
+        button = findViewById(R.id.button21);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, GeneratorActivity.class);
+                startActivity(intent);
+            }
+        });
     }
     @Override
     protected void onPause() {
         super.onPause();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        DrawView dw = findViewById(R.id.drawView);
-        refresh(x,y);
-        editor.putString("Boardik",dw.drawBoardtoJSON(dw.board));
-        editor.apply();
+        if(!db.checkSudoku()) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            DrawView dw = findViewById(R.id.drawView);
+            db.refreshAll();
+            editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
+            editor.apply();
+        }
     }
     View.OnClickListener createOnClick() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                db.refreshAll();
                 db.setValue(x,y,(String)((Button)view).getText());
+                if(db.checkSudoku())
+                    Toast.makeText(MainActivity.this, "Судоку решено верно", Toast.LENGTH_LONG).show();
             }
         };
     }
     void refresh(float x, float y){
-        db.focusOnCell(x,y,Color.WHITE);
+        db.focusOnCell(x,y,Color.WHITE,Color.WHITE);
     }
     void tutu(){
-        db.focusOnCell(x,y,Color.rgb(179,179,179));
+        db.focusOnCell(x,y,Color.rgb(150,150,150),Color.rgb(153,204,255));
     }
     @Override
     public boolean onTouch(View v, MotionEvent event){
@@ -94,7 +109,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         y = event.getY();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN: // нажатие
-                refresh(a, b);
+                db.refreshAll();
                 tutu();
                 break;
             case MotionEvent.ACTION_MOVE: // движение
