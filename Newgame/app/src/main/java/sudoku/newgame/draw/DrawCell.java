@@ -48,6 +48,7 @@ public class DrawCell {
     public void setFillColor(int fillColor){
         this.fillColor = fillColor;
     }
+    public int getFillColor(){ return fillColor; }
     public void setTextColor(int textColor){
         this.textColor = textColor;
     }
