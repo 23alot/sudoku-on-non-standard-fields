@@ -94,6 +94,9 @@ public class DrawBoardGeneratorView extends View {
             prpr[i] = -1;
             possibleCells[i] = false;
         }
+        prpr = new byte[n*n];
+        for(int i = 0; i < n*n;++i)
+            prpr[i] = -1;
         float sizeY = startY;
         float length = (w-2*10)/n;
         board = new DrawCell[n][n];
@@ -135,22 +138,21 @@ public class DrawBoardGeneratorView extends View {
         }
         if(posy < n && posx < n)
         {
+            if(board[posy][posx].getFillColor()==Color.YELLOW)
+                return;
             if(board[posy][posx].getFillColor()==color) {
                 deleteFromSequence(posx, posy);
+                refreshPossibleCells();
                 invalidate();
+                return;
+            }
+            if(!(possibleCells[board.length*posy+posx]||(currentSize==0 && board[posy][posx].getFillColor()==Color.WHITE))){
+                Toast.makeText(context, "Не в ту степь", Toast.LENGTH_LONG).show();
                 return;
             }
             currentHighlighted[currentSize++] = new CellPosition(posx,posy,board[posy][posx]);
             board[posy][posx].setFillColor(color);
-            if(posy-1>-1){
-                if(posx+1<board.length){
-                    possibleCells[board.length*(posy-1)+posx+1] = true;
-                    possibleCells[board.length*(posy-1)+posx] = true;
-                }
-                if(posx-1>-1){
-                    possibleCells[board.length*(posy-1)+posx-1] = true;
-                }
-            }
+            refreshPossibleCells();
         }
         if(currentSize == n) {
             if(!checkCell())
@@ -161,6 +163,20 @@ public class DrawBoardGeneratorView extends View {
         }
         invalidate();
     }
+    void refreshPossibleCells(){
+        for(int i = 0; i < board.length*board.length; ++i)
+            possibleCells[i] = false;
+        for(int i = 0; i < currentSize; ++i){
+            if(currentHighlighted[i].y-1>-1)
+                possibleCells[board.length*(currentHighlighted[i].y-1)+currentHighlighted[i].x] = true;
+            if(currentHighlighted[i].x-1>-1)
+                possibleCells[board.length*(currentHighlighted[i].y)+currentHighlighted[i].x-1] = true;
+            if(currentHighlighted[i].y+1<board.length)
+                possibleCells[board.length*(currentHighlighted[i].y+1)+currentHighlighted[i].x] = true;
+            if(currentHighlighted[i].x+1<board.length)
+                possibleCells[board.length*(currentHighlighted[i].y)+currentHighlighted[i].x+1] = true;
+        }
+    }
     void saveArea(){
         for(int i = 0; i < board.length;++i){
             currentHighlighted[i].drawCell.setFillColor(Color.YELLOW);
@@ -168,18 +184,18 @@ public class DrawBoardGeneratorView extends View {
         }
         currentArea++;
         currentSize = 0;
+        refreshPossibleCells();
         refreshBorders();
         invalidate();
     }
     void deleteFromSequence(int x, int y){
-        if(board[y][x].getFillColor()==Color.YELLOW)
-            return;
         board[y][x].setFillColor(Color.WHITE);
-        for(int i = 0; i <= currentSize; ++i)
+        for(int i = 0; i < currentSize; ++i)
             if(currentHighlighted[i].drawCell.getFillColor()==Color.WHITE) {
-                currentHighlighted[i] = currentHighlighted[currentSize--];
+                currentHighlighted[i] = currentHighlighted[--currentSize];
                 return;
             }
+        invalidate();
     }
     boolean checkCell(){
         for(int i = 0; i < board.length; ++i)
