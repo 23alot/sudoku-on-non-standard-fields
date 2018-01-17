@@ -9,7 +9,7 @@ import android.graphics.Paint;
  */
 
 public class DrawCell {
-    Border border;
+    public Border border;
     int fillColor;
     int textColor;
     float startX;

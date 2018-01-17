@@ -10,11 +10,11 @@
         android:layout_height="400dp" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/button50"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        android:layout_gravity="bottom|right"/>
+        android:text="Accept"
+        android:layout_gravity="bottom|end"/>
 
     <EditText
         android:id="@+id/editText2"
@@ -23,6 +23,6 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
-        android:layout_gravity="bottom|left"/>
+        android:layout_gravity="bottom|start"/>
 
 </FrameLayout>
