@@ -5,10 +5,10 @@ package sudoku.newgame.draw;
  */
 
 public class Border {
-    public boolean left;
-    public boolean right;
-    public boolean up;
-    public boolean down;
+    boolean left;
+    boolean right;
+    boolean up;
+    boolean down;
     public Border(boolean left, boolean right, boolean up, boolean down){
         this.left = left;
         this.right = right;

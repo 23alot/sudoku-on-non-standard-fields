@@ -9,7 +9,6 @@ import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -25,14 +24,12 @@ import sudoku.newgame.sudoku.Board;
  */
 public class DrawBoardGeneratorView extends View {
     public DrawCell[][] board;
-    byte[] prpr;
     public Canvas canvas;
     int w;
     int h;
     int currentSize;
-    CellPosition[] currentHighlighted;
+    DrawCell[] currentHighlighted;
     int counter;
-    byte currentArea = 0;
     float startY = 40;
     float startX = 10;
     Paint p;
@@ -85,11 +82,11 @@ public class DrawBoardGeneratorView extends View {
     public void creation(){
         int n = 9;
         isVisited = new boolean[n][n];
-        currentHighlighted = new CellPosition[n];
+        currentHighlighted = new DrawCell[n];
         currentSize = 0;
-        prpr = new byte[n*n];
+        byte[] prpr = new byte[n*n];
         for(int i = 0; i < n*n;++i)
-            prpr[i] = -1;
+            prpr[i] = 0;
         float sizeY = startY;
         float length = (w-2*10)/n;
         board = new DrawCell[n][n];
@@ -107,28 +104,12 @@ public class DrawBoardGeneratorView extends View {
         }
 
     }
-    void refreshBorders(){
-        for(int i = 0; i < board.length; ++i) {
-            float sizeX = startX;
-            for (int z = 0; z < board.length; ++z) {
-                board[i][z].border.left = z == 0 || prpr[board.length*i+z-1] != prpr[board.length*i+z];
-                board[i][z].border.right = z == (board.length - 1) || prpr[board.length*i+z+1]!=prpr[board.length*i+z];
-                board[i][z].border.up = i == 0 || prpr[board.length*i+z-board.length]!=prpr[board.length*i+z];
-                board[i][z].border.down = i == (board.length - 1) || prpr[board.length*i+z+board.length]!=prpr[board.length*i+z];
-            }
-        }
-    }
     public void focusOnCell(float x, float y, int color){
         x -= startX;
         y -= startY;
         int n = 9;
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
-        if(currentSize == n) {
-            getRootView().findViewById(R.id.button50).setBackgroundColor(Color.RED);
-            invalidate();
-            return;
-        }
         if(posy < n && posx < n)
         {
             if(board[posy][posx].getFillColor()==color) {
@@ -136,34 +117,20 @@ public class DrawBoardGeneratorView extends View {
                 invalidate();
                 return;
             }
-            currentHighlighted[currentSize++] = new CellPosition(posx,posy,board[posy][posx]);
+            currentHighlighted[currentSize++] = board[posy][posx];
             board[posy][posx].setFillColor(color);
         }
         if(currentSize == n) {
+            currentSize = 0;
             if(!checkCell())
                 Toast.makeText(context, "Такая себе поляна", Toast.LENGTH_LONG).show();
-            else
-                getRootView().findViewById(R.id.button50).setVisibility(VISIBLE);
-
         }
-        invalidate();
-    }
-    void saveArea(){
-        for(int i = 0; i < board.length;++i){
-            currentHighlighted[i].drawCell.setFillColor(Color.YELLOW);
-            prpr[currentHighlighted[i].y*board.length + currentHighlighted[i].x] = currentArea;
-        }
-        currentArea++;
-        currentSize = 0;
-        refreshBorders();
         invalidate();
     }
     void deleteFromSequence(int x, int y){
-        if(board[y][x].getFillColor()==Color.YELLOW)
-            return;
         board[y][x].setFillColor(Color.WHITE);
         for(int i = 0; i <= currentSize; ++i)
-            if(currentHighlighted[i].drawCell.getFillColor()==Color.WHITE) {
+            if(currentHighlighted[i].getFillColor()==Color.WHITE) {
                 currentHighlighted[i] = currentHighlighted[currentSize--];
                 return;
             }
@@ -174,7 +141,7 @@ public class DrawBoardGeneratorView extends View {
                 isVisited[i][z] = board[z][i].getFillColor()==Color.BLUE;
         for(int i = 0; i < board.length; ++i)
             for(int z = 0; z < board.length; ++z){
-                if(!isVisited[i][z]&&board[z][i].getFillColor()==Color.WHITE) {
+                if(!isVisited[i][z]) {
                     counter = 1;
                     isFullArea(i, z);
                     if(counter % board.length != 0)
@@ -185,19 +152,19 @@ public class DrawBoardGeneratorView extends View {
     }
     void isFullArea(int x, int y){
         isVisited[x][y] = true;
-        if(x-1 >= 0 && board[y][x-1].getFillColor()==Color.WHITE && !isVisited[x-1][y]){
+        if(x-1 >= 0 && board[y][x-1].getFillColor()!=Color.BLUE && !isVisited[x-1][y]){
             counter++;
             isFullArea(x-1, y);
         }
-        if(x+1 < board.length && board[y][x+1].getFillColor()==Color.WHITE && !isVisited[x+1][y]){
+        if(x+1 < board.length && board[y][x+1].getFillColor()!=Color.BLUE && !isVisited[x+1][y]){
             counter++;
             isFullArea(x+1, y);
         }
-        if(y-1 >= 0 && board[y-1][x].getFillColor()==Color.WHITE && !isVisited[x][y-1]){
+        if(y-1 >= 0 && board[y-1][x].getFillColor()!=Color.BLUE && !isVisited[x][y-1]){
             counter++;
             isFullArea(x, y-1);
         }
-        if(y+1 < board.length && board[y+1][x].getFillColor()==Color.WHITE && !isVisited[x][y+1]){
+        if(y+1 < board.length && board[y+1][x].getFillColor()!=Color.BLUE && !isVisited[x][y+1]){
             counter++;
             isFullArea(x, y+1);
         }
