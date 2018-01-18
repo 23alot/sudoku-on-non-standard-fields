@@ -33,6 +33,8 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         db = findViewById(R.id.drawView);
+        Intent intent = getIntent();
+        db.area = intent.getByteArrayExtra("area");
         db.setOnTouchListener(this);
         FrameLayout fl = (FrameLayout)findViewById(R.id.framelayout);
         //db.creation();
@@ -109,6 +111,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         y = event.getY();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN: // нажатие
+                db.refreshAll();
                 db.refreshAll();
                 tutu();
                 break;

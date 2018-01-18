@@ -5,10 +5,14 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -33,50 +37,56 @@ import sudoku.newgame.sudoku.Board;
  * Created by sanya on 13.01.2018.
  */
 
-public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
-    public DrawThread drawThread;
+public class DrawView extends View{
     public DrawBoard board = null;
     Canvas canvas;
+    byte[] area = null;
     int w;
     int h;
     Paint p;
     Context context;
-    public DrawView(Context context) {
+    public DrawView(Context context){
         super(context);
         this.context = context;
         p = new Paint();
-        getHolder().addCallback(this);
+
     }
-    public DrawView(Context context, AttributeSet attrs){
+    public DrawView(Context context, AttributeSet attrs) {
         super(context,attrs);
         this.context = context;
         p = new Paint();
-        getHolder().addCallback(this);
     }
-    public DrawView(Context context, AttributeSet attrs,int defStyleAttr){
-        super(context,attrs,defStyleAttr);
-        System.out.println(1);
+
+    public DrawView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         this.context = context;
         p = new Paint();
-        getHolder().addCallback(this);
     }
-    public DrawView(Context context, AttributeSet attrs,int defStyleAttr, int defStyleRes){
-        super(context,attrs,defStyleAttr,defStyleRes);
-        System.out.println(1);
+
+    public DrawView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        Display display = getDisplay();
         this.context = context;
         p = new Paint();
-        getHolder().addCallback(this);
+    }
+    @Override
+    protected void onDraw(Canvas canvas) {
+        canvas.drawColor(Color.WHITE);
+        p.setColor(Color.BLACK);
+        if (board==null)
+            creation();
+        board.draw(canvas,p);
+    }
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        this.w = w;
+        this.h = h;
+        super.onSizeChanged(w, h, oldw, oldh);
     }
     String drawBoardtoJSON(DrawBoard drawBoard){
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             return gson.toJson(board);
-    }
-    public void changeBoard(String s){
-        try{
-            JSONObject jsonBoard = new JSONObject(s);
-            board = (DrawBoard)jsonBoard.get("Board");
-        }catch (JSONException e){}
     }
     public void creation(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -88,15 +98,17 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
             board = gson.fromJson(boardik,DrawBoard.class);
             return;
         }
-        byte[] prpr = {0,0,0,0,0,0,0,0,0,
-                1,1,1,1,1,1,1,1,1,
-                2,2,2,2,2,2,2,2,2,
-                3,3,3,3,3,3,3,3,3,
-                4,4,4,4,4,4,4,4,4,
-                5,5,5,5,5,5,5,5,5,
-                6,6,6,6,6,6,6,6,6,
-                7,7,7,7,7,7,7,7,7,
-                8,8,8,8,8,8,8,8,8};
+        if(area == null) {
+            area = new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    2, 2, 2, 2, 2, 2, 2, 2, 2,
+                    3, 3, 3, 3, 3, 3, 3, 3, 3,
+                    4, 4, 4, 4, 4, 4, 4, 4, 4,
+                    5, 5, 5, 5, 5, 5, 5, 5, 5,
+                    6, 6, 6, 6, 6, 6, 6, 6, 6,
+                    7, 7, 7, 7, 7, 7, 7, 7, 7,
+                    8, 8, 8, 8, 8, 8, 8, 8, 8};
+        }
 //        byte[] prpr = {0,0,0,1,1,1,2,2,2,
 //                0,0,0,1,1,1,2,2,2,
 //                0,0,0,1,1,1,2,2,2,
@@ -107,8 +119,8 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
 //                6,6,6,7,7,7,8,8,8,
 //                6,6,6,7,7,7,8,8,8};
         int n = 9;
-        Algorithm algo = new Algorithm(new Structure((byte) n, prpr));
-        Board bd = algo.create(50, 80, prpr);
+        Algorithm algo = new Algorithm(new Structure((byte) n, area));
+        Board bd = algo.create(50, 80, area);
         board = new DrawBoard(10,40,(w-2*10)/9,bd.areas,bd);
     }
     boolean checkSudoku(){
@@ -122,86 +134,14 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
     }
     void refreshAll(){
         board.refreshAll();
+        invalidate();
     }
     void focusOnCell(float x, float y, int color, int highlightColor){
         board.focusOnCell(x,y,w,color,highlightColor);
+        invalidate();
     }
     void setValue(float x, float y, String value){
         board.setValue(x,y,value,w);
+        invalidate();
     }
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        this.w = w;
-        this.h = h;
-        super.onSizeChanged(w, h, oldw, oldh);
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
-//        drawThread = new DrawThread(getHolder());
-//        drawThread.setRunning(true);
-//        drawThread.start();
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        drawThread = new DrawThread(getHolder());
-        drawThread.setRunning(true);
-        if(board == null)
-            creation();
-        drawThread.start();
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-
-        boolean retry = true;
-        drawThread.setRunning(false);
-        while (retry) {
-            try {
-                drawThread.join();
-                retry = false;
-            } catch (InterruptedException e) {
-            }
-        }
-    }
-
-    public class DrawThread extends Thread {
-
-        private boolean running = false;
-        private SurfaceHolder surfaceHolder;
-
-        public DrawThread(SurfaceHolder surfaceHolder) {
-            this.surfaceHolder = surfaceHolder;
-        }
-
-        public void setRunning(boolean running) {
-            this.running = running;
-        }
-
-        @Override
-        public void run() {
-            while (running) {
-                canvas = null;
-                try {
-                    canvas = surfaceHolder.lockCanvas(null);
-
-                    if (canvas == null)
-                        continue;
-                    draw(canvas);
-                } finally {
-                    if (canvas != null) {
-                        surfaceHolder.unlockCanvasAndPost(canvas);
-                    }
-                }
-            }
-        }
-        void draw(Canvas canvas){
-            canvas.drawColor(Color.WHITE);
-            p.setColor(Color.BLACK);
-            board.draw(canvas,p);
-        }
-    }
-
 }
