@@ -40,6 +40,7 @@ import sudoku.newgame.sudoku.Board;
 public class DrawView extends View{
     public DrawBoard board = null;
     Canvas canvas;
+    byte[] area = null;
     int w;
     int h;
     Paint p;
@@ -97,15 +98,17 @@ public class DrawView extends View{
             board = gson.fromJson(boardik,DrawBoard.class);
             return;
         }
-        byte[] prpr = {0,0,0,0,0,0,0,0,0,
-                1,1,1,1,1,1,1,1,1,
-                2,2,2,2,2,2,2,2,2,
-                3,3,3,3,3,3,3,3,3,
-                4,4,4,4,4,4,4,4,4,
-                5,5,5,5,5,5,5,5,5,
-                6,6,6,6,6,6,6,6,6,
-                7,7,7,7,7,7,7,7,7,
-                8,8,8,8,8,8,8,8,8};
+        if(area == null) {
+            area = new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    2, 2, 2, 2, 2, 2, 2, 2, 2,
+                    3, 3, 3, 3, 3, 3, 3, 3, 3,
+                    4, 4, 4, 4, 4, 4, 4, 4, 4,
+                    5, 5, 5, 5, 5, 5, 5, 5, 5,
+                    6, 6, 6, 6, 6, 6, 6, 6, 6,
+                    7, 7, 7, 7, 7, 7, 7, 7, 7,
+                    8, 8, 8, 8, 8, 8, 8, 8, 8};
+        }
 //        byte[] prpr = {0,0,0,1,1,1,2,2,2,
 //                0,0,0,1,1,1,2,2,2,
 //                0,0,0,1,1,1,2,2,2,
@@ -116,8 +119,8 @@ public class DrawView extends View{
 //                6,6,6,7,7,7,8,8,8,
 //                6,6,6,7,7,7,8,8,8};
         int n = 9;
-        Algorithm algo = new Algorithm(new Structure((byte) n, prpr));
-        Board bd = algo.create(50, 80, prpr);
+        Algorithm algo = new Algorithm(new Structure((byte) n, area));
+        Board bd = algo.create(50, 80, area);
         board = new DrawBoard(10,40,(w-2*10)/9,bd.areas,bd);
     }
     boolean checkSudoku(){

@@ -1,6 +1,7 @@
 package sudoku.newgame;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -29,11 +30,18 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
         mbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                db.saveArea();
+                if(db.saveArea())
+                    startNewGame();
+
                 mbutton.setVisibility(View.INVISIBLE);
                 mbutton.setBackgroundColor(Color.WHITE);
             }
         });
+    }
+    void startNewGame(){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("area", db.prpr);
+        startActivity(intent);
     }
     void tutu(){
         db.focusOnCell(x,y, Color.BLUE);

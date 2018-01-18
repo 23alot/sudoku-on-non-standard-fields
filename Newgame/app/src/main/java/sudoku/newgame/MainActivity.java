@@ -33,6 +33,8 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         db = findViewById(R.id.drawView);
+        Intent intent = getIntent();
+        db.area = intent.getByteArrayExtra("area");
         db.setOnTouchListener(this);
         FrameLayout fl = (FrameLayout)findViewById(R.id.framelayout);
         //db.creation();
@@ -75,14 +77,14 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     @Override
     protected void onPause() {
         super.onPause();
-//        if(!db.checkSudoku()) {
-//            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-//            SharedPreferences.Editor editor = sharedPreferences.edit();
-//            DrawView dw = findViewById(R.id.drawView);
-//            db.refreshAll();
-//            editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
-//            editor.apply();
-//        }
+        if(!db.checkSudoku()) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            DrawView dw = findViewById(R.id.drawView);
+            db.refreshAll();
+            editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
+            editor.apply();
+        }
     }
     View.OnClickListener createOnClick() {
         return new View.OnClickListener() {

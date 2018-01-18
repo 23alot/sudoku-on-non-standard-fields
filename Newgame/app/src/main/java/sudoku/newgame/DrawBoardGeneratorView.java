@@ -1,6 +1,7 @@
 package sudoku.newgame;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,7 +26,7 @@ import sudoku.newgame.sudoku.Board;
  */
 public class DrawBoardGeneratorView extends View {
     public DrawCell[][] board;
-    byte[] prpr;
+    public byte[] prpr;
     public Canvas canvas;
     int w;
     int h;
@@ -116,7 +117,6 @@ public class DrawBoardGeneratorView extends View {
     }
     void refreshBorders(){
         for(int i = 0; i < board.length; ++i) {
-            float sizeX = startX;
             for (int z = 0; z < board.length; ++z) {
                 board[i][z].border.left = z == 0 || prpr[board.length*i+z-1] != prpr[board.length*i+z];
                 board[i][z].border.right = z == (board.length - 1) || prpr[board.length*i+z+1]!=prpr[board.length*i+z];
@@ -177,7 +177,7 @@ public class DrawBoardGeneratorView extends View {
                 possibleCells[board.length*(currentHighlighted[i].y)+currentHighlighted[i].x+1] = true;
         }
     }
-    void saveArea(){
+    boolean saveArea(){
         for(int i = 0; i < board.length;++i){
             currentHighlighted[i].drawCell.setFillColor(Color.YELLOW);
             prpr[currentHighlighted[i].y*board.length + currentHighlighted[i].x] = currentArea;
@@ -187,7 +187,9 @@ public class DrawBoardGeneratorView extends View {
         refreshPossibleCells();
         refreshBorders();
         invalidate();
+        return currentArea == board.length;
     }
+
     void deleteFromSequence(int x, int y){
         board[y][x].setFillColor(Color.WHITE);
         for(int i = 0; i < currentSize; ++i)
