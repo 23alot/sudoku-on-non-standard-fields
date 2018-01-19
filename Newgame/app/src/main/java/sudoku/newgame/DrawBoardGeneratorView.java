@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.Display;
 import android.view.SurfaceHolder;
@@ -60,7 +61,6 @@ public class DrawBoardGeneratorView extends View {
 
     public DrawBoardGeneratorView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        Display display = getDisplay();
         this.context = context;
         p = new Paint();
     }
@@ -99,6 +99,9 @@ public class DrawBoardGeneratorView extends View {
         for(int i = 0; i < n*n;++i)
             prpr[i] = -1;
         float sizeY = startY;
+        Point size = new Point();
+        getDisplay().getSize(size);
+        w = size.x;
         float length = (w-2*10)/n;
         board = new DrawCell[n][n];
         for(int i = 0; i < n; ++i) {

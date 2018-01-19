@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -65,7 +66,6 @@ public class DrawView extends View{
 
     public DrawView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        Display display = getDisplay();
         this.context = context;
         p = new Paint();
     }
@@ -73,9 +73,10 @@ public class DrawView extends View{
     protected void onDraw(Canvas canvas) {
         canvas.drawColor(Color.WHITE);
         p.setColor(Color.BLACK);
-        if (board==null)
+        Log.d("onDraw","Вызвался");
+        if(board==null)
             creation();
-        board.draw(canvas,p);
+        board.draw(canvas, p);
     }
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -98,27 +99,27 @@ public class DrawView extends View{
             board = gson.fromJson(boardik,DrawBoard.class);
             return;
         }
-        if(area == null) {
-            area = new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    1, 1, 1, 1, 1, 1, 1, 1, 1,
-                    2, 2, 2, 2, 2, 2, 2, 2, 2,
-                    3, 3, 3, 3, 3, 3, 3, 3, 3,
-                    4, 4, 4, 4, 4, 4, 4, 4, 4,
-                    5, 5, 5, 5, 5, 5, 5, 5, 5,
-                    6, 6, 6, 6, 6, 6, 6, 6, 6,
-                    7, 7, 7, 7, 7, 7, 7, 7, 7,
-                    8, 8, 8, 8, 8, 8, 8, 8, 8};
+        boardik = sharedPreferences.getString("area",null);
+        if(boardik == null) {
+            area = new byte[] {0,0,0,1,1,1,2,2,2,
+                0,0,0,1,1,1,2,2,2,
+                0,0,0,1,1,1,2,2,2,
+                3,3,3,4,4,4,5,5,5,
+                3,3,3,4,4,4,5,5,5,
+                3,3,3,4,4,4,5,5,5,
+                6,6,6,7,7,7,8,8,8,
+                6,6,6,7,7,7,8,8,8,
+                6,6,6,7,7,7,8,8,8};
         }
-//        byte[] prpr = {0,0,0,1,1,1,2,2,2,
-//                0,0,0,1,1,1,2,2,2,
-//                0,0,0,1,1,1,2,2,2,
-//                3,3,3,4,4,4,5,5,5,
-//                3,3,3,4,4,4,5,5,5,
-//                3,3,3,4,4,4,5,5,5,
-//                6,6,6,7,7,7,8,8,8,
-//                6,6,6,7,7,7,8,8,8,
-//                6,6,6,7,7,7,8,8,8};
+        else {
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            area = gson.fromJson(boardik,byte[].class);
+        }
         int n = 9;
+        Point size = new Point();
+        getDisplay().getSize(size);
+        w = size.x;
         Algorithm algo = new Algorithm(new Structure((byte) n, area));
         Board bd = algo.create(50, 80, area);
         board = new DrawBoard(10,40,(w-2*10)/9,bd.areas,bd);

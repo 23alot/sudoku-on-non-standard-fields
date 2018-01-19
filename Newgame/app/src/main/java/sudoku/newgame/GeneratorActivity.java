@@ -2,13 +2,16 @@ package sudoku.newgame;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Created by sanya on 14.01.2018.
@@ -39,9 +42,16 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
         });
     }
     void startNewGame(){
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("area", db.prpr);
+        Intent intent = new Intent(this, GameActivity.class);
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("area",gson.toJson(db.prpr));
+        editor.apply();
         startActivity(intent);
+        finish();
     }
     void tutu(){
         db.focusOnCell(x,y, Color.BLUE);

@@ -100,7 +100,7 @@ public class Algorithm {
         solve();
     }
     private void solve(){
-        if(result!=null && !result.isMultiple)
+        if(result!=null && result.isMultiple)
             return;
         if(isBadEnd())
             return;
@@ -243,26 +243,29 @@ public class Algorithm {
         for(int i = 0; i < structure.N*structure.N; ++i)
             isVisited[i] = false;
         int pos = rnd.nextInt(structure.N*structure.N);
+        int t = 0;
         while (!(moves <= difficultyr && moves > difficultyl)){
+            t++;
             result = null;
             while(isVisited[pos])
                 pos = rnd.nextInt(structure.N*structure.N);
 
             isVisited[pos] = true;
             for(int i = 0; i < isVisited.length;++i)
-                if(finalSolution[i]!=-1) {
+                if(finalSolution[i]!=-1 && i != pos) {
                     delete(structure.getNode(finalSolution[i]));
                 }
             start();
 
             for(int i = isVisited.length-1; i >= 0 ;--i)
-                if(finalSolution[i]!=-1)
+                if(finalSolution[i]!=-1 && i != pos)
                     cover(structure.getNode(finalSolution[i]));
 
             if(!result.isMultiple) {
                 finalSolution[pos] = -1;
             }
-
+            else
+                System.out.println(22);
         }
         return new Board(structure.N,areas,finalSolution,answer);
     }
