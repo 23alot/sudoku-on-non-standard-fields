@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -116,7 +117,21 @@ public class DrawBoardGeneratorView extends View {
             }
             sizeY += length;
         }
-
+    }
+    void declineArea(){
+        currentArea--;
+        currentSize = 0;
+        for(int i = 0; i < board.length * board.length; ++i)
+            if(prpr[i] == currentArea) {
+                prpr[i] = -1;
+                board[i/board.length][i%board.length].setFillColor(Color.WHITE);
+            }
+        refreshBorders();
+        if(currentArea == 0) {
+            Log.d("Decline area", "Button invisible");
+            getRootView().findViewById(R.id.button51).setVisibility(INVISIBLE);
+        }
+        invalidate();
     }
     void refreshBorders(){
         for(int i = 0; i < board.length; ++i) {
@@ -136,7 +151,6 @@ public class DrawBoardGeneratorView extends View {
         int posy = (int)y/((w-2*10)/n);
         if(currentSize == n) {
             getRootView().findViewById(R.id.button50).setBackgroundColor(Color.RED);
-            invalidate();
             return;
         }
         if(posy < n && posx < n)
@@ -189,18 +203,63 @@ public class DrawBoardGeneratorView extends View {
         currentSize = 0;
         refreshPossibleCells();
         refreshBorders();
+        if(currentArea > 0) {
+            Log.d("Save area","Button visible");
+            getRootView().findViewById(R.id.button51).setVisibility(VISIBLE);
+        }
         invalidate();
         return currentArea == board.length;
     }
 
     void deleteFromSequence(int x, int y){
         board[y][x].setFillColor(Color.WHITE);
+        if(!checkDeleteFromSequence()){
+            Log.d("Delete highlighted", "Chain gap");
+            board[y][x].setFillColor(Color.BLUE);
+            return;
+        }
         for(int i = 0; i < currentSize; ++i)
             if(currentHighlighted[i].drawCell.getFillColor()==Color.WHITE) {
                 currentHighlighted[i] = currentHighlighted[--currentSize];
                 return;
             }
-        invalidate();
+    }
+    boolean checkDeleteFromSequence(){
+        int x = currentHighlighted[0].x;
+        int y = currentHighlighted[0].y;
+        for(int i = 0; i < board.length; ++i)
+            for(int z = 0; z < board.length; ++z)
+                isVisited[i][z] = board[z][i].getFillColor()!=Color.BLUE;
+        for(int i = 1; i < currentSize; ++i)
+            if(currentHighlighted[i].drawCell.getFillColor()==Color.BLUE) {
+                x = currentHighlighted[i].x;
+                y = currentHighlighted[i].y;
+                break;
+            }
+
+        counter = 1;
+        isFullHighlightedArea(x, y);
+        Log.d("Deleting from sequence",counter+"");
+        return counter == currentSize-1;
+    }
+    void isFullHighlightedArea(int x, int y){
+        isVisited[x][y] = true;
+        if(x-1 >= 0 && !isVisited[x-1][y]){
+            counter++;
+            isFullHighlightedArea(x-1, y);
+        }
+        if(x+1 < board.length && !isVisited[x+1][y]){
+            counter++;
+            isFullHighlightedArea(x+1, y);
+        }
+        if(y-1 >= 0 && !isVisited[x][y-1]){
+            counter++;
+            isFullHighlightedArea(x, y-1);
+        }
+        if(y+1 < board.length && !isVisited[x][y+1]){
+            counter++;
+            isFullHighlightedArea(x, y+1);
+        }
     }
     boolean checkCell(){
         for(int i = 0; i < board.length; ++i)
