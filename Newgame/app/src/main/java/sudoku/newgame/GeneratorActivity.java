@@ -111,6 +111,7 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
                                 return false;
                         }
                         editor.putInt("Difficulty", t);
+                        editor.putString("Boardik", null);
                         editor.apply();
                         startNewGame();
                         return true;
