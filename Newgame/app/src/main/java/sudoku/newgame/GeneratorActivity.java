@@ -99,13 +99,13 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
                         int t;
                         switch (item.getItemId()) {
                             case R.id.menuEasy:
-                                t = 3;
+                                t = 13;
                                 break;
                             case R.id.menuMedium:
                                 t = 8;
                                 break;
                             case R.id.menuHard:
-                                t = 13;
+                                t = 3;
                                 break;
                             default:
                                 return false;
