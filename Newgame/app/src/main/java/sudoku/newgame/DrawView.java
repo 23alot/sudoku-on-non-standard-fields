@@ -93,7 +93,7 @@ public class DrawView extends View{
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String boardik = sharedPreferences.getString("Boardik",null);
-        if(boardik!=null){
+        if(boardik != null){
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             board = gson.fromJson(boardik,DrawBoard.class);
@@ -120,8 +120,10 @@ public class DrawView extends View{
         Point size = new Point();
         getDisplay().getSize(size);
         w = size.x;
+        int difficulty = 81 - (20 + sharedPreferences.getInt("Difficulty",8));
         Algorithm algo = new Algorithm(new Structure((byte) n, area));
-        Board bd = algo.create(50, 80, area);
+        Log.d("Creation", difficulty+"");
+        Board bd = algo.create(difficulty-3, difficulty+2, area);
         board = new DrawBoard(10,40,(w-2*10)/9,bd.areas,bd);
     }
     boolean checkSudoku(){

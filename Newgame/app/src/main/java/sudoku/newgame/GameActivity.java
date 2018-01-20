@@ -53,14 +53,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 editor.putString("Boardik",null);
                 editor.apply();
                 db.creation();
-            }
-        });
-        button = findViewById(R.id.button21);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(GameActivity.this, GeneratorActivity.class);
-                startActivity(intent);
+                db.invalidate();
             }
         });
     }
