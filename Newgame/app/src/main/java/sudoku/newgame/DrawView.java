@@ -39,43 +39,71 @@ import sudoku.newgame.sudoku.Board;
  */
 
 public class DrawView extends View{
+    Point size;
+    Board bd;
     public DrawBoard board = null;
     Canvas canvas;
     byte[] area = null;
+    SharedPreferences sharedPreferences;
     int w;
     int h;
+    int n;
     Paint p;
     Context context;
     public DrawView(Context context){
         super(context);
         this.context = context;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        n = sharedPreferences.getInt("Dimension",9);
+        size = new Point();
         p = new Paint();
 
     }
     public DrawView(Context context, AttributeSet attrs) {
         super(context,attrs);
         this.context = context;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        n = sharedPreferences.getInt("Dimension",9);
+        size = new Point();
         p = new Paint();
     }
 
     public DrawView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        n = sharedPreferences.getInt("Dimension",9);
+        size = new Point();
         p = new Paint();
     }
 
     public DrawView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        n = sharedPreferences.getInt("Dimension",9);
+        size = new Point();
         p = new Paint();
     }
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawColor(Color.WHITE);
         p.setColor(Color.BLACK);
-        Log.d("onDraw","Вызвался");
         if(board==null)
             creation();
+        getDisplay().getSize(size);
+        if(size.x < size.y) {
+            if(board.board[0][0].length!=(w-2*10) / n) {
+                Log.d("onDraw", "Вызвался " + w);
+                w = size.x;
+                board.changeLength((w - 2 * 10) / n);
+            }
+        }
+        else if(w != size.y){
+            Log.d("onDraw","Вызвался");
+            w = size.y;
+            board.changeLength((w - 100) / n);
+        }
         board.draw(canvas, p);
     }
     @Override
@@ -116,18 +144,17 @@ public class DrawView extends View{
             Gson gson = builder.create();
             area = gson.fromJson(boardik,byte[].class);
         }
-        int n = 9;
         Point size = new Point();
         getDisplay().getSize(size);
         w = size.x;
-        int difficulty = 81 - (20 + sharedPreferences.getInt("Difficulty",8));
+        int difficulty = (20 + sharedPreferences.getInt("Difficulty",8))*n*n/81;
+        difficulty = n*n - difficulty;
         Algorithm algo = new Algorithm(new Structure((byte) n, area));
         Log.d("Creation", difficulty+"");
-        Board bd = algo.create(difficulty-3, difficulty+2, area);
-        board = new DrawBoard(10,40,(w-2*10)/9,bd.areas,bd);
+        bd = algo.create(difficulty-3, difficulty+2, area);
+        board = new DrawBoard(10,10,(w - 2 * 10)/n,bd.areas,bd,n);
     }
     boolean checkSudoku(){
-        int n = 9;
         for(int i = 0; i < n; ++i)
             for(int j = 0; j < n; ++j) {
                 if(!board.bd.cells[i][j].isCorrect())
@@ -139,11 +166,11 @@ public class DrawView extends View{
         board.refreshAll();
         invalidate();
     }
-    void focusOnCell(float x, float y, int color, int highlightColor){
+    void focusOnCell(float x, float y,int w, int color, int highlightColor){
         board.focusOnCell(x,y,w,color,highlightColor);
         invalidate();
     }
-    void setValue(float x, float y, String value){
+    void setValue(float x, float y,int w, String value){
         board.setValue(x,y,value,w);
         invalidate();
     }

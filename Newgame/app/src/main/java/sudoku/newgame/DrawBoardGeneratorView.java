@@ -2,10 +2,12 @@ package sudoku.newgame;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -28,6 +30,7 @@ import sudoku.newgame.sudoku.Board;
  */
 public class DrawBoardGeneratorView extends View {
     public DrawCell[][] board;
+    SharedPreferences sharedPreferences;
     public byte[] prpr;
     public Canvas canvas;
     int w;
@@ -36,6 +39,7 @@ public class DrawBoardGeneratorView extends View {
     boolean[] possibleCells;
     CellPosition[] currentHighlighted;
     int counter;
+    int n;
     byte currentArea = 0;
     float startY = 40;
     float startX = 10;
@@ -45,24 +49,32 @@ public class DrawBoardGeneratorView extends View {
     public DrawBoardGeneratorView(Context context){
         super(context);
         this.context = context;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        n = sharedPreferences.getInt("Dimension",9);
         p = new Paint();
 
     }
     public DrawBoardGeneratorView(Context context, AttributeSet attrs) {
         super(context,attrs);
         this.context = context;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        n = sharedPreferences.getInt("Dimension",9);
         p = new Paint();
     }
 
     public DrawBoardGeneratorView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        n = sharedPreferences.getInt("Dimension",9);
         p = new Paint();
     }
 
     public DrawBoardGeneratorView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        n = sharedPreferences.getInt("Dimension",9);
         p = new Paint();
     }
     @Override
@@ -71,7 +83,6 @@ public class DrawBoardGeneratorView extends View {
         p.setColor(Color.BLACK);
         if(board == null)
             creation();
-        int n = 9;
         for(int i = 0; i < n; ++i)
             for(int z = 0; z < n; ++z)
                 board[i][z].draw(p,canvas);
@@ -86,7 +97,6 @@ public class DrawBoardGeneratorView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
     }
     public void creation(){
-        int n = 9;
         isVisited = new boolean[n][n];
         currentHighlighted = new CellPosition[n];
         currentSize = 0;
@@ -146,7 +156,6 @@ public class DrawBoardGeneratorView extends View {
     public void focusOnCellMove(float x, float y, int color){
         x -= startX;
         y -= startY;
-        int n = 9;
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
         if(currentSize == n) {
@@ -177,7 +186,6 @@ public class DrawBoardGeneratorView extends View {
     public void focusOnCell(float x, float y, int color){
         x -= startX;
         y -= startY;
-        int n = 9;
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
         if(currentSize == n) {

@@ -14,7 +14,7 @@ public class DrawCell {
     int textColor;
     float startX;
     float startY;
-    float length;
+    public float length;
     public DrawCell(Border border, float startX, float startY, float length){
         this.border = border;
         this.length = length;
@@ -22,6 +22,11 @@ public class DrawCell {
         this.startY = startY;
         fillColor = Color.WHITE;
         textColor = Color.BLACK;
+    }
+    public void changeLength(float startX, float startY, float length){
+        this.startX = startX;
+        this.startY = startY;
+        this.length = length;
     }
     public void draw(Paint p, Canvas canvas){
         p.setStrokeWidth(2);

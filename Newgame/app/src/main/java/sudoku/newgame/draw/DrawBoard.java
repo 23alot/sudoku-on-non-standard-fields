@@ -20,39 +20,50 @@ public class DrawBoard {
     public float startY;
     public byte[] structure;
     Paint p;
-    public DrawBoard(float startX, float startY, float length, byte[] structure, Board bd){
+    int n;
+    public DrawBoard(float startX, float startY, float length, byte[] structure, Board bd, int n){
         p = new Paint();
+        this.n = n;
         this.startX = startX;
         this.startY = startY;
         this.bd = bd;
         this.structure = structure;
         float sizeY = startY;
-        board = new DrawCell[9][9];
-        for(int i = 0; i < 9; ++i){
+        board = new DrawCell[n][n];
+        for(int i = 0; i < n; ++i){
             float sizeX = startX;
-            for(int z = 0; z < 9;++z){
-                board[i][z] = new DrawCell(new Border(z%9==0 || structure[9*i+z-1]!=structure[9*i+z],
-                        z%9==8 || structure[9*i+z+1]!=structure[9*i+z],
-                        i%9==0 || structure[9*i+z-9]!=structure[9*i+z],
-                        i%9==8 || structure[9*i+z+9]!=structure[9*i+z]),
+            for(int z = 0; z < n;++z){
+                board[i][z] = new DrawCell(new Border(z%n==0 ||
+                        structure[n*i+z-1]!=structure[n*i+z],
+                        z%n==(n-1) || structure[n*i+z+1]!=structure[n*i+z],
+                        i%n==0 || structure[n*i+z-n]!=structure[n*i+z],
+                        i%n==(n-1) || structure[n*i+z+n]!=structure[n*i+z]),
                         sizeX,sizeY,length);
                 sizeX+=length;
             }
             sizeY+=length;
         }
-
-
+    }
+    public void changeLength(float length){
+        float sizeY = startY;
+        for(int i = 0; i < n; ++i){
+            float sizeX = startX;
+            for(int z = 0; z < n;++z){
+                board[i][z].changeLength(sizeX,sizeY,length);
+                sizeX+=length;
+            }
+            sizeY+=length;
+        }
     }
 
     public void draw(Canvas canvas, Paint paint){
-        int n = 9;
 
         for(int i = 0; i < n; ++i)
             for(int z = 0; z < n; ++z)
                 board[i][z].draw(paint,canvas);
 
-        for(int i = 0; i < 9; ++i){
-            for(int z = 0; z < 9;++z){
+        for(int i = 0; i < n; ++i){
+            for(int z = 0; z < n;++z){
                 board[i][z].drawBoard(paint,canvas);
                 if(bd.cells[i][z].isInput) {
                     board[i][z].setTextColor(Color.BLACK);
@@ -72,7 +83,6 @@ public class DrawBoard {
     public void focusOnCell(float x, float y, int w, int color, int highlightColor){
         x -= startX;
         y -= startY;
-        int n = 9;
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
         if(posy < n && posx < n) {
@@ -81,32 +91,33 @@ public class DrawBoard {
         }
     }
     public void refreshAll(){
-        for(int i = 0; i < bd.N; ++i)
-            for(int j = 0; j < bd.N; ++j)
+        for(int i = 0; i < n; ++i)
+            for(int j = 0; j < n; ++j)
                     board[i][j].setFillColor(Color.WHITE);
     }
     void highlightCell(int x, int y, int highlightColor){
         int value = bd.cells[y][x].value;
         if(value == -1)
             return;
-        for(int i = 0; i < bd.N; ++i)
-            for(int j = 0; j < bd.N; ++j) {
+        for(int i = 0; i < n; ++i)
+            for(int j = 0; j < n; ++j) {
                 if (bd.cells[i][j].value == value) {
                     if(!(i==y && j==x))
                         board[i][j].setFillColor(highlightColor);
-                    if ((i == y && j != x) || (i != y && j == x) || (i != y && j != x && bd.areas[bd.N * y + x] == bd.areas[bd.N * i + j]))
+                    if ((i == y && j != x) || (i != y && j == x) ||
+                            (i != y && j != x && bd.areas[n * y + x] == bd.areas[n * i + j]))
                         board[y][x].setFillColor(Color.rgb(255, 204, 204));
                 }
-                else if(i==y || j==x || bd.areas[bd.N * y + x] == bd.areas[bd.N * i + j])
+                else if(i==y || j==x || bd.areas[n * y + x] == bd.areas[n * i + j])
                     board[i][j].setFillColor(highlightColor);
             }
     }
     private boolean isCorrect(int x, int y){
-        for(int i = 0; i < bd.N; ++i)
-            for(int j = 0; j < bd.N; ++j)
+        for(int i = 0; i < n; ++i)
+            for(int j = 0; j < n; ++j)
                 if(bd.cells[i][j].value==bd.cells[x][y].value){
                     if(!(x==i&&y==j)) {
-                        if (bd.areas[bd.N * x + y] == bd.areas[bd.N * i + j])
+                        if (bd.areas[n * x + y] == bd.areas[n * i + j])
                             return false;
                         if (x == i || y == j)
                             return false;
@@ -117,7 +128,6 @@ public class DrawBoard {
     public void setValue(float x, float y, String value, int w){
         x -= startX;
         y -= startY;
-        int n = 9;
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
         if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
