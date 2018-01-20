@@ -40,6 +40,15 @@ public class MainActivity extends Activity{
                 startActivity(intent);
             }
         });
+        bt = findViewById(R.id.dimensionButton);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, DimensionActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
     @Override
     protected void onPause() {
