@@ -1,5 +1,7 @@
 package sudoku.newgame.dancinglinks;
 
+import android.util.Log;
+
 import sudoku.newgame.sudoku.Board;
 import sudoku.newgame.sudoku.Cell;
 
@@ -236,7 +238,9 @@ public class Algorithm {
         }
     }
     public Board create(int difficultyl, int difficultyr, byte[] areas){
+        Log.d("Algorithm","Algo started");
         start();
+        Log.d("Algorithm","Algo finished");
         int[][] answer = toArray();
         int[] finalSolution = result.solution.clone();
         boolean[] isVisited= new boolean[structure.N*structure.N];
@@ -244,7 +248,9 @@ public class Algorithm {
             isVisited[i] = false;
         int pos = rnd.nextInt(structure.N*structure.N);
         int t = 0;
+        Log.d("Algorithm","Pre loop");
         while (!(moves <= difficultyr && moves > difficultyl)){
+            Log.d("Algorithm", moves+" moves");
             t++;
             result = null;
             while(isVisited[pos])
@@ -264,8 +270,6 @@ public class Algorithm {
             if(!result.isMultiple) {
                 finalSolution[pos] = -1;
             }
-            else
-                System.out.println(22);
         }
         return new Board(structure.N,areas,finalSolution,answer);
     }
