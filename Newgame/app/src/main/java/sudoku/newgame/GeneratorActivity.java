@@ -69,6 +69,9 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
     void tutu(){
         db.focusOnCell(x,y, Color.BLUE);
     }
+    void tutuMove(){
+        db.focusOnCellMove(x,y, Color.BLUE);
+    }
     @Override
     public boolean onTouch(View v, MotionEvent event){
         x = event.getX();
@@ -78,7 +81,7 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
                 tutu();
                 break;
             case MotionEvent.ACTION_MOVE: // движение
-                //
+                tutuMove();
                 break;
             case MotionEvent.ACTION_UP: // отпускание
             case MotionEvent.ACTION_CANCEL:

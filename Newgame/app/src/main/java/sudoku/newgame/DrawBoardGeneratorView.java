@@ -143,6 +143,37 @@ public class DrawBoardGeneratorView extends View {
             }
         }
     }
+    public void focusOnCellMove(float x, float y, int color){
+        x -= startX;
+        y -= startY;
+        int n = 9;
+        int posx = (int)x/((w-2*10)/n);
+        int posy = (int)y/((w-2*10)/n);
+        if(currentSize == n) {
+            getRootView().findViewById(R.id.button50).setBackgroundColor(Color.RED);
+            return;
+        }
+        if(posy < n && posx < n)
+        {
+            if(board[posy][posx].getFillColor()!=Color.WHITE)
+                return;
+            if(!(possibleCells[board.length*posy+posx]||(currentSize==0 && board[posy][posx].getFillColor()==Color.WHITE))){
+                Toast.makeText(context, "Не в ту степь", Toast.LENGTH_LONG).show();
+                return;
+            }
+            currentHighlighted[currentSize++] = new CellPosition(posx,posy,board[posy][posx]);
+            board[posy][posx].setFillColor(color);
+            refreshPossibleCells();
+        }
+        if(currentSize == n) {
+            if(!checkCell())
+                Toast.makeText(context, "Такая себе поляна", Toast.LENGTH_LONG).show();
+            else
+                getRootView().findViewById(R.id.button50).setVisibility(VISIBLE);
+
+        }
+        invalidate();
+    }
     public void focusOnCell(float x, float y, int color){
         x -= startX;
         y -= startY;
