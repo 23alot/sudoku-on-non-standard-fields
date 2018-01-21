@@ -174,4 +174,8 @@ public class DrawView extends View{
         board.setValue(x,y,value,w);
         invalidate();
     }
+    void setPencilValue(float x, float y, String value){
+        board.setPencilValue(x,y,value);
+        invalidate();
+    }
 }

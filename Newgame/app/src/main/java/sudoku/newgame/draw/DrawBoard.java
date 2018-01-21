@@ -3,6 +3,7 @@ package sudoku.newgame.draw;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,6 +77,8 @@ public class DrawBoard {
                         board[i][z].setTextColor(Color.RED);
                     board[i][z].writeText(paint, canvas, bd.cells[i][z].value);
                 }
+                else
+                    board[i][z].writePossibleValues(paint, canvas, bd.cells[i][z].possibleValues);
             }
         }
     }
@@ -83,8 +86,9 @@ public class DrawBoard {
     public void focusOnCell(float x, float y, int w, int color, int highlightColor){
         x -= startX;
         y -= startY;
-        int posx = (int)x/((w-2*10)/n);
-        int posy = (int)y/((w-2*10)/n);
+        float length = board[0][0].length;
+        int posx = (int)(x/(length));
+        int posy = (int)(y/(length));
         if(posy < n && posx < n) {
             board[posy][posx].setFillColor(color);
             highlightCell(posx,posy,highlightColor);
@@ -128,10 +132,24 @@ public class DrawBoard {
     public void setValue(float x, float y, String value, int w){
         x -= startX;
         y -= startY;
-        int posx = (int)x/((w-2*10)/n);
-        int posy = (int)y/((w-2*10)/n);
+        float length = board[0][0].length;
+        int posx = (int)(x/(length));
+        int posy = (int)(y/(length));
         if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
             bd.cells[posy][posx].value = Byte.valueOf(value);
+            highlightCell(posx,posy,Color.rgb(153,204,255));
+        }
+    }
+    public void setPencilValue(float x, float y, String value){
+        x -= startX;
+        y -= startY;
+        float length = board[0][0].length;
+        int posx = (int)(x/(length));
+        int posy = (int)(y/(length));
+        if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
+            Log.d("setPencilValue","Setting pencil value");
+            bd.cells[posy][posx].possibleValues[Byte.valueOf(value)-1] =
+                    !bd.cells[posy][posx].possibleValues[Byte.valueOf(value)-1];
             highlightCell(posx,posy,Color.rgb(153,204,255));
         }
     }

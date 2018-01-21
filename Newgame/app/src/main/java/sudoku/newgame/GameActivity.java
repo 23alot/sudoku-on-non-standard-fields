@@ -21,6 +21,7 @@ import sudoku.newgame.draw.DrawCell;
 import sudoku.newgame.sudoku.Cell;
 
 public class GameActivity extends Activity implements View.OnTouchListener {
+    boolean isPen;
     private Button mbutton;
     private Cell focusedCell = null;
     private DrawCell focusedDrawCell = null;
@@ -33,6 +34,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isPen = false;
         Point size = new Point();
         Display display = getWindowManager().getDefaultDisplay();
         display.getSize(size);
@@ -139,9 +141,16 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             @Override
             public void onClick(View view) {
                 db.refreshAll();
-                db.setValue(x,y,w,(String)((Button)view).getText());
-                if(db.checkSudoku())
-                    Toast.makeText(GameActivity.this, "Судоку решено верно", Toast.LENGTH_LONG).show();
+                if(isPen) {
+                    db.setValue(x, y, w, (String) ((Button) view).getText());
+                    if (db.checkSudoku())
+                        Toast.makeText(GameActivity.this, "Судоку решено верно",
+                                Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Log.d("Button click","Pencil click");
+                    db.setPencilValue(x, y, (String) ((Button) view).getText());
+                }
             }
         };
     }
