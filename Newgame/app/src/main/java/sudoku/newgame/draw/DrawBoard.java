@@ -105,6 +105,8 @@ public class DrawBoard {
             return;
         for(int i = 0; i < n; ++i)
             for(int j = 0; j < n; ++j) {
+                if(j == x || i == y || bd.areas[n * y + x] == bd.areas[n * i + j])
+                    bd.cells[i][j].possibleValues[value-1] = false;
                 if (bd.cells[i][j].value == value) {
                     if(!(i==y && j==x))
                         board[i][j].setFillColor(highlightColor);
