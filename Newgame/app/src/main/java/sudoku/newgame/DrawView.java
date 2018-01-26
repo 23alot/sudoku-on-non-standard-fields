@@ -118,6 +118,7 @@ public class DrawView extends View{
             return gson.toJson(board);
     }
     public void creation(){
+        long start = System.currentTimeMillis();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String boardik = sharedPreferences.getString("Boardik",null);
@@ -140,6 +141,7 @@ public class DrawView extends View{
                 6,6,6,7,7,7,8,8,8};
         }
         else {
+            Log.d("creation","area from preferences");
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             area = gson.fromJson(boardik,byte[].class);
@@ -150,9 +152,47 @@ public class DrawView extends View{
         int difficulty = (20 + sharedPreferences.getInt("Difficulty",8))*n*n/81;
         difficulty = n*n - difficulty;
         Algorithm algo = new Algorithm(new Structure((byte) n, area));
-        Log.d("Creation", difficulty+"");
-        bd = algo.create(difficulty-3, difficulty+2, area);
+        Log.d("Creation", "Difficulty " + difficulty);
+        Creation[] threads = new Creation[6];
+        for(int i = 0; i < 6; ++i){
+            threads[i] = new Creation(difficulty,area,i%4);
+            threads[i].start();
+        }
+        outerloop:
+        while(true){
+            for(int i = 0; i < 6;++i){
+                if(threads[i].algorithm.isDone){
+                    Log.d("Threads",i + " thread");
+                    //bd = threads[i].bd;
+                    Log.d("Threads",bd + "");
+//                    for(int z = 0; z < 4; ++z){
+//                        threads[z].interrupt();
+//                    }
+                    break outerloop;
+                }
+            }
+        }
+        Log.d("Creation",bd+"");
         board = new DrawBoard(10,10,(w - 2 * 10)/n,bd.areas,bd,n);
+        Toast.makeText(context,System.currentTimeMillis()-start+"",Toast.LENGTH_SHORT).show();
+    }
+    class Creation extends Thread {
+        Algorithm algorithm;
+        Board board;
+        int q;
+        int difficulty;
+        public Creation(int difficulty, byte[] area, int q){
+            algorithm = new Algorithm(new Structure((byte) n, area));
+            this.q = q;
+            this.difficulty = difficulty;
+        }
+        @Override
+        public void run(){
+            board = algorithm.create(difficulty-3,difficulty+7,area,q*n*n);
+            if(board!=null)
+                bd = board;
+            algorithm.isDone = true;
+        }
     }
     boolean checkSudoku(){
         for(int i = 0; i < n; ++i)
@@ -173,6 +213,9 @@ public class DrawView extends View{
     void setValue(float x, float y,int w, String value){
         board.setValue(x,y,value,w);
         invalidate();
+    }
+    void clearPencil(float x, float y, int w){
+        board.clearPencil(x,y);
     }
     void setPencilValue(float x, float y, String value){
         board.setPencilValue(x,y,value);

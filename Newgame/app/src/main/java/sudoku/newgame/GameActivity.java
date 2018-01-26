@@ -140,6 +140,21 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
         });
         fl.addView(penButton);
+        final Button clearButton = new Button(getApplicationContext());
+        viewParams = new FrameLayout.LayoutParams(width,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        clearButton.setLayoutParams(viewParams);
+        clearButton.setY(size.y - 100 - 3*width);
+        clearButton.setX(size.x - 400);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.refreshAll();
+                db.setValue(x, y, w, "-1");
+                db.clearPencil(x,y,w);
+            }
+        });
+        fl.addView(clearButton);
     }
     @Override
     protected void onPause() {
@@ -157,8 +172,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                db.refreshAll();
                 if(isPen) {
+                    db.refreshAll();
                     db.setValue(x, y, w, (String) ((Button) view).getText());
                     if (db.checkSudoku())
                         Toast.makeText(GameActivity.this, "Судоку решено верно",
@@ -175,6 +190,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         db.focusOnCell(x,y,w,Color.WHITE,Color.WHITE);
     }
     void tutu(){
+        db.refreshAll();
         db.focusOnCell(x,y,w,Color.rgb(150,150,150),Color.rgb(153,204,255));
     }
     @Override

@@ -10,16 +10,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Created by boscatov on 02.12.2017.
- */
 public class Algorithm {
+    public boolean isDone = false;
+    private long startTime;
     private Random rnd = new Random();
     private int moves;
     private Structure structure;
     private int[] solution;
     private int solutionCounter;
     private Solution result = null;
+    int q = 0;
     /**
      * Main constructor
      * @param structure of sudoku
@@ -58,17 +58,41 @@ public class Algorithm {
         return t;
     }
     private HeadNode findMinNode(){
-        int d = findMinValue();
-        List<HeadNode> result = new ArrayList<>();
+        int d =structure.N+1;
+        int t = 1;
         HeadNode temp = (HeadNode)structure.root.right;
         while(temp!=structure.root) {
-            if (!temp.deleted && length(temp) == d) {
-                result.add(temp);
+            if(!temp.deleted){
+                int k = length(temp);
+                if(k == d){
+                    t++;
+                }
+                if (k < d) {
+                    t = 1;
+                    d = k;
+                }
             }
             temp = (HeadNode)temp.right;
         }
 
-        return result.get(rnd.nextInt(result.size()));
+        return getRandomMinNode(d,t,0);
+    }
+    private HeadNode getRandomMinNode(int d, int t, int q) {
+        HeadNode temp = (HeadNode)structure.root.right;
+        int r = -1;
+        t = q + rnd.nextInt(t);
+        while(temp!=structure.root) {
+            if(!temp.deleted){
+                int k = length(temp);
+                if(k == d){
+                    r++;
+                    if(r == t)
+                        return temp;
+                }
+            }
+            temp = (HeadNode)temp.right;
+        }
+        return null;
     }
     private int findMinValue(){
         int d = structure.N + 1;
@@ -97,9 +121,49 @@ public class Algorithm {
         solutionCounter = 0;
         moves = 0;
     }
+    private void startFirst(int q){
+        refresh();
+        Node temp = getRandomMinNode(structure.N,structure.N*structure.N,q).down;
+        delete(temp);
+        moves++;
+        solution[solutionCounter++] = temp.leftHead.position;
+        findFirstSolution();
+    }
     public void start(){
         refresh();
         solve();
+    }
+    private void findFirstSolution(){
+        if(System.currentTimeMillis()-startTime > 3000)
+            return;
+        if(result!=null)
+            return;
+        if(isBadEnd()) {
+            q++;
+            return;
+        }
+        if(isEnd()) {
+            Log.d("findFirstSolution","End " + q);
+            if(result == null)
+                result = new Solution(moves,solution,false);
+            else
+                result.isMultiple = true;
+            return;
+        }
+
+        HeadNode deleted = findMinNode();
+        Node temp = deleted.down;
+        while(temp!=deleted){
+            delete(temp);
+            moves++;
+            solution[solutionCounter++] = temp.leftHead.position;
+            findFirstSolution();
+            cover(temp);
+            solutionCounter--;
+            if(result!=null)
+                return;
+            temp = temp.down;
+        }
     }
     private void solve(){
         if(result!=null && result.isMultiple)
@@ -107,6 +171,7 @@ public class Algorithm {
         if(isBadEnd())
             return;
         if(isEnd()) {
+            //Log.d("solve","End");
             if(result == null)
                 result = new Solution(moves,solution,false);
             else
@@ -123,6 +188,8 @@ public class Algorithm {
             solve();
             cover(temp);
             solutionCounter--;
+            if(result!=null && result.isMultiple)
+                return;
             temp = temp.down;
         }
 
@@ -237,10 +304,14 @@ public class Algorithm {
             temp = temp.left;
         }
     }
-    public Board create(int difficultyl, int difficultyr, byte[] areas){
-        Log.d("Algorithm","Algo started");
-        start();
-        Log.d("Algorithm","Algo finished");
+    public Board create(int difficultyl, int difficultyr, byte[] areas,int q){
+        Log.d("Algorithm","Algo started ");
+        long a = System.currentTimeMillis();
+        startTime = a;
+        startFirst(q);
+        if(System.currentTimeMillis()-startTime > 3000)
+            return null;
+        Log.d("Algorithm","Algo finished " + (System.currentTimeMillis()-a));
         int[][] answer = toArray();
         int[] finalSolution = result.solution.clone();
         boolean[] isVisited= new boolean[structure.N*structure.N];
@@ -248,9 +319,9 @@ public class Algorithm {
             isVisited[i] = false;
         int pos = rnd.nextInt(structure.N*structure.N);
         int t = 0;
-        Log.d("Algorithm","Pre loop");
-        while (!(moves <= difficultyr && moves > difficultyl)){
-            Log.d("Algorithm", moves+" moves");
+        refresh();
+        while (!(moves <= difficultyr && moves > difficultyl && !result.isMultiple)){
+            //Log.d("Algorithm", moves+" moves");
             t++;
             result = null;
             while(isVisited[pos])
@@ -267,11 +338,23 @@ public class Algorithm {
                 if(finalSolution[i]!=-1 && i != pos)
                     cover(structure.getNode(finalSolution[i]));
 
-            if(!result.isMultiple) {
+            if(!result.isMultiple && moves <= difficultyr) {
                 finalSolution[pos] = -1;
             }
+            if(countVisited(isVisited) == structure.N*structure.N) {
+                Log.d("create", "All visited");
+                break;
+            }
         }
+        Log.d("Algorithm","Final moves " + moves);
         return new Board(structure.N,areas,finalSolution,answer);
+    }
+    private int countVisited(boolean[] isVisited){
+        int t = 0;
+        for(int i = 0; i < isVisited.length; ++i)
+            if(isVisited[i])
+                t++;
+        return t;
     }
     private int[][] toArray(){
         int[][] answer = new int[structure.N][structure.N];

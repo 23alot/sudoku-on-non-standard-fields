@@ -109,7 +109,7 @@ public class DrawBoard {
                     bd.cells[i][j].possibleValues[value-1] = false;
                 if (bd.cells[i][j].value == value) {
                     if(!(i==y && j==x))
-                        board[i][j].setFillColor(highlightColor);
+                        board[i][j].setFillColor(Color.GREEN);
                     if ((i == y && j != x) || (i != y && j == x) ||
                             (i != y && j != x && bd.areas[n * y + x] == bd.areas[n * i + j]))
                         board[y][x].setFillColor(Color.rgb(255, 204, 204));
@@ -140,6 +140,17 @@ public class DrawBoard {
         if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
             bd.cells[posy][posx].value = Byte.valueOf(value);
             highlightCell(posx,posy,Color.rgb(153,204,255));
+        }
+    }
+    public void clearPencil(float x, float y){
+        x -= startX;
+        y -= startY;
+        float length = board[0][0].length;
+        int posx = (int)(x/(length));
+        int posy = (int)(y/(length));
+        if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
+            for(int i = 0; i < bd.cells[posy][posx].possibleValues.length; ++i)
+            bd.cells[posy][posx].possibleValues[i] = false;
         }
     }
     public void setPencilValue(float x, float y, String value){
