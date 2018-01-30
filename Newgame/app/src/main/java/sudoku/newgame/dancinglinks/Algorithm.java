@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Algorithm {
-    public boolean isDone = false;
+    public boolean isFailed = false;
     private long startTime;
     private Random rnd = new Random();
     private int moves;
@@ -134,8 +134,9 @@ public class Algorithm {
         solve();
     }
     private void findFirstSolution(){
-        if(System.currentTimeMillis()-startTime > 3000)
+        if(System.currentTimeMillis()-startTime > 1000) {
             return;
+        }
         if(result!=null)
             return;
         if(isBadEnd()) {
@@ -162,6 +163,9 @@ public class Algorithm {
             solutionCounter--;
             if(result!=null)
                 return;
+            if(System.currentTimeMillis()-startTime > 1000) {
+                return;
+            }
             temp = temp.down;
         }
     }
@@ -305,13 +309,14 @@ public class Algorithm {
         }
     }
     public Board create(int difficultyl, int difficultyr, byte[] areas,int q){
-        Log.d("Algorithm","Algo started ");
-        long a = System.currentTimeMillis();
-        startTime = a;
+        //Log.d("Algorithm","Algo started ");
+        startTime = System.currentTimeMillis();
         startFirst(q);
-        if(System.currentTimeMillis()-startTime > 3000)
+        if(System.currentTimeMillis()-startTime > 1000) {
+            isFailed = true;
             return null;
-        Log.d("Algorithm","Algo finished " + (System.currentTimeMillis()-a));
+        }
+        //Log.d("Algorithm","Algo finished " + (System.currentTimeMillis()-startTime));
         int[][] answer = toArray();
         int[] finalSolution = result.solution.clone();
         boolean[] isVisited= new boolean[structure.N*structure.N];

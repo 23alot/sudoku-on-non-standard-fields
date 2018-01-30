@@ -39,8 +39,9 @@ import sudoku.newgame.sudoku.Board;
  */
 
 public class DrawView extends View{
+    boolean isDone = false;
     Point size;
-    Board bd;
+    volatile Board bd;
     public DrawBoard board = null;
     Canvas canvas;
     byte[] area = null;
@@ -87,25 +88,32 @@ public class DrawView extends View{
     }
     @Override
     protected void onDraw(Canvas canvas) {
+        Log.d("onDraw","draw begin "+w);
         canvas.drawColor(Color.WHITE);
         p.setColor(Color.BLACK);
         if(board==null)
             creation();
-        getDisplay().getSize(size);
-        if(size.x < size.y) {
+        if(w < h) {
             if(board.board[0][0].length!=(w-2*10) / n) {
                 Log.d("onDraw", "Вызвался " + w);
-                w = size.x;
                 board.changeLength((w - 2 * 10) / n);
             }
         }
-        else if(w != size.y){
-            Log.d("onDraw","Вызвался");
-            w = size.y;
+        else if(w != h){
             board.changeLength((w - 100) / n);
         }
         board.draw(canvas, p);
     }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        w = getMeasuredWidth();
+        h = getMeasuredHeight();
+        Log.d("onMeasure","w="+w+" h="+h);
+        setMeasuredDimension(w, h);
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         this.w = w;
@@ -146,12 +154,10 @@ public class DrawView extends View{
             Gson gson = builder.create();
             area = gson.fromJson(boardik,byte[].class);
         }
-        Point size = new Point();
-        getDisplay().getSize(size);
-        w = size.x;
         int difficulty = (20 + sharedPreferences.getInt("Difficulty",8))*n*n/81;
         difficulty = n*n - difficulty;
-        Algorithm algo = new Algorithm(new Structure((byte) n, area));
+        bd = null;
+        isDone = false;
         Log.d("Creation", "Difficulty " + difficulty);
         Creation[] threads = new Creation[6];
         for(int i = 0; i < 6; ++i){
@@ -160,8 +166,9 @@ public class DrawView extends View{
         }
         outerloop:
         while(true){
+            int t = 0;
             for(int i = 0; i < 6;++i){
-                if(threads[i].algorithm.isDone){
+                if(isDone){
                     Log.d("Threads",i + " thread");
                     //bd = threads[i].bd;
                     Log.d("Threads",bd + "");
@@ -170,6 +177,15 @@ public class DrawView extends View{
 //                    }
                     break outerloop;
                 }
+                if(threads[i].algorithm.isFailed){
+                    t++;
+                }
+                //Log.d("Thread loop","isDone="+threads[i].algorithm.isDone + " failed: " + t);
+            }
+            //Log.d("Thread loop","Failed: " + t);
+            if(t == 6){
+                Log.d("Loop threads","All threads failed");
+                creation();
             }
         }
         Log.d("Creation",bd+"");
@@ -189,9 +205,15 @@ public class DrawView extends View{
         @Override
         public void run(){
             board = algorithm.create(difficulty-3,difficulty+7,area,q*n*n);
-            if(board!=null)
+            Log.d("Thread","End of thread " + algorithm.isFailed + " " +isDone);
+            if(bd != null) {
+                Log.d("Thread "," "+bd);
+                return;
+            }
+            if(board != null) {
                 bd = board;
-            algorithm.isDone = true;
+                isDone = true;
+            }
         }
     }
     boolean checkSudoku(){
