@@ -3,6 +3,7 @@ package sudoku.newgame.draw;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 /**
  * Created by sanya on 13.01.2018.
@@ -14,7 +15,7 @@ public class DrawCell {
     int textColor;
     float startX;
     float startY;
-    float length;
+    public float length;
     public DrawCell(Border border, float startX, float startY, float length){
         this.border = border;
         this.length = length;
@@ -22,6 +23,11 @@ public class DrawCell {
         this.startY = startY;
         fillColor = Color.WHITE;
         textColor = Color.BLACK;
+    }
+    public void changeLength(float startX, float startY, float length){
+        this.startX = startX;
+        this.startY = startY;
+        this.length = length;
     }
     public void draw(Paint p, Canvas canvas){
         p.setStrokeWidth(2);
@@ -75,6 +81,74 @@ public class DrawCell {
         if(border.right){
             canvas.drawLine(startX+length,startY,startX+length,startY+length,p);
         }
+    }
+    void writePossibleValues(Paint paint, Canvas canvas, boolean[] possible){
+        paint.setColor(Color.GRAY);
+        paint.setTextSize(length/3-2);
+        int k = possible.length < 6? 2:3;
+        int r = possible.length - 2*k;
+        paint.setTextAlign(Paint.Align.LEFT);
+        int i = 0;
+        if(k == 2){
+            if(possible[i++])
+                canvas.drawText(i + "", startX + 10,
+                        startY + length / 3 - 10, paint);
+            if(possible[i++])
+                canvas.drawText(i + "", startX + 2*length/3 + 10,
+                        startY + length / 3 - 10, paint);
+            if(r!=0 && possible[i++])
+                canvas.drawText(i + "", startX + length/3 + 10,
+                        startY + 2 *length / 3 - 10, paint);
+            if(possible[i++])
+                canvas.drawText(i + "", startX + 10,
+                        startY + length - 10, paint);
+            if(possible[i++])
+                canvas.drawText(i + "", startX + 2*length/3 + 10,
+                        startY + length - 10, paint);
+            return;
+        }
+        if(possible[i++])
+            canvas.drawText(i + "", startX + 10,
+                    startY + length / 3 - 10, paint);
+        if(possible[i++])
+            canvas.drawText(i + "", startX + length/3 + 10,
+                    startY + length / 3 - 10, paint);
+        if(possible[i++])
+            canvas.drawText(i + "", startX + 2*length/3 + 10,
+                    startY + length / 3 - 10, paint);
+        if(r == 1) {
+            if (possible[i++])
+                canvas.drawText(i + "", startX + length / 3 + 10,
+                        startY + 2 * length / 3 - 10, paint);
+        }
+        else if(r == 2){
+            if(possible[i++])
+                canvas.drawText(i + "", startX + 10,
+                        startY + 2*length / 3 - 10, paint);
+            if(possible[i++])
+                canvas.drawText(i + "", startX + 2*length/3 + 10,
+                        startY + 2*length / 3 - 10, paint);
+        }
+        else if(r == 3){
+            if(possible[i++])
+                canvas.drawText(i + "", startX + 10,
+                        startY + 2*length / 3 - 10, paint);
+            if(possible[i++])
+                canvas.drawText(i + "", startX + length/3 + 10,
+                        startY + 2*length / 3 - 10, paint);
+            if(possible[i++])
+                canvas.drawText(i + "", startX + 2*length/3 + 10,
+                        startY + 2*length / 3 - 10, paint);
+        }
+        if(possible[i++])
+            canvas.drawText(i + "", startX + 10,
+                    startY + length - 10, paint);
+        if(possible[i++])
+            canvas.drawText(i + "", startX + length/3 + 10,
+                    startY + length - 10, paint);
+        if(possible[i++])
+            canvas.drawText(i + "", startX + 2*length/3 + 10,
+                    startY + length - 10, paint);
     }
     void writeText(Paint paint, Canvas canvas, Byte n){
         paint.setColor(textColor);

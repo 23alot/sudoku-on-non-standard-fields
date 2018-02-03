@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/framelayout"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <sudoku.newgame.DrawView
-        android:id="@+id/drawView"
+    <Button
+        android:id="@+id/gameButton"
         android:layout_width="match_parent"
-
-        android:layout_height="400dp" />
+        android:layout_height="wrap_content"
+        android:text="Game" />
 
     <Button
-        android:id="@+id/button20"
-        android:layout_width="wrap_content"
+        android:id="@+id/generatorButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:text="New game" />
-    <Button
-        android:id="@+id/button21"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
         android:text="Generator" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/dimensionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose dimensions" />
+</LinearLayout>

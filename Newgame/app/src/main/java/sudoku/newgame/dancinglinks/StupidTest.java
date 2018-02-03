@@ -57,7 +57,7 @@ public class StupidTest {
             long start = System.currentTimeMillis();
             byte n = 9;
             Algorithm algo = new Algorithm(new Structure((byte) 9, prpr));
-            Board bd = algo.create(55, 81, prpr);
+            Board bd = algo.create(55, 81, prpr,0);
             long finish = System.currentTimeMillis();
             System.out.println("time: " + (finish - start));
             time.add(finish - start);

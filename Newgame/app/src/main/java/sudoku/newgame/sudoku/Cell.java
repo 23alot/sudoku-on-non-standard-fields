@@ -6,7 +6,7 @@ package sudoku.newgame.sudoku;
 public class Cell {
     public byte value;
     public byte correctValue;
-    boolean[] possibleValues;
+    public boolean[] possibleValues;
     public boolean isInput;
     public Cell(int N){
         this.possibleValues = new boolean[N];

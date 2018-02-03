@@ -41,3 +41,14 @@ For the algorithm I have to choose *demands*. And here it is:
 **29.12.2017 14:00** Start working on the algorithmic part of the solution. 
 
 **11.01.2018** Finish the algorithmic part and start thinking how to store and compare sudoku boards.
+
+**15.01.2018** Finish highlighting cells methods. Looks ugly, but, for sure, it will be cool.
+
+**19.01.2018** Add the generator to project to create your own board.
+*Note: Yes, I now that when you tap wrong field you have to start from the very begging and I'll fix it. I hope so...*
+
+**20.01.2018** Add rotation support and dimension activity. Now we can choose a dimension of the field.
+
+**21.01.2018** Add pencil support. Now we can note possible variables on each cell.
+
+**24.01.2018** Add stupid concurrence to finding solution because on some fields it takes too much time to find solution.
