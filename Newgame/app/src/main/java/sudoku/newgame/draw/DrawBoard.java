@@ -45,6 +45,26 @@ public class DrawBoard {
             sizeY+=length;
         }
     }
+    public DrawBoard(float length, byte[] structure, int n) {
+        p = new Paint();
+        this.n = n;
+        this.structure = structure;
+        float sizeY = startY;
+        board = new DrawCell[n][n];
+        for(int i = 0; i < n; ++i){
+            float sizeX = startX;
+            for(int z = 0; z < n;++z){
+                board[i][z] = new DrawCell(new Border(z%n==0 ||
+                        structure[n*i+z-1]!=structure[n*i+z],
+                        z%n==(n-1) || structure[n*i+z+1]!=structure[n*i+z],
+                        i%n==0 || structure[n*i+z-n]!=structure[n*i+z],
+                        i%n==(n-1) || structure[n*i+z+n]!=structure[n*i+z]),
+                        sizeX,sizeY,length);
+                sizeX+=length;
+            }
+            sizeY+=length;
+        }
+    }
     public void changeLength(float length){
         float sizeY = startY;
         for(int i = 0; i < n; ++i){
@@ -81,6 +101,15 @@ public class DrawBoard {
                     board[i][z].writePossibleValues(paint, canvas, bd.cells[i][z].possibleValues);
             }
         }
+    }
+    public void drawBitmap(Canvas canvas, Paint paint) {
+        for(int i = 0; i < n; ++i)
+            for(int z = 0; z < n; ++z)
+                board[i][z].draw(paint,canvas);
+
+        for(int i = 0; i < n; ++i)
+            for(int z = 0; z < n;++z)
+                board[i][z].drawBoard(paint,canvas);
     }
 
     public void focusOnCell(float x, float y, int w, int color, int highlightColor){
