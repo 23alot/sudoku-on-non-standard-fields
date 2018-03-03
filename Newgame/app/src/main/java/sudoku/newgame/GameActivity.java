@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import org.w3c.dom.Attr;
+
 import sudoku.newgame.draw.DrawCell;
 import sudoku.newgame.sudoku.Cell;
 
@@ -74,6 +76,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             int i = 1;
             for(;i < r+1; ++i){
                 Button bt = new Button(getApplicationContext());
+                //bt.setBackgroundResource(R.drawable.val_button);
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         FrameLayout.LayoutParams.WRAP_CONTENT);
