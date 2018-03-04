@@ -50,7 +50,7 @@ public class BoardBitmap {
         }
         Arrays.sort(names);
         rearrangeFiles(names, context);
-
+        saveBitmap(names[0], bitmap, context);
     }
     private void rearrangeFiles(String[] names, Context context) {
         for(int i = names.length-2; i >= 0; --i) {

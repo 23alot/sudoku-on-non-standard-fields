@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.w3c.dom.Attr;
@@ -76,6 +77,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             int i = 1;
             for(;i < r+1; ++i){
                 Button bt = new Button(getApplicationContext());
+                bt.setBackgroundColor(Color.WHITE);
                 //bt.setBackgroundResource(R.drawable.val_button);
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
@@ -94,6 +96,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             int k = n%2==0?0:width/2;
             for(;i < n+1; ++i){
                 Button bt = new Button(getApplicationContext());
+                bt.setBackgroundColor(Color.WHITE);
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -121,32 +124,39 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setX(i * margin + (i-1)*width);
                 bt.setHeight(width);
                 bt.setY(size.y - 100 - width);
+                bt.setElevation(10);
+                bt.setTranslationZ(10);
+                bt.setBackgroundColor(Color.WHITE);
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
                 fl.addView(bt);
             }
         }
-        final Button penButton = new Button(getApplicationContext());
+        final ImageButton penButton = new ImageButton(getApplicationContext());
         FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
-                FrameLayout.LayoutParams.WRAP_CONTENT);
+                width);
         penButton.setLayoutParams(viewParams);
         penButton.setY(size.y - 100 - 3*width);
         penButton.setX(size.x - 200);
+        penButton.setBackgroundResource(R.drawable.pencil);
         penButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(isPen)
-                    penButton.setBackgroundColor(Color.RED);
+                    penButton.setBackgroundResource(R.drawable.pencil);
+                    //penButton.setBackgroundColor(Color.RED);
                 else
-                    penButton.setBackgroundColor(Color.BLUE);
+                    penButton.setBackgroundResource(R.drawable.pen);
+                    //penButton.setBackgroundColor(Color.BLUE);
                 isPen = !isPen;
             }
         });
         fl.addView(penButton);
         final Button clearButton = new Button(getApplicationContext());
         viewParams = new FrameLayout.LayoutParams(width,
-                FrameLayout.LayoutParams.WRAP_CONTENT);
+                width);
         clearButton.setLayoutParams(viewParams);
+        clearButton.setBackgroundResource(R.drawable.eraser);
         clearButton.setY(size.y - 100 - 3*width);
         clearButton.setX(size.x - 400);
         clearButton.setOnClickListener(new View.OnClickListener() {
