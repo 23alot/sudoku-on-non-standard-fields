@@ -31,35 +31,35 @@
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:contentDescription="add new"
-                    app:srcCompat="@drawable/plus" />
+                    android:src="@drawable/plus" />
 
                     <ImageView
                         android:id="@+id/imageView2"
                         android:layout_below="@+id/imageView0"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/empty"
+                        android:src="@drawable/empty"
                         android:adjustViewBounds="true"/>
                     <ImageView
                         android:id="@+id/imageView4"
                         android:layout_below="@+id/imageView2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/empty"
+                        android:src="@drawable/empty"
                         android:adjustViewBounds="true"/>
                     <ImageView
                         android:id="@+id/imageView6"
                         android:layout_below="@+id/imageView4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/empty"
+                        android:src="@drawable/empty"
                         android:adjustViewBounds="true"/>
                     <ImageView
                         android:id="@+id/imageView8"
                         android:layout_below="@+id/imageView6"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/empty"
+                        android:src="@drawable/empty"
                         android:adjustViewBounds="true"/>
                 <!--</LinearLayout>-->
             </RelativeLayout>
@@ -77,35 +77,35 @@
                         android:id="@+id/imageView1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/empty"
+                        android:src="@drawable/empty"
                         android:adjustViewBounds="true"/>
                     <ImageView
                         android:id="@+id/imageView3"
                         android:layout_below="@+id/imageView1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/empty"
+                        android:src="@drawable/empty"
                         android:adjustViewBounds="true"/>
                     <ImageView
                         android:id="@+id/imageView5"
                         android:layout_below="@+id/imageView3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/empty"
+                        android:src="@drawable/empty"
                         android:adjustViewBounds="true"/>
                     <ImageView
                         android:id="@+id/imageView7"
                         android:layout_below="@+id/imageView5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/empty"
+                        android:src="@drawable/empty"
                         android:adjustViewBounds="true"/>
                     <ImageView
                         android:id="@+id/imageView9"
                         android:layout_below="@+id/imageView7"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/empty"
+                        android:src="@drawable/empty"
                         android:adjustViewBounds="true"/>
                 <!--</LinearLayout>-->
             </RelativeLayout>
