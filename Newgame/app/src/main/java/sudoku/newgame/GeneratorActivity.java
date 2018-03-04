@@ -1,6 +1,7 @@
 package sudoku.newgame;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -36,7 +37,7 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_board);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences = this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         db = findViewById(R.id.drawBoardGeneratorView);
         db.setOnTouchListener(this);

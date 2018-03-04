@@ -129,6 +129,7 @@ public class DrawView extends View{
         long start = System.currentTimeMillis();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences sp = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         String boardik = sharedPreferences.getString("Boardik",null);
         if(boardik != null){
             GsonBuilder builder = new GsonBuilder();
@@ -136,7 +137,7 @@ public class DrawView extends View{
             board = gson.fromJson(boardik,DrawBoard.class);
             return;
         }
-        boardik = sharedPreferences.getString("area",null);
+        boardik = sp.getString("area", null);
         if(boardik == null) {
             area = new byte[] {0,0,0,1,1,1,2,2,2,
                 0,0,0,1,1,1,2,2,2,

@@ -31,7 +31,7 @@ public class DrawCell {
     }
     public void draw(Paint p, Canvas canvas){
         p.setStrokeWidth(2);
-        p.setColor(Color.GRAY);
+        p.setColor(Color.rgb(207,207,207));
         if(!border.up){
             canvas.drawLine(startX,startY,startX+length,startY,p);
         }

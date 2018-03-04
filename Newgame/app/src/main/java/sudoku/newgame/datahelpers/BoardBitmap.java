@@ -1,11 +1,16 @@
 package sudoku.newgame.datahelpers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,8 +18,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 
+import sudoku.newgame.BoardsActivity;
+import sudoku.newgame.GameActivity;
 import sudoku.newgame.draw.DrawBoard;
 import sudoku.newgame.sudoku.Board;
 
@@ -24,10 +32,13 @@ import sudoku.newgame.sudoku.Board;
 
 public class BoardBitmap {
     DrawBoard db;
+    byte[] structure;
     int len;
     Bitmap myBitmap;
+    SharedPreferences sharedPreferences;
     public BoardBitmap(byte[] structure, int n, float length) {
         len = (int) (length - 3 * 20) >> 1;
+        this.structure = structure;
         float size = len / n;
         db = new DrawBoard(size, structure, n);
     }
@@ -86,6 +97,37 @@ public class BoardBitmap {
             rearrangeFiles(names, context);
         }
         saveBitmap("board0.bmp", myBitmap, context);
+        sharedPreferences = context.getSharedPreferences("Boards",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String data = sharedPreferences.getString("Array", null);
+        if(data == null) {
+            editor.putString("Array", createDataArray());
+            editor.apply();
+        }
+        else {
+            editor.putString("Array", addToDataArray(data));
+            editor.apply();
+        }
+    }
+    private String addToDataArray(String data) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        byte[][] arr = gson.fromJson(data, byte[][].class);
+        for(int i = 7; i >= 0; --i) {
+            arr[i+1] = arr[i];
+        }
+        arr[0] = structure;
+        return gson.toJson(arr);
+    }
+    private String createDataArray() {
+        byte[][] arr = new byte[9][];
+        for(int i = 0; i < 9; ++i) {
+            arr[i] = null;
+        }
+        arr[0] = structure;
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        return gson.toJson(arr);
     }
     private void rearrangeFiles(String[] names, Context context) {
         int size = names.length == 9?names.length-2:names.length-1;
