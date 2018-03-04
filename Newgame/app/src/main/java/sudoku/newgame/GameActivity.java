@@ -1,6 +1,7 @@
 package sudoku.newgame;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -48,7 +49,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         setContentView(R.layout.game);
         db = findViewById(R.id.drawView);
         db.setOnTouchListener(this);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
+        sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         createButtons();
         Button button = findViewById(R.id.button20);
