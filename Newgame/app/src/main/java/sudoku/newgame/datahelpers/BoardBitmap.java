@@ -23,19 +23,20 @@ import sudoku.newgame.draw.DrawBoard;
 public class BoardBitmap {
     DrawBoard db;
     int len;
+    Bitmap myBitmap;
     public BoardBitmap(byte[] structure, int n, float length) {
-        len = (int) (length - n * 10) >> 1;
+        len = (int) (length - 3 * 20) >> 1;
         float size = len / n;
         db = new DrawBoard(size, structure, n);
     }
     public void toBitmap() {
-        Bitmap myBitmap = Bitmap.createBitmap( len, len, Bitmap.Config.RGB_565 );
+        myBitmap = Bitmap.createBitmap( len, len, Bitmap.Config.RGB_565 );
         Canvas canvas = new Canvas();
         canvas.setBitmap(myBitmap);
         Paint p = new Paint();
         db.drawBitmap(canvas, p);
     }
-    public void save(Context context, Bitmap bitmap) {
+    public void save(Context context) {
         File directory = context.getFilesDir();
         File[] files = directory.listFiles();
         String[] names = new String[files.length];
@@ -50,7 +51,7 @@ public class BoardBitmap {
         }
         Arrays.sort(names);
         rearrangeFiles(names, context);
-        saveBitmap(names[0], bitmap, context);
+        saveBitmap(names[0], myBitmap, context);
     }
     private void rearrangeFiles(String[] names, Context context) {
         for(int i = names.length-2; i >= 0; --i) {
