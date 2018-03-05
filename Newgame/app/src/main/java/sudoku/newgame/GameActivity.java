@@ -9,14 +9,19 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextClock;
 import android.widget.Toast;
 
 import org.w3c.dom.Attr;
@@ -29,6 +34,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     private Button mbutton;
     private Cell focusedCell = null;
     private DrawCell focusedDrawCell = null;
+    long stopTime;
     int w;
     float x;
     float y;
@@ -50,6 +56,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         db = findViewById(R.id.drawView);
         db.setOnTouchListener(this);
         sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        long time = sharedPreferences.getLong("Time", 0);
+        Chronometer ch = findViewById(R.id.chronometer2);
+        ch.setBase(SystemClock.elapsedRealtime() - time);
         editor = sharedPreferences.edit();
         createButtons();
         Button button = findViewById(R.id.button20);
@@ -60,6 +69,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 editor.apply();
                 db.creation();
                 db.invalidate();
+                Chronometer ch = findViewById(R.id.chronometer2);
+                Log.d("Chronometer time", ch.getBase()+"");
+                ch.setBase(SystemClock.elapsedRealtime());
             }
         });
     }
@@ -110,6 +122,13 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setOnClickListener(createOnClick());
                 fl.addView(bt);
             }
+            Chronometer clock = findViewById(R.id.chronometer2);
+            clock.setY(10+clock.getHeight());
+            clock.setTextSize(20);
+            clock.start();
+            clock.setHeight(100);
+            Button ng = findViewById(R.id.button20);
+            ng.setY(clock.getY() + 110);
         }
         else {
             int margin = 5;
@@ -132,13 +151,22 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setOnClickListener(createOnClick());
                 fl.addView(bt);
             }
+            Chronometer clock = findViewById(R.id.chronometer2);
+            clock.setTextSize(20);
+            clock.start();
+            clock.setY(size.x);
+            Button ng = findViewById(R.id.button20);
+            Log.d("Clock height", clock.getHeight()+"");
+            clock.setHeight(100);
+            ng.setY(clock.getY() + 110);
         }
         final ImageButton penButton = new ImageButton(getApplicationContext());
+        width = 100;
         FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                 width);
         penButton.setLayoutParams(viewParams);
-        penButton.setY(size.y - 100 - 3*width);
-        penButton.setX(size.x - 200);
+        penButton.setY(size.y - 100 - 3 * width);
+        penButton.setX(size.x - 150);
         penButton.setBackgroundResource(R.drawable.pencil);
         penButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,8 +186,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 width);
         clearButton.setLayoutParams(viewParams);
         clearButton.setBackgroundResource(R.drawable.eraser);
-        clearButton.setY(size.y - 100 - 3*width);
-        clearButton.setX(size.x - 400);
+        clearButton.setY(size.y - 100 - 3 * width);
+        clearButton.setX(size.x - 200 - 100);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,12 +201,16 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     @Override
     protected void onPause() {
         super.onPause();
+        Chronometer ch = findViewById(R.id.chronometer2);
+        Log.d("onPause", SystemClock.elapsedRealtime()-ch.getBase()+"");
+        ch.stop();
         if(!db.checkSudoku()) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             DrawView dw = findViewById(R.id.drawView);
             db.refreshAll();
             editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
+            editor.putLong("Time",SystemClock.elapsedRealtime() - ch.getBase());
             editor.apply();
         }
     }
@@ -226,5 +258,13 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         }
         return true;
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        long time = sharedPreferences.getLong("Time", 0);
+        Chronometer ch = findViewById(R.id.chronometer2);
+        Log.d("onResume", SystemClock.elapsedRealtime()-ch.getBase()+"");
+        ch.setBase(SystemClock.elapsedRealtime() - time);
+        ch.start();
+    }
 }

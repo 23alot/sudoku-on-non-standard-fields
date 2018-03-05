@@ -37,7 +37,7 @@ public class BoardBitmap {
     Bitmap myBitmap;
     SharedPreferences sharedPreferences;
     public BoardBitmap(byte[] structure, int n, float length) {
-        len = (int) (length - 3 * 20) >> 1;
+        len = (int) (length - 20) >> 1;
         this.structure = structure;
         float size = len / n;
         db = new DrawBoard(size, structure, n);
