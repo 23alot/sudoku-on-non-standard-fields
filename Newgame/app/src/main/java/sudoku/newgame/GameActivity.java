@@ -7,24 +7,17 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.hardware.display.DisplayManager;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextClock;
 import android.widget.Toast;
-
-import org.w3c.dom.Attr;
 
 import sudoku.newgame.draw.DrawCell;
 import sudoku.newgame.sudoku.Cell;
@@ -221,9 +214,16 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 if(isPen) {
                     db.refreshAll();
                     db.setValue(x, y, w, (String) ((Button) view).getText());
-                    if (db.checkSudoku())
+                    if (db.checkSudoku()) {
                         Toast.makeText(GameActivity.this, "Судоку решено верно",
                                 Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(GameActivity.this, CongratulationActivity.class);
+                        Chronometer ch = findViewById(R.id.chronometer2);
+                        long time = SystemClock.elapsedRealtime() - ch.getBase();
+                        intent.putExtra("Time", time);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
                 else {
                     Log.d("Button click","Pencil click");
