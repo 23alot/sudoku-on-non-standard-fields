@@ -19,6 +19,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import sudoku.newgame.draw.DrawCell;
 import sudoku.newgame.sudoku.Cell;
 
@@ -27,6 +30,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     private Button mbutton;
     private Cell focusedCell = null;
     private DrawCell focusedDrawCell = null;
+    private int difficulty;
+    private int board;
     long stopTime;
     int w;
     float x;
@@ -65,6 +70,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 Chronometer ch = findViewById(R.id.chronometer2);
                 Log.d("Chronometer time", ch.getBase()+"");
                 ch.setBase(SystemClock.elapsedRealtime());
+                gameStat();
             }
         });
     }
@@ -207,6 +213,45 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             editor.apply();
         }
     }
+    private void gameStat() {
+        SharedPreferences sp = GameActivity.this.getSharedPreferences("Statistics", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        String data = sp.getString("Array", null);
+        Stat[][] stat = gson.fromJson(data, Stat[][].class);
+        int n = sharedPreferences.getInt("Dimension", 9);
+        int dif = sharedPreferences.getInt("Difficulty", 8);
+        dif = (dif - 3) / 5;
+        stat[dif][n].numGames++;
+        editor.putString("Array", gson.toJson(stat));
+    }
+    private void winStat(long time) {
+        time /= 1000;
+        SharedPreferences sp = GameActivity.this.getSharedPreferences("Statistics", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        String data = sp.getString("Array", null);
+        Stat[][] stat = gson.fromJson(data, Stat[][].class);
+        int n = sharedPreferences.getInt("Dimension", 9);
+        int dif = sharedPreferences.getInt("Difficulty", 8);
+        dif = (dif - 3) / 5;
+        Stat cell = stat[dif][n-4];
+        long timing = cell.avgTime * cell.winGames;
+        if(timing == 0) {
+            timing = time;
+        }
+        cell.winGames++;
+        timing = (timing + time) / 2;
+        cell.avgTime = timing;
+        if(cell.bestTime > time || cell.bestTime == 0) {
+            cell.bestTime = time;
+        }
+        editor.putString("Array", gson.toJson(stat));
+        Log.d("winStat",n+" "+dif+" "+cell.avgTime);
+        editor.apply();
+    }
     View.OnClickListener createOnClick() {
         return new View.OnClickListener() {
             @Override
@@ -220,6 +265,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                         Intent intent = new Intent(GameActivity.this, CongratulationActivity.class);
                         Chronometer ch = findViewById(R.id.chronometer2);
                         long time = SystemClock.elapsedRealtime() - ch.getBase();
+                        winStat(time);
                         intent.putExtra("Time", time);
                         startActivity(intent);
                         finish();
