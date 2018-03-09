@@ -20,4 +20,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Choose dimensions" />
+
+    <Button
+        android:id="@+id/boardButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose board" />
 </LinearLayout>

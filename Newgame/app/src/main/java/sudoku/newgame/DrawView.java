@@ -2,6 +2,7 @@ package sudoku.newgame;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -54,7 +55,7 @@ public class DrawView extends View{
     public DrawView(Context context){
         super(context);
         this.context = context;
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         n = sharedPreferences.getInt("Dimension",9);
         size = new Point();
         p = new Paint();
@@ -63,7 +64,7 @@ public class DrawView extends View{
     public DrawView(Context context, AttributeSet attrs) {
         super(context,attrs);
         this.context = context;
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         n = sharedPreferences.getInt("Dimension",9);
         size = new Point();
         p = new Paint();
@@ -72,7 +73,7 @@ public class DrawView extends View{
     public DrawView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         n = sharedPreferences.getInt("Dimension",9);
         size = new Point();
         p = new Paint();
@@ -81,7 +82,7 @@ public class DrawView extends View{
     public DrawView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         n = sharedPreferences.getInt("Dimension",9);
         size = new Point();
         p = new Paint();
@@ -91,25 +92,34 @@ public class DrawView extends View{
         Log.d("onDraw","draw begin "+w);
         canvas.drawColor(Color.WHITE);
         p.setColor(Color.BLACK);
-        if(board==null)
+
+        //boolean newGame = sharedPreferences.getBoolean("New game",false);
+
+        if(board == null) {
             creation();
-        if(w < h) {
-            if(board.board[0][0].length!=(w-2*10) / n) {
-                Log.d("onDraw", "Вызвался " + w);
-                board.changeLength((w - 2 * 10) / n);
+        }
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if(board.board[0][0].length != (h - 2*10) / n) {
+                board.changeLength((h - 2*10) / n);
             }
+
         }
-        else if(w != h){
-            board.changeLength((w - 100) / n);
+        else if(board.board[0][0].length != (w-2*10) / n) {
+            board.changeLength((w - 2 * 10) / n);
         }
+
         board.draw(canvas, p);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        w = getMeasuredWidth();
-        h = getMeasuredHeight();
+        int w = getMeasuredWidth();
+        int h = getMeasuredHeight();
+        if(h < w) {
+            this.w = h;
+            this.h = w;
+        }
         Log.d("onMeasure","w="+w+" h="+h);
         setMeasuredDimension(w, h);
     }
@@ -127,8 +137,7 @@ public class DrawView extends View{
     }
     public void creation(){
         long start = System.currentTimeMillis();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+
         String boardik = sharedPreferences.getString("Boardik",null);
         if(boardik != null){
             GsonBuilder builder = new GsonBuilder();
@@ -136,7 +145,7 @@ public class DrawView extends View{
             board = gson.fromJson(boardik,DrawBoard.class);
             return;
         }
-        boardik = sharedPreferences.getString("area",null);
+        boardik = sharedPreferences.getString("area", null);
         if(boardik == null) {
             area = new byte[] {0,0,0,1,1,1,2,2,2,
                 0,0,0,1,1,1,2,2,2,

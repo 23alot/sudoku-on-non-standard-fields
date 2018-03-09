@@ -48,7 +48,14 @@ public class MainActivity extends Activity{
                 startActivity(intent);
             }
         });
-
+        bt = findViewById(R.id.boardButton);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, BoardsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
     @Override
     protected void onPause() {

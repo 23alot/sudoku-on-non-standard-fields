@@ -1,11 +1,14 @@
 package sudoku.newgame;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +18,8 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import sudoku.newgame.datahelpers.BoardBitmap;
 
 /**
  * Created by sanya on 14.01.2018.
@@ -32,7 +37,7 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_board);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences = this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         db = findViewById(R.id.drawBoardGeneratorView);
         db.setOnTouchListener(this);
@@ -58,14 +63,27 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
         });
     }
     void startNewGame(){
+        Point size = new Point();
+        Display display = getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        float w;
+        if(size.x < size.y)
+            w = size.x;
+        else
+            w = size.y;
+        BoardBitmap bitmap = new BoardBitmap(db.prpr,db.n,w);
+        bitmap.toBitmap();
+        bitmap.save(this);
         Intent intent = new Intent(this, GameActivity.class);
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
         editor.putString("area",gson.toJson(db.prpr));
+        //editor.putBoolean("New game", true);
         editor.apply();
         startActivity(intent);
         finish();
     }
+
     void tutu(){
         db.focusOnCell(x,y, Color.BLUE);
     }
