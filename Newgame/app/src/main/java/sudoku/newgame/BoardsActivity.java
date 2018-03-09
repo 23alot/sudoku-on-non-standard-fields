@@ -62,22 +62,23 @@ public class BoardsActivity extends Activity {
                     int id = view.getId();
                     String name = getResources().getResourceEntryName(id);
                     int i = Character.getNumericValue(name.charAt(name.length()-1));
-                    sharedPreferences = BoardsActivity.this.getSharedPreferences("Boards", Context.MODE_PRIVATE);
-                    String data = sharedPreferences.getString("Array", null);
+                    SharedPreferences sp = BoardsActivity.this.getSharedPreferences("Boards", Context.MODE_PRIVATE);
+                    String data = sp.getString("Array", null);
                     if(data != null) {
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
                         byte[][] arr = gson.fromJson(data, byte[][].class);
                         byte[] structure = arr[i-1];
-                        showPopupMenu(view);
+
                         sharedPreferences = BoardsActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor = sharedPreferences.edit();
                         editor.putString("area", gson.toJson(structure));
 
                         //editor.putBoolean("New game", true);
                         editor.apply();
                     }
                     Log.d("Board click", name);
+                    showPopupMenu(view);
                 }
             });
             img.setImageBitmap(boards[i]);

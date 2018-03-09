@@ -165,7 +165,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                 width);
         penButton.setLayoutParams(viewParams);
-        penButton.setY(size.y - 100 - 3 * width);
+        penButton.setY(size.x + 250);
         penButton.setX(size.x - 150);
         penButton.setBackgroundResource(R.drawable.pencil);
         penButton.setOnClickListener(new View.OnClickListener() {
@@ -186,7 +186,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 width);
         clearButton.setLayoutParams(viewParams);
         clearButton.setBackgroundResource(R.drawable.eraser);
-        clearButton.setY(size.y - 100 - 3 * width);
+        clearButton.setY(size.x + 250);
         clearButton.setX(size.x - 200 - 100);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,8 +205,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         Log.d("onPause", SystemClock.elapsedRealtime()-ch.getBase()+"");
         ch.stop();
         if(!db.checkSudoku()) {
-            SharedPreferences sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            SharedPreferences sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
             DrawView dw = findViewById(R.id.drawView);
             db.refreshAll();
             editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
