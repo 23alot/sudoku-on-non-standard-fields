@@ -69,7 +69,7 @@ public class BoardsActivity extends Activity {
                         Gson gson = builder.create();
                         byte[][] arr = gson.fromJson(data, byte[][].class);
                         byte[] structure = arr[i-1];
-                        showPopupMenu(view);
+
                         sharedPreferences = BoardsActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("area", gson.toJson(structure));
@@ -79,6 +79,7 @@ public class BoardsActivity extends Activity {
                         editor.apply();
                     }
                     Log.d("Board click", name);
+                    showPopupMenu(view);
                 }
             });
             img.setImageBitmap(boards[i]);
