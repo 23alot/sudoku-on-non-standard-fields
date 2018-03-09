@@ -73,7 +73,8 @@ public class BoardsActivity extends Activity {
                         sharedPreferences = BoardsActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
                         editor = sharedPreferences.edit();
                         editor.putString("area", gson.toJson(structure));
-
+                        editor.putLong("Time", 0);
+                        editor.putInt("Dimension", (int)Math.sqrt(structure.length));
                         //editor.putBoolean("New game", true);
                         editor.apply();
                     }

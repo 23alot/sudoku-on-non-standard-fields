@@ -78,6 +78,8 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
         editor.putString("area",gson.toJson(db.prpr));
+        editor.putLong("Time", 0);
+        editor.putInt("Dimension", db.n);
         //editor.putBoolean("New game", true);
         editor.apply();
         startActivity(intent);

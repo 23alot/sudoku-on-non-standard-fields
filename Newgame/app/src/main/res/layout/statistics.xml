@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="10dp" >
+
+    <RadioGroup
+        android:id="@+id/radioGroupBoard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/radio4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="4x4"
+            android:textColor="@drawable/radiobutton_text" />
+        <RadioButton
+            android:id="@+id/radio5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="false"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="5x5"
+            android:textColor="@drawable/radiobutton_text" />
+        <RadioButton
+            android:id="@+id/radio6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="false"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="6x6"
+            android:textColor="@drawable/radiobutton_text" />
+
+        <RadioButton
+            android:id="@+id/radio7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="7x7"
+            android:textColor="@drawable/radiobutton_text" />
+
+        <RadioButton
+            android:id="@+id/radio8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="8x8"
+            android:textColor="@drawable/radiobutton_text" />
+        <RadioButton
+            android:id="@+id/radio9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="9x9"
+            android:textColor="@drawable/radiobutton_text" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/radioGroupDifficulty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginBottom="30dp">
+
+        <RadioButton
+            android:id="@+id/radioEasy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Easy"
+            android:textColor="@drawable/radiobutton_text" />
+        <RadioButton
+            android:id="@+id/radioMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="false"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Medium"
+            android:textColor="@drawable/radiobutton_text" />
+        <RadioButton
+            android:id="@+id/radioHard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="false"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Hard"
+            android:textColor="@drawable/radiobutton_text" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textViewNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="12pt"
+        android:text="Количество игр: " />
+
+    <TextView
+        android:id="@+id/textViewBest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="12pt"
+        android:text="Лучшее время: " />
+
+    <TextView
+        android:id="@+id/textViewAvg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="12pt"
+        android:text="Среднее время: " />
+
+</LinearLayout>

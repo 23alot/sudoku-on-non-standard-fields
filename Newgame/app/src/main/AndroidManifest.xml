@@ -21,6 +21,8 @@
         <activity android:name=".GameActivity"></activity>
         <activity android:name=".DimensionActivity"></activity>
         <activity android:name=".BoardsActivity"></activity>
+        <activity android:name=".CongratulationActivity"></activity>
+        <activity android:name=".Statictics"></activity>
     </application>
 
 </manifest>
