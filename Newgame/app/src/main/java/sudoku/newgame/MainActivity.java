@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import sudoku.newgame.draw.DrawCell;
+import sudoku.newgame.firebaseauth.ChooserActivity;
 import sudoku.newgame.sudoku.Cell;
 
 /**
@@ -50,6 +51,14 @@ public class MainActivity extends Activity{
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, DimensionActivity.class);
+                startActivity(intent);
+            }
+        });
+        bt = findViewById(R.id.sign_up);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ChooserActivity.class);
                 startActivity(intent);
             }
         });

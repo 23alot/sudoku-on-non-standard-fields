@@ -23,6 +23,9 @@
         <activity android:name=".BoardsActivity"></activity>
         <activity android:name=".CongratulationActivity"></activity>
         <activity android:name=".Statictics"></activity>
+        <activity android:name=".firebaseauth.ChooserActivity"></activity>
+        <activity android:name=".firebaseauth.FirebaseUIActivity"></activity>
+        <activity android:name=".firebaseauth.GoogleSignInActivity"></activity>
     </application>
 
 </manifest>
