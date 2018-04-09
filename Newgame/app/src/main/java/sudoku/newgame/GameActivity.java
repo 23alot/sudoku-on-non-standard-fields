@@ -7,16 +7,25 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -60,19 +69,16 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         editor = sharedPreferences.edit();
         createButtons();
         Button button = findViewById(R.id.button20);
+        final Activity act = this;
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editor.putString("Boardik",null);
-                editor.apply();
-                db.creation();
-                db.invalidate();
-                Chronometer ch = findViewById(R.id.chronometer2);
-                Log.d("Chronometer time", ch.getBase()+"");
-                ch.setBase(SystemClock.elapsedRealtime());
-                gameStat();
+                PopupWindow pw = initiatePopupWindow(view);
+                View v = findViewById(R.id.drawView);
+                pw.showAtLocation(v, Gravity.BOTTOM, 0 , 0);
             }
         });
+
     }
     void createButtons(){
         FrameLayout fl = (FrameLayout)findViewById(R.id.framelayout);
@@ -223,7 +229,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         int n = sharedPreferences.getInt("Dimension", 9);
         int dif = sharedPreferences.getInt("Difficulty", 8);
         dif = (dif - 3) / 5;
-        stat[dif][n].numGames++;
+        stat[dif][n-4].numGames++;
         editor.putString("Array", gson.toJson(stat));
     }
     private void winStat(long time) {
@@ -312,5 +318,27 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         Log.d("onResume", SystemClock.elapsedRealtime()-ch.getBase()+"");
         ch.setBase(SystemClock.elapsedRealtime() - time);
         ch.start();
+    }
+    private PopupWindow initiatePopupWindow(View pop) {
+        PopupWindow mDropdown = null;
+        try {
+
+            LayoutInflater mInflater = (LayoutInflater) getApplicationContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View layout = mInflater.inflate(R.layout.newgame_menu, null);
+
+            layout.measure(View.MeasureSpec.UNSPECIFIED,
+                    View.MeasureSpec.UNSPECIFIED);
+            mDropdown = new PopupWindow(layout,FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT,true);
+            Drawable background = getResources().getDrawable(android.R.drawable.screen_background_light);
+            mDropdown.setBackgroundDrawable(background);
+            mDropdown.update();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mDropdown;
+
     }
 }
