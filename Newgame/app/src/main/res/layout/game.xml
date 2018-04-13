@@ -4,26 +4,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <sudoku.newgame.DrawView
-        android:id="@+id/drawView"
+    <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/button20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="@string/new_game"
+                android:textSize="20sp"
+                android:layout_centerVertical="true"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+            <Chronometer
+                android:id="@+id/chronometer2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="20sp"
+                android:layout_toRightOf="@id/button20"/>
+            <ImageButton
+                android:id="@+id/buttonOverflow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_action_more_vert"
+                style="@style/Widget.AppCompat.ActionButton.Overflow"/>
+        </RelativeLayout>
+        <sudoku.newgame.DrawView
+            android:id="@+id/drawView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-        android:layout_height="match_parent" />
-    <Chronometer
-        android:id="@+id/chronometer2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_margin="10dp"/>
-
-    <Button
-        android:id="@+id/button20"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="100px"
-        android:layout_gravity="right"
-        android:text="New game"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
-
+    </LinearLayout>
 </FrameLayout>

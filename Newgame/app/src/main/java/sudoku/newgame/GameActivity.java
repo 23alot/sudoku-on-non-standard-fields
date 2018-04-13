@@ -15,6 +15,7 @@ import android.view.ContextMenu;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -64,8 +65,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         db.setOnTouchListener(this);
         sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         long time = sharedPreferences.getLong("Time", 0);
-        Chronometer ch = findViewById(R.id.chronometer2);
-        ch.setBase(SystemClock.elapsedRealtime() - time);
+        setTimer(time);
         editor = sharedPreferences.edit();
         createButtons();
         Button button = findViewById(R.id.button20);
@@ -128,12 +128,12 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 fl.addView(bt);
             }
             Chronometer clock = findViewById(R.id.chronometer2);
-            clock.setY(10+clock.getHeight());
+//            clock.setY(10+clock.getHeight());
             clock.setTextSize(20);
             clock.start();
-            clock.setHeight(100);
-            Button ng = findViewById(R.id.button20);
-            ng.setY(clock.getY() + 110);
+//            clock.setHeight(100);
+//            Button ng = findViewById(R.id.button20);
+//            ng.setY(clock.getY() + 110);
         }
         else {
             int margin = 5;
@@ -159,11 +159,12 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             Chronometer clock = findViewById(R.id.chronometer2);
             clock.setTextSize(20);
             clock.start();
-            clock.setY(size.x);
-            Button ng = findViewById(R.id.button20);
-            Log.d("Clock height", clock.getHeight()+"");
-            clock.setHeight(100);
-            ng.setY(clock.getY() + 110);
+
+//            clock.setY(size.x);
+//            Button ng = findViewById(R.id.button20);
+//            Log.d("Clock height", clock.getHeight()+"");
+//            clock.setHeight(100);
+//            ng.setY(clock.getY() + 110);
         }
         final ImageButton penButton = new ImageButton(getApplicationContext());
         width = 100;
@@ -202,6 +203,13 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
         });
         fl.addView(clearButton);
+        ImageButton menu = findViewById(R.id.buttonOverflow);
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopupMenu(view);
+            }
+        });
     }
     @Override
     protected void onPause() {
@@ -231,6 +239,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         dif = (dif - 3) / 5;
         stat[dif][n-4].numGames++;
         editor.putString("Array", gson.toJson(stat));
+        editor.apply();
     }
     private void winStat(long time) {
         time /= 1000;
@@ -242,8 +251,10 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         Stat[][] stat = gson.fromJson(data, Stat[][].class);
         int n = sharedPreferences.getInt("Dimension", 9);
         int dif = sharedPreferences.getInt("Difficulty", 8);
+        Log.d("WinStat","Difficulty: " + dif + " Dimension: " + n);
         dif = (dif - 3) / 5;
-        Stat cell = stat[dif][n-4];
+        Log.d("WinStat","Difficulty: " + dif + " Dimension: " + n);
+        Stat cell = stat[2-dif][n-4];
         long timing = cell.avgTime * cell.winGames;
         if(timing == 0) {
             timing = time;
@@ -255,7 +266,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             cell.bestTime = time;
         }
         editor.putString("Array", gson.toJson(stat));
-        Log.d("winStat",n+" "+dif+" "+cell.avgTime);
         editor.apply();
     }
     View.OnClickListener createOnClick() {
@@ -270,6 +280,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                                 Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(GameActivity.this, CongratulationActivity.class);
                         Chronometer ch = findViewById(R.id.chronometer2);
+                        editor.putLong("Time",0);
+                        editor.putString("Boardik", null);
+                        editor.apply();
                         long time = SystemClock.elapsedRealtime() - ch.getBase();
                         winStat(time);
                         intent.putExtra("Time", time);
@@ -315,8 +328,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         super.onResume();
         long time = sharedPreferences.getLong("Time", 0);
         Chronometer ch = findViewById(R.id.chronometer2);
-        Log.d("onResume", SystemClock.elapsedRealtime()-ch.getBase()+"");
-        ch.setBase(SystemClock.elapsedRealtime() - time);
+        setTimer(time);
         ch.start();
     }
     private PopupWindow initiatePopupWindow(View pop) {
@@ -340,5 +352,42 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         }
         return mDropdown;
 
+    }
+    private void showPopupMenu(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.inflate(R.menu.menu_stat);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menuSettings:
+                        Log.d("Popup menu", "Settings choice");
+                        break;
+                    case R.id.menuRules:
+                        Log.d("Popup menu", "Rules choice");
+                        break;
+                    case R.id.menuStatistics:
+                        Log.d("Popup menu", "Statistics choice");
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
+
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+
+            }
+        });
+        popupMenu.show();
+    }
+
+    void setTimer(long time) {
+        Chronometer ch = findViewById(R.id.chronometer2);
+        Log.d("setTimer", SystemClock.elapsedRealtime()-ch.getBase()+"");
+        ch.setBase(SystemClock.elapsedRealtime() - time);
     }
 }

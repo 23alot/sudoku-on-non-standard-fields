@@ -79,4 +79,7 @@
     <string name="new_easy">Лёгкая</string>
     <string name="new_medium">Средняя</string>
     <string name="new_hard">Сложная</string>
+    <string name="settings">Настройки</string>
+    <string name="statistics">Статистика</string>
+    <string name="rules">Правила</string>
 </resources>
