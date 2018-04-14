@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -82,6 +84,11 @@ public class MainActivity extends Activity{
         String stat = sharedPreferences.getString("Array", null);
         if(stat == null) {
             setupStatistics();
+        }
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null) {
+            Toast.makeText(this, "Привет, "+currentUser.getDisplayName(), Toast.LENGTH_LONG).show();
         }
     }
     private void setupStatistics() {

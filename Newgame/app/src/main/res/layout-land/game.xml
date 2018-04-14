@@ -10,18 +10,29 @@
 
         android:layout_height="match_parent" />
 
-    <Chronometer
-        android:id="@+id/chronometer2"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_margin="10dp"/>
-
-    <Button
-        android:id="@+id/button20"
+        android:id="@+id/linear"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/button20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_game"
+            android:textSize="20sp"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+        <Chronometer
+            android:id="@+id/chronometer2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"/>
+    </LinearLayout>
+    <ImageButton
+        android:id="@+id/buttonOverflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="New game" />
+        android:src="@drawable/ic_action_more_vert"
+        style="@style/Widget.AppCompat.ActionButton.Overflow"/>
 
 </FrameLayout>

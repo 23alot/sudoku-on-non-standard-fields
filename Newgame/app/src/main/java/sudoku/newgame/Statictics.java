@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import sudoku.newgame.datahelpers.TimeHelper;
+
 /**
  * Created by sanya on 08.03.2018.
  */
@@ -104,8 +106,9 @@ public class Statictics extends Activity {
         TextView num = findViewById(R.id.textViewNum);
         TextView best = findViewById(R.id.textViewBest);
         TextView avg = findViewById(R.id.textViewAvg);
+        TimeHelper timeHelper = new TimeHelper();
         num.setText("Сыграно игр: " + stat[curDifficulty][curBoard].numGames);
-        best.setText("Лучшее время: " + stat[curDifficulty][curBoard].bestTime);
-        avg.setText("Среднее время: " + stat[curDifficulty][curBoard].avgTime);
+        best.setText("Лучшее время: " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].bestTime));
+        avg.setText("Среднее время: " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].avgTime));
     }
 }

@@ -74,4 +74,13 @@
 
     <string name="id_fmt">User ID: %s</string>
     <string name="email_fmt">Email: %s</string>
+    <string name="new_game">Новая игра</string>
+    <string name="new_field">Другое поле</string>
+    <string name="new_easy">Лёгкая</string>
+    <string name="new_medium">Средняя</string>
+    <string name="new_hard">Сложная</string>
+    <string name="settings">Настройки</string>
+    <string name="statistics">Статистика</string>
+    <string name="rules">Правила</string>
+    <string name="repeat_game">Начать заново</string>
 </resources>
