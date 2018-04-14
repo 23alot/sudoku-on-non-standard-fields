@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Display;
@@ -24,8 +26,10 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,16 +47,18 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     private int difficulty;
     private int board;
     long stopTime;
+    boolean newGame = false;
     int w;
     float x;
     float y;
     DrawView db;
+    PopupWindow pw;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isPen = false;
+        isPen = true;
         Point size = new Point();
         Display display = getWindowManager().getDefaultDisplay();
         display.getSize(size);
@@ -70,11 +76,12 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         createButtons();
         Button button = findViewById(R.id.button20);
         final Activity act = this;
+        pw = initiatePopupWindow();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupWindow pw = initiatePopupWindow(view);
                 View v = findViewById(R.id.drawView);
+
                 pw.showAtLocation(v, Gravity.BOTTOM, 0 , 0);
             }
         });
@@ -88,45 +95,76 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         display.getSize(size);
         Log.d("Create Buttons", "x: "+size.x + " y: "+size.y);
         int width;
+        int marginButtons;
+        int sizeButtons;
+        final ImageButton penButton = new ImageButton(getApplicationContext());
+        final Button clearButton = new Button(getApplicationContext());
+        penButton.setBackgroundResource(R.drawable.pen);
+        clearButton.setBackgroundResource(R.drawable.eraser);
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             int margin = 5;
             int r = n>4?(n%2==0?n/2:n/2+1):n;
             width = (size.x - size.y - (r+1)*margin)/r;
             int i = 1;
+            Button bt = null;
             for(;i < r+1; ++i){
-                Button bt = new Button(getApplicationContext());
+                bt = new Button(getApplicationContext());
                 bt.setBackgroundColor(Color.WHITE);
                 //bt.setBackgroundResource(R.drawable.val_button);
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
-                        FrameLayout.LayoutParams.WRAP_CONTENT);
+                        width);
                 bt.setLayoutParams(viewParams);
                 bt.setX(size.y + margin/2 + i * margin + (i-1)*width);
                 bt.setHeight(width);
+                bt.setPadding(0,0,0,0);
                 if(r == n)
-                    bt.setY(size.y - 100 - width);
+                    bt.setY(size.y - 75 - width);
                 else
-                    bt.setY(size.y - 100 - 2*width - 2*margin);
+                    bt.setY(size.y - 75 - 2*width - margin);
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
                 fl.addView(bt);
             }
             int k = n%2==0?0:width/2;
             for(;i < n+1; ++i){
-                Button bt = new Button(getApplicationContext());
+                bt = new Button(getApplicationContext());
                 bt.setBackgroundColor(Color.WHITE);
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
-                        FrameLayout.LayoutParams.WRAP_CONTENT);
+                        width);
                 bt.setLayoutParams(viewParams);
                 bt.setX(size.y + k + margin/2 + i%r * margin + ((i-1)%r)*width);
                 bt.setHeight(width);
-                bt.setY(size.y - 75 - width - margin);
+                bt.setPadding(0,0,0,0);
+                bt.setY(size.y - 75 - width);
                 Log.d("Create Buttons","Button"+i+" is created " + bt.getX());
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
                 fl.addView(bt);
             }
+            sizeButtons = (size.x - size.y) / 6;
+            LinearLayout layout = findViewById(R.id.linear);
+            layout.setX(size.y - 50);
+            Resources resources = getApplicationContext().getResources();
+            int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+            ImageButton dots = findViewById(R.id.buttonOverflow);
+            if (resourceId > 0) {
+                int x = resources.getDimensionPixelSize(resourceId);
+                dots.setX(size.x - x);
+            }
+            else {
+                dots.setX(size.x);
+            }
+            FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
+                    sizeButtons);
+            penButton.setLayoutParams(viewParamsB);
+            viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
+                    sizeButtons);
+            clearButton.setLayoutParams(viewParamsB);
+
+            penButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
+            clearButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
             Chronometer clock = findViewById(R.id.chronometer2);
 //            clock.setY(10+clock.getHeight());
             clock.setTextSize(20);
@@ -138,19 +176,20 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         else {
             int margin = 5;
             width = (size.x-5*(n+1))/n;
-
+            Button bt = null;
             for (int i = 1; i < n + 1; ++i) {
-                Button bt = new Button(getApplicationContext());
+                bt = new Button(getApplicationContext());
                 Log.d("Create Buttons","Button"+i+" is created");
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
-                        FrameLayout.LayoutParams.WRAP_CONTENT);
+                        width);
                 bt.setLayoutParams(viewParams);
                 bt.setX(i * margin + (i-1)*width);
                 bt.setHeight(width);
-                bt.setY(size.y - 100 - width);
-                bt.setElevation(10);
-                bt.setTranslationZ(10);
+                bt.setPadding(0,0,0,0);
+                bt.setY(size.y - width - 90);
+//                bt.setElevation(10);
+//                bt.setTranslationZ(10);
                 bt.setBackgroundColor(Color.WHITE);
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
@@ -159,21 +198,25 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             Chronometer clock = findViewById(R.id.chronometer2);
             clock.setTextSize(20);
             clock.start();
+            sizeButtons = size.x / 6;
+            FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
+                    sizeButtons);
+            penButton.setLayoutParams(viewParamsB);
 
+            clearButton.setLayoutParams(viewParamsB);
+            penButton.setMinimumWidth(0);
+            penButton.setMinimumHeight(0);
+            penButton.setY(size.y - sizeButtons - width - 110);
+            clearButton.setY(size.y - sizeButtons - width - 110);
 //            clock.setY(size.x);
 //            Button ng = findViewById(R.id.button20);
 //            Log.d("Clock height", clock.getHeight()+"");
 //            clock.setHeight(100);
 //            ng.setY(clock.getY() + 110);
         }
-        final ImageButton penButton = new ImageButton(getApplicationContext());
-        width = 100;
-        FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
-                width);
-        penButton.setLayoutParams(viewParams);
-        penButton.setY(size.x + 250);
-        penButton.setX(size.x - 150);
-        penButton.setBackgroundResource(R.drawable.pencil);
+
+        penButton.setX(size.x - 6*sizeButtons / 15 - sizeButtons);
+
         penButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,14 +229,10 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 isPen = !isPen;
             }
         });
+        Log.d("createButtons", "width: "+penButton.getWidth()+" y: "+penButton.getY()+" x: "+penButton.getX());
         fl.addView(penButton);
-        final Button clearButton = new Button(getApplicationContext());
-        viewParams = new FrameLayout.LayoutParams(width,
-                width);
-        clearButton.setLayoutParams(viewParams);
-        clearButton.setBackgroundResource(R.drawable.eraser);
-        clearButton.setY(size.x + 250);
-        clearButton.setX(size.x - 200 - 100);
+
+        clearButton.setX(size.x - 2*6*sizeButtons/15 - 2*sizeButtons);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -217,7 +256,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         Chronometer ch = findViewById(R.id.chronometer2);
         Log.d("onPause", SystemClock.elapsedRealtime()-ch.getBase()+"");
         ch.stop();
-        if(!db.checkSudoku()) {
+        if(!db.checkSudoku() && !newGame) {
 //            SharedPreferences sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
 //            SharedPreferences.Editor editor = sharedPreferences.edit();
             DrawView dw = findViewById(R.id.drawView);
@@ -331,20 +370,21 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         setTimer(time);
         ch.start();
     }
-    private PopupWindow initiatePopupWindow(View pop) {
+    private PopupWindow initiatePopupWindow() {
         PopupWindow mDropdown = null;
         try {
 
             LayoutInflater mInflater = (LayoutInflater) getApplicationContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View layout = mInflater.inflate(R.layout.newgame_menu, null);
-
+            setupNewGameMenu(layout);
             layout.measure(View.MeasureSpec.UNSPECIFIED,
                     View.MeasureSpec.UNSPECIFIED);
             mDropdown = new PopupWindow(layout,FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT,true);
             Drawable background = getResources().getDrawable(android.R.drawable.screen_background_light);
             mDropdown.setBackgroundDrawable(background);
+
             mDropdown.update();
 
         } catch (Exception e) {
@@ -352,6 +392,102 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         }
         return mDropdown;
 
+    }
+    private void setupNewGameMenu(View popupView) {
+        Button button = popupView.findViewById(R.id.new_game);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("New game menu", "New game");
+                newGame = true;
+                gameStat();
+                editor.putLong("Time",0);
+                editor.putString("Boardik", null);
+                editor.apply();
+                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                startActivity(intent);
+                pw.dismiss();
+                finish();
+            }
+        });
+        button = popupView.findViewById(R.id.new_field);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("New game menu", "New field");
+                newGame = true;
+                gameStat();
+                editor.putLong("Time",0);
+                editor.apply();
+                Intent intent = new Intent(getApplicationContext(), DimensionActivity.class);
+                startActivity(intent);
+                pw.dismiss();
+                finish();
+            }
+        });
+        button = popupView.findViewById(R.id.new_easy);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("New game menu", "New easy");
+                newGame = true;
+                gameStat();
+                editor.putLong("Time",0);
+                editor.putString("Boardik", null);
+                editor.putInt("Difficulty", 13);
+                editor.apply();
+                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                startActivity(intent);
+                pw.dismiss();
+                finish();
+            }
+        });
+        button = popupView.findViewById(R.id.new_medium);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("New game menu", "New medium");
+                newGame = true;
+                gameStat();
+                editor.putLong("Time",0);
+                editor.putString("Boardik", null);
+                editor.putInt("Difficulty", 8);
+                editor.apply();
+                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                startActivity(intent);
+                pw.dismiss();
+                finish();
+            }
+        });
+        button = popupView.findViewById(R.id.new_hard);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("New game menu", "New hard");
+                newGame = true;
+                gameStat();
+                editor.putLong("Time",0);
+                editor.putString("Boardik", null);
+                editor.putInt("Difficulty", 3);
+                editor.apply();
+                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                startActivity(intent);
+                pw.dismiss();
+                finish();
+            }
+        });
+        button = popupView.findViewById(R.id.repeat_game);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("New game menu", "Repeat game");
+                newGame = true;
+                db.board.bd.resetValues();
+                gameStat();
+                setTimer(0);
+                db.refreshAll();
+            }
+        });
     }
     private void showPopupMenu(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);

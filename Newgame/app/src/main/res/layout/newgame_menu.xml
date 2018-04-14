@@ -20,6 +20,18 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
     <Button
+        android:id="@+id/repeat_game"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="3dp"
+        android:text="@string/repeat_game"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:ignore="HardcodedText"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+
+    <Button
         android:id="@+id/new_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
