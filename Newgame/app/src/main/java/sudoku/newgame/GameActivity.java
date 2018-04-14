@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Display;
@@ -36,6 +37,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import sudoku.newgame.datahelpers.CleanData;
 import sudoku.newgame.draw.DrawCell;
 import sudoku.newgame.sudoku.Cell;
 
@@ -73,6 +75,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         long time = sharedPreferences.getLong("Time", 0);
         setTimer(time);
         editor = sharedPreferences.edit();
+
         createButtons();
         Button button = findViewById(R.id.button20);
         final Activity act = this;
@@ -95,6 +98,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         display.getSize(size);
         Log.d("Create Buttons", "x: "+size.x + " y: "+size.y);
         int width;
+        Resources resources = getApplicationContext().getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
         int marginButtons;
         int sizeButtons;
         final ImageButton penButton = new ImageButton(getApplicationContext());
@@ -104,6 +109,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             int margin = 5;
             int r = n>4?(n%2==0?n/2:n/2+1):n;
+            sizeButtons = (size.x - size.y) / 6;
             width = (size.x - size.y - (r+1)*margin)/r;
             int i = 1;
             Button bt = null;
@@ -143,11 +149,10 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setOnClickListener(createOnClick());
                 fl.addView(bt);
             }
-            sizeButtons = (size.x - size.y) / 6;
+
             LinearLayout layout = findViewById(R.id.linear);
             layout.setX(size.y - 50);
-            Resources resources = getApplicationContext().getResources();
-            int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+
             ImageButton dots = findViewById(R.id.buttonOverflow);
             if (resourceId > 0) {
                 int x = resources.getDimensionPixelSize(resourceId);
@@ -175,7 +180,19 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         }
         else {
             int margin = 5;
+
             width = (size.x-5*(n+1))/n;
+            int down;
+            if (resourceId > 0) {
+                DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                Log.d("Down","resources: " + resources.getDimensionPixelSize(resourceId));
+                Log.d("Down","resources: " + displayMetrics.density);
+                down = (int)(resources.getDimensionPixelSize(resourceId) / displayMetrics.density);
+            }
+            else {
+                down = 0;
+            }
+            Log.d("Down", "Down: " + down);
             Button bt = null;
             for (int i = 1; i < n + 1; ++i) {
                 bt = new Button(getApplicationContext());
@@ -187,18 +204,18 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setX(i * margin + (i-1)*width);
                 bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
-                bt.setY(size.y - width - 90);
-//                bt.setElevation(10);
-//                bt.setTranslationZ(10);
+                bt.setY(size.y - width - down);
                 bt.setBackgroundColor(Color.WHITE);
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
                 fl.addView(bt);
             }
+            sizeButtons = size.x / 6;
+
             Chronometer clock = findViewById(R.id.chronometer2);
             clock.setTextSize(20);
             clock.start();
-            sizeButtons = size.x / 6;
+
             FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
                     sizeButtons);
             penButton.setLayoutParams(viewParamsB);
@@ -206,13 +223,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             clearButton.setLayoutParams(viewParamsB);
             penButton.setMinimumWidth(0);
             penButton.setMinimumHeight(0);
-            penButton.setY(size.y - sizeButtons - width - 110);
-            clearButton.setY(size.y - sizeButtons - width - 110);
-//            clock.setY(size.x);
-//            Button ng = findViewById(R.id.button20);
-//            Log.d("Clock height", clock.getHeight()+"");
-//            clock.setHeight(100);
-//            ng.setY(clock.getY() + 110);
+            penButton.setY(size.y - sizeButtons - width - down - margin);
+            clearButton.setY(size.y - sizeButtons - width - down - margin);
         }
 
         penButton.setX(size.x - 6*sizeButtons / 15 - sizeButtons);
@@ -276,7 +288,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         int n = sharedPreferences.getInt("Dimension", 9);
         int dif = sharedPreferences.getInt("Difficulty", 8);
         dif = (dif - 3) / 5;
-        stat[dif][n-4].numGames++;
+        stat[2-dif][n-4].numGames++;
         editor.putString("Array", gson.toJson(stat));
         editor.apply();
     }
@@ -481,6 +493,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             @Override
             public void onClick(View view) {
                 Log.d("New game menu", "Repeat game");
+                pw.dismiss();
                 newGame = true;
                 db.board.bd.resetValues();
                 gameStat();
