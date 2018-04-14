@@ -281,7 +281,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         editor.apply();
     }
     private void winStat(long time) {
-        time /= 1000;
         SharedPreferences sp = GameActivity.this.getSharedPreferences("Statistics", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         GsonBuilder builder = new GsonBuilder();
@@ -299,7 +298,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             timing = time;
         }
         cell.winGames++;
-        timing = (timing + time) / 2;
+        cell.numGames++;
+        timing = (timing + time) / cell.winGames;
         cell.avgTime = timing;
         if(cell.bestTime > time || cell.bestTime == 0) {
             cell.bestTime = time;
