@@ -12,11 +12,17 @@ public class TimeHelper {
         if(minutes == 0) {
             result += "00:";
         }
+        else if(minutes < 10){
+            result += "0" + minutes + ":";
+        }
         else {
             result += minutes + ":";
         }
         if(seconds == 0) {
             result += "00";
+        }
+        else if(seconds < 10){
+            result += "0" + seconds;
         }
         else {
             result += seconds;
