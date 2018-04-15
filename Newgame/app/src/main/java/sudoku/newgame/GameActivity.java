@@ -1,6 +1,9 @@
 package sudoku.newgame;
 
+import android.animation.StateListAnimator;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -56,8 +59,10 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     float y;
     DrawView db;
     PopupWindow pw;
+    HistoryFragment fragmentHistory;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    FragmentTransaction fTrans;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +83,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         editor = sharedPreferences.edit();
 
         createButtons();
+        fragmentHistory = new HistoryFragment();
         Button button = findViewById(R.id.button20);
         final Activity act = this;
         pw = initiatePopupWindow();
@@ -104,14 +110,18 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
         int marginButtons;
         int sizeButtons;
-        final ImageButton penButton = new ImageButton(getApplicationContext());
+        final Button penButton = new Button(getApplicationContext());
         final Button clearButton = new Button(getApplicationContext());
         final Button hintButton = new Button(getApplicationContext());
         final Button undoButton = new Button(getApplicationContext());
         penButton.setBackgroundResource(R.drawable.pen);
+        penButton.setStateListAnimator(null);
         clearButton.setBackgroundResource(R.drawable.eraser);
+        clearButton.setStateListAnimator(null);
         hintButton.setBackgroundResource(R.drawable.hint);
+        hintButton.setStateListAnimator(null);
         undoButton.setBackgroundResource(R.drawable.undo);
+        undoButton.setStateListAnimator(null);
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             int margin = 5;
             int r = n>4?(n%2==0?n/2:n/2+1):n;
@@ -138,6 +148,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
+                bt.setStateListAnimator(null);
                 fl.addView(bt);
             }
             int k = n%2==0?0:width/2;
@@ -157,6 +168,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 Log.d("Create Buttons","Button"+i+" is created " + bt.getX());
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
+                bt.setStateListAnimator(null);
                 fl.addView(bt);
             }
 
@@ -202,8 +214,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
             width = (size.x-5*(n+1))/n;
             int down;
+            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
             if (resourceId > 0) {
-                DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
                 Log.d("Down","resources: " + resources.getDimensionPixelSize(resourceId));
                 Log.d("Down","resources: " + displayMetrics.density);
                 down = (int)(resources.getDimensionPixelSize(resourceId) / displayMetrics.density);
@@ -221,8 +234,10 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
                 viewParams.gravity = Gravity.BOTTOM;
-                viewParams.bottomMargin = 5;
+                viewParams.bottomMargin = 10;
                 bt.setLayoutParams(viewParams);
+                Log.d("Create buttons", "Width: " + width);
+                bt.setTextSize((width - 10) / displayMetrics.scaledDensity);
                 bt.setX(i * margin + (i-1)*width);
 //                bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
@@ -230,6 +245,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setBackgroundColor(Color.WHITE);
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
+                bt.setStateListAnimator(null);
                 fl.addView(bt);
             }
             sizeButtons = size.x / 6;
@@ -241,7 +257,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
                     sizeButtons);
             viewParamsB.gravity = Gravity.BOTTOM;
-            viewParamsB.bottomMargin = (width + 10);
+            viewParamsB.bottomMargin = (width + 20);
             penButton.setLayoutParams(viewParamsB);
             clearButton.setLayoutParams(viewParamsB);
             hintButton.setLayoutParams(viewParamsB);
@@ -548,12 +564,25 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
         });
     }
+    @Override
+    public void onBackPressed() {
+        if(fragmentHistory.active) {
+            fTrans = getFragmentManager().beginTransaction();
+            fragmentHistory.active = false;
+            fTrans.remove(fragmentHistory);
+            fTrans.commit();
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
     private void showPopupMenu(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.inflate(R.menu.menu_stat);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                fTrans = getFragmentManager().beginTransaction();
                 switch (item.getItemId()) {
                     case R.id.menuSettings:
                         Log.d("Popup menu", "Settings choice");
@@ -564,9 +593,16 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                     case R.id.menuStatistics:
                         Log.d("Popup menu", "Statistics choice");
                         break;
+                    case R.id.menuHistory:
+                        Log.d("Popup menu", "History choice");
+                        fragmentHistory.active = true;
+                        fragmentHistory.setHistory(db.board.gameHistory);
+                        fTrans.add(R.id.framelayout, fragmentHistory);
+                        break;
                     default:
                         return false;
                 }
+                fTrans.commit();
                 return true;
             }
         });

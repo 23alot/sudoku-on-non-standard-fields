@@ -17,4 +17,9 @@
         android:orderInCategory="100"
         android:title="@string/rules"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menuHistory"
+        android:orderInCategory="100"
+        android:title="@string/history"
+        app:showAsAction="never" />
 </menu>

@@ -29,7 +29,20 @@ public class Event {
     public int getX() {
         return posx;
     }
+
     public int getY() {
         return posy;
+    }
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("Значение: ");
+        result.append(value);
+        result.append(" в ячейке (");
+        result.append(posx+1);
+        result.append(", ");
+        result.append(posy+1);
+        result.append(")");
+        return result.toString();
     }
 }
