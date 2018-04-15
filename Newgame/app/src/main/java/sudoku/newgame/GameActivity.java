@@ -38,6 +38,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import sudoku.newgame.datahelpers.CleanData;
+import sudoku.newgame.datahelpers.Size;
 import sudoku.newgame.draw.DrawCell;
 import sudoku.newgame.sudoku.Cell;
 
@@ -80,6 +81,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         Button button = findViewById(R.id.button20);
         final Activity act = this;
         pw = initiatePopupWindow();
+        pw.setAnimationStyle(R.style.Animation);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,8 +106,12 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         int sizeButtons;
         final ImageButton penButton = new ImageButton(getApplicationContext());
         final Button clearButton = new Button(getApplicationContext());
+        final Button hintButton = new Button(getApplicationContext());
+        final Button undoButton = new Button(getApplicationContext());
         penButton.setBackgroundResource(R.drawable.pen);
         clearButton.setBackgroundResource(R.drawable.eraser);
+        hintButton.setBackgroundResource(R.drawable.hint);
+        undoButton.setBackgroundResource(R.drawable.undo);
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             int margin = 5;
             int r = n>4?(n%2==0?n/2:n/2+1):n;
@@ -120,14 +126,16 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
+                viewParams.gravity = Gravity.BOTTOM;
+                if(r == n)
+                    viewParams.bottomMargin = 5;
+                else
+                    viewParams.bottomMargin = width + 10;
                 bt.setLayoutParams(viewParams);
                 bt.setX(size.y + margin/2 + i * margin + (i-1)*width);
                 bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
-                if(r == n)
-                    bt.setY(size.y - 75 - width);
-                else
-                    bt.setY(size.y - 75 - 2*width - margin);
+
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
                 fl.addView(bt);
@@ -140,10 +148,12 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
                 bt.setLayoutParams(viewParams);
+                viewParams.gravity = Gravity.BOTTOM;
+                viewParams.bottomMargin = 5;
                 bt.setX(size.y + k + margin/2 + i%r * margin + ((i-1)%r)*width);
                 bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
-                bt.setY(size.y - 75 - width);
+//                bt.setY(size.y - 75 - width);
                 Log.d("Create Buttons","Button"+i+" is created " + bt.getX());
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
@@ -163,13 +173,22 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
             FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
                     sizeButtons);
+            viewParamsB.gravity = Gravity.BOTTOM;
+            if(r == n) {
+                viewParamsB.bottomMargin = width + 10;
+            }
+            else {
+                viewParamsB.bottomMargin = 2*width + 15;
+            }
             penButton.setLayoutParams(viewParamsB);
-            viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
-                    sizeButtons);
             clearButton.setLayoutParams(viewParamsB);
+            hintButton.setLayoutParams(viewParamsB);
+            undoButton.setLayoutParams(viewParamsB);
 
-            penButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
-            clearButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
+//            penButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
+//            clearButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
+//            hintButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
+//            undoButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
             Chronometer clock = findViewById(R.id.chronometer2);
 //            clock.setY(10+clock.getHeight());
             clock.setTextSize(20);
@@ -192,7 +211,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             else {
                 down = 0;
             }
-            Log.d("Down", "Down: " + down);
+            Point s = Size.getNavigationBarSize(getApplicationContext());
+            Log.d("Down", "Down: " + down + " s.y: " + s.y + " s.x: " + s.x);
             Button bt = null;
             for (int i = 1; i < n + 1; ++i) {
                 bt = new Button(getApplicationContext());
@@ -200,11 +220,13 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
+                viewParams.gravity = Gravity.BOTTOM;
+                viewParams.bottomMargin = 5;
                 bt.setLayoutParams(viewParams);
                 bt.setX(i * margin + (i-1)*width);
-                bt.setHeight(width);
+//                bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
-                bt.setY(size.y - width - down);
+                //bt.setY(size.y - width - down);
                 bt.setBackgroundColor(Color.WHITE);
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
@@ -218,17 +240,20 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
             FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
                     sizeButtons);
+            viewParamsB.gravity = Gravity.BOTTOM;
+            viewParamsB.bottomMargin = (width + 10);
             penButton.setLayoutParams(viewParamsB);
-
             clearButton.setLayoutParams(viewParamsB);
-            penButton.setMinimumWidth(0);
-            penButton.setMinimumHeight(0);
-            penButton.setY(size.y - sizeButtons - width - down - margin);
-            clearButton.setY(size.y - sizeButtons - width - down - margin);
+            hintButton.setLayoutParams(viewParamsB);
+            undoButton.setLayoutParams(viewParamsB);
+            Log.d("Button Y", "Y: " + bt.getY());
+//            penButton.setY(size.y - sizeButtons - width - down - margin);
+//            clearButton.setY(size.y - sizeButtons - width - down - margin);
+//            hintButton.setY(size.y - sizeButtons - width - down - margin);
+//            undoButton.setY(size.y - sizeButtons - width - down - margin);
         }
 
         penButton.setX(size.x - 6*sizeButtons / 15 - sizeButtons);
-
         penButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -254,6 +279,27 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
         });
         fl.addView(clearButton);
+
+        hintButton.setX(size.x - 3*6*sizeButtons/15 - 3*sizeButtons);
+        hintButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.refreshAll();
+                db.hint(x, y);
+            }
+        });
+        fl.addView(hintButton);
+
+        undoButton.setX(size.x - 4*6*sizeButtons/15 - 4*sizeButtons);
+        undoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.refreshAll();
+                db.undo();
+            }
+        });
+        fl.addView(undoButton);
+
         ImageButton menu = findViewById(R.id.buttonOverflow);
         menu.setOnClickListener(new View.OnClickListener() {
             @Override

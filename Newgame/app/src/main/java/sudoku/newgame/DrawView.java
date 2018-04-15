@@ -241,8 +241,16 @@ public class DrawView extends View{
         board.focusOnCell(x,y,w,color,highlightColor);
         invalidate();
     }
+    void hint(float x, float y) {
+        board.hint(x, y);
+        invalidate();
+    }
     void setValue(float x, float y,int w, String value){
         board.setValue(x,y,value,w);
+        invalidate();
+    }
+    void undo() {
+        board.undo();
         invalidate();
     }
     void clearPencil(float x, float y, int w){

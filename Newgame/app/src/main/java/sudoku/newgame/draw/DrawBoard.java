@@ -8,6 +8,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import sudoku.newgame.Event;
 import sudoku.newgame.History;
 import sudoku.newgame.sudoku.Board;
 
@@ -126,6 +127,44 @@ public class DrawBoard {
             highlightCell(posx,posy,highlightColor);
         }
     }
+    public void hint(float x, float y) {
+        x -= startX;
+        y -= startY;
+        float length = board[0][0].length;
+        int posx = (int)(x/(length));
+        int posy = (int)(y/(length));
+        if(posy < n && posx < n) {
+            bd.cells[posy][posx].writeCorrectValue();
+        }
+    }
+    public void undo() {
+        Event last = gameHistory.getLastEvent();
+        if(last == null)
+            return;
+        Log.d("Undo","Value: " + last.getValue() + " x: " + last.getX() + " y: " + last.getY());
+        int posx = last.getX();
+        int posy = last.getY();
+        if(last.isEnter()) {
+            if(last.isPen()) {
+                bd.cells[posy][posx].value = -1;
+                highlightCell(posx,posy,Color.rgb(153,204,255));
+            }
+            else {
+                bd.cells[posy][posx].possibleValues[last.getValue()-1] =
+                        !bd.cells[posy][posx].possibleValues[last.getValue()-1];
+                highlightCell(posx,posy,Color.rgb(153,204,255));
+            }
+        }
+        else if(last.isPen()) {
+            bd.cells[posy][posx].value = (byte)last.getValue();
+            highlightCell(posx,posy,Color.rgb(153,204,255));
+        }
+        else {
+            bd.cells[posy][posx].possibleValues[last.getValue()-1] =
+                    !bd.cells[posy][posx].possibleValues[last.getValue()-1];
+            highlightCell(posx,posy,Color.rgb(153,204,255));
+        }
+    }
     public void refreshAll(){
         for(int i = 0; i < n; ++i)
             for(int j = 0; j < n; ++j)
@@ -153,7 +192,7 @@ public class DrawBoard {
     private boolean isCorrect(int x, int y){
         for(int i = 0; i < n; ++i)
             for(int j = 0; j < n; ++j)
-                if(bd.cells[i][j].value==bd.cells[x][y].value){
+                if(bd.cells[i][j].value == bd.cells[x][y].value){
                     if(!(x==i&&y==j)) {
                         if (bd.areas[n * x + y] == bd.areas[n * i + j])
                             return false;
@@ -171,7 +210,7 @@ public class DrawBoard {
         int posy = (int)(y/(length));
         if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
             bd.cells[posy][posx].value = Byte.valueOf(value);
-            gameHistory.addEvent(Integer.valueOf(value),true,true);
+            gameHistory.addEvent(Integer.valueOf(value),true,true, posx, posy);
             highlightCell(posx,posy,Color.rgb(153,204,255));
         }
     }
@@ -184,7 +223,7 @@ public class DrawBoard {
         if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
             for(int i = 0; i < bd.cells[posy][posx].possibleValues.length; ++i) {
                 if(bd.cells[posy][posx].possibleValues[i]) {
-                    gameHistory.addEvent(i + 1, false, false);
+                    gameHistory.addEvent(i + 1, false, false, posx, posy);
                 }
                 bd.cells[posy][posx].possibleValues[i] = false;
             }
@@ -199,10 +238,10 @@ public class DrawBoard {
         if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
             Log.d("setPencilValue","Setting pencil value");
             if(!bd.cells[posy][posx].possibleValues[Byte.valueOf(value)-1]){
-                gameHistory.addEvent(Integer.valueOf(value), false, true);
+                gameHistory.addEvent(Integer.valueOf(value), false, true, posx, posy);
             }
             else {
-                gameHistory.addEvent(Integer.valueOf(value), false, false);
+                gameHistory.addEvent(Integer.valueOf(value), false, false, posx, posy);
             }
             bd.cells[posy][posx].possibleValues[Byte.valueOf(value)-1] =
                     !bd.cells[posy][posx].possibleValues[Byte.valueOf(value)-1];

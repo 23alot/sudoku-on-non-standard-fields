@@ -4,11 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/gameRelativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
         <RelativeLayout
+            android:id="@+id/relativeCondition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -42,7 +44,8 @@
         <sudoku.newgame.DrawView
             android:id="@+id/drawView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_below="@+id/relativeCondition"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 </FrameLayout>
