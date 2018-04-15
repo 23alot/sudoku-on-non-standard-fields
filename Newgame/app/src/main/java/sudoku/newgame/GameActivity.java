@@ -1,8 +1,6 @@
 package sudoku.newgame;
 
-import android.animation.StateListAnimator;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -14,15 +12,11 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,14 +27,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import sudoku.newgame.datahelpers.CleanData;
 import sudoku.newgame.datahelpers.Size;
 import sudoku.newgame.draw.DrawCell;
 import sudoku.newgame.sudoku.Cell;
@@ -60,6 +51,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     DrawView db;
     PopupWindow pw;
     HistoryFragment fragmentHistory;
+    RulesFragment fragmentRules;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     FragmentTransaction fTrans;
@@ -84,6 +76,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
         createButtons();
         fragmentHistory = new HistoryFragment();
+        fragmentRules = new RulesFragment();
         Button button = findViewById(R.id.button20);
         final Activity act = this;
         pw = initiatePopupWindow();
@@ -263,10 +256,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             hintButton.setLayoutParams(viewParamsB);
             undoButton.setLayoutParams(viewParamsB);
             Log.d("Button Y", "Y: " + bt.getY());
-//            penButton.setY(size.y - sizeButtons - width - down - margin);
-//            clearButton.setY(size.y - sizeButtons - width - down - margin);
-//            hintButton.setY(size.y - sizeButtons - width - down - margin);
-//            undoButton.setY(size.y - sizeButtons - width - down - margin);
         }
 
         penButton.setX(size.x - 6*sizeButtons / 15 - sizeButtons);
@@ -572,6 +561,12 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             fTrans.remove(fragmentHistory);
             fTrans.commit();
         }
+        else if(fragmentRules.active) {
+            fTrans = getFragmentManager().beginTransaction();
+            fragmentRules.active = false;
+            fTrans.remove(fragmentRules);
+            fTrans.commit();
+        }
         else {
             super.onBackPressed();
         }
@@ -583,15 +578,22 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 fTrans = getFragmentManager().beginTransaction();
+                Intent intent;
                 switch (item.getItemId()) {
                     case R.id.menuSettings:
                         Log.d("Popup menu", "Settings choice");
+                        intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.menuRules:
                         Log.d("Popup menu", "Rules choice");
+                        fragmentRules.active = true;
+                        fTrans.add(R.id.framelayout, fragmentRules);
                         break;
                     case R.id.menuStatistics:
                         Log.d("Popup menu", "Statistics choice");
+                        intent = new Intent(getApplicationContext(), StatisticsActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.menuHistory:
                         Log.d("Popup menu", "History choice");

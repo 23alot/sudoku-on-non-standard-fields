@@ -4,13 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,9 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import sudoku.newgame.draw.DrawCell;
 import sudoku.newgame.firebaseauth.ChooserActivity;
-import sudoku.newgame.sudoku.Cell;
 
 /**
  * Created by sanya on 18.01.2018.
@@ -76,7 +70,7 @@ public class MainActivity extends Activity{
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, Statictics.class);
+                Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
                 startActivity(intent);
             }
         });

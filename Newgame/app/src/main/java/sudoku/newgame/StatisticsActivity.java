@@ -17,7 +17,7 @@ import sudoku.newgame.datahelpers.TimeHelper;
  * Created by sanya on 08.03.2018.
  */
 
-public class Statictics extends Activity {
+public class StatisticsActivity extends Activity {
     private RadioGroup radioGroupDif;
     private RadioGroup radioGroupBoard;
     private SharedPreferences sharedPreferences;
