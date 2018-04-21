@@ -89,10 +89,10 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 pw.showAtLocation(v, Gravity.BOTTOM, 0 , 0);
             }
         });
-
+        setupStatistics();
     }
     void createButtons(){
-        FrameLayout fl = (FrameLayout)findViewById(R.id.framelayout);
+        FrameLayout fl = findViewById(R.id.framelayout);
         int n = sharedPreferences.getInt("Dimension",9);
         Point size = new Point();
         Display display = getWindowManager().getDefaultDisplay();
@@ -101,7 +101,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         int width;
         Resources resources = getApplicationContext().getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-        int marginButtons;
+        int marginButtons = 20;
         int sizeButtons;
         final Button penButton = new Button(getApplicationContext());
         final Button clearButton = new Button(getApplicationContext());
@@ -115,6 +115,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         hintButton.setStateListAnimator(null);
         undoButton.setBackgroundResource(R.drawable.undo);
         undoButton.setStateListAnimator(null);
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             int margin = 5;
             int r = n>4?(n%2==0?n/2:n/2+1):n;
@@ -127,13 +128,14 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setBackgroundColor(Color.WHITE);
                 //bt.setBackgroundResource(R.drawable.val_button);
                 bt.setText(i + "");
+                bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
                 viewParams.gravity = Gravity.BOTTOM;
                 if(r == n)
-                    viewParams.bottomMargin = 5;
+                    viewParams.bottomMargin = marginButtons;
                 else
-                    viewParams.bottomMargin = width + 10;
+                    viewParams.bottomMargin = width + 2*marginButtons;
                 bt.setLayoutParams(viewParams);
                 bt.setX(size.y + margin/2 + i * margin + (i-1)*width);
                 bt.setHeight(width);
@@ -152,8 +154,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
                 bt.setLayoutParams(viewParams);
+                bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);
                 viewParams.gravity = Gravity.BOTTOM;
-                viewParams.bottomMargin = 5;
+                viewParams.bottomMargin = marginButtons;
                 bt.setX(size.y + k + margin/2 + i%r * margin + ((i-1)%r)*width);
                 bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
@@ -180,10 +183,10 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                     sizeButtons);
             viewParamsB.gravity = Gravity.BOTTOM;
             if(r == n) {
-                viewParamsB.bottomMargin = width + 10;
+                viewParamsB.bottomMargin = width + 2*marginButtons;
             }
             else {
-                viewParamsB.bottomMargin = 2*width + 15;
+                viewParamsB.bottomMargin = 2*width + 3*marginButtons;
             }
             penButton.setLayoutParams(viewParamsB);
             clearButton.setLayoutParams(viewParamsB);
@@ -207,7 +210,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
             width = (size.x-5*(n+1))/n;
             int down;
-            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
             if (resourceId > 0) {
 
                 Log.d("Down","resources: " + resources.getDimensionPixelSize(resourceId));
@@ -227,10 +230,10 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
                 viewParams.gravity = Gravity.BOTTOM;
-                viewParams.bottomMargin = 10;
+                viewParams.bottomMargin = marginButtons;
                 bt.setLayoutParams(viewParams);
                 Log.d("Create buttons", "Width: " + width);
-                bt.setTextSize((width - 10) / displayMetrics.scaledDensity);
+                bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);
                 bt.setX(i * margin + (i-1)*width);
 //                bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
@@ -250,7 +253,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
                     sizeButtons);
             viewParamsB.gravity = Gravity.BOTTOM;
-            viewParamsB.bottomMargin = (width + 20);
+            viewParamsB.bottomMargin = (width + 2*marginButtons);
             penButton.setLayoutParams(viewParamsB);
             clearButton.setLayoutParams(viewParamsB);
             hintButton.setLayoutParams(viewParamsB);
@@ -329,6 +332,24 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             editor.apply();
         }
     }
+    private void setupStatistics() {
+        SharedPreferences sp = this.getSharedPreferences("Statistics", Context.MODE_PRIVATE);
+        String stat = sp.getString("Array", null);
+        if(stat != null) {
+            return;
+        }
+        Stat[][] data = new Stat[3][6];
+        for(int i = 0; i < 3; ++i) {
+            for(int z = 0; z < 6; ++z) {
+                data[i][z] = new Stat(0, 0, 0, 0);
+            }
+        }
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("Array", gson.toJson(data));
+        editor.apply();
+    }
     private void gameStat() {
         SharedPreferences sp = GameActivity.this.getSharedPreferences("Statistics", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -388,6 +409,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                         long time = SystemClock.elapsedRealtime() - ch.getBase();
                         winStat(time);
                         intent.putExtra("Time", time);
+                        intent.putExtra("Difficulty", sharedPreferences.getInt("Difficulty", 0));
                         startActivity(intent);
                         finish();
                     }
