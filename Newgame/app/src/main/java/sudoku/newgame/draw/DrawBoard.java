@@ -49,7 +49,7 @@ public class DrawBoard {
             sizeY+=length;
         }
     }
-    public DrawBoard(float length, byte[] structure, int n) {
+    public DrawBoard(float startX, float startY, float length, byte[] structure, int n) {
         p = new Paint();
         this.n = n;
         this.structure = structure;

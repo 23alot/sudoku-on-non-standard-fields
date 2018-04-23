@@ -40,7 +40,7 @@ public class BoardBitmap {
         len = (int) (length - 20) >> 1;
         this.structure = structure;
         float size = len / n;
-        db = new DrawBoard(size, structure, n);
+        db = new DrawBoard(2, 2, size, structure, n);
     }
     public BoardBitmap() {
 

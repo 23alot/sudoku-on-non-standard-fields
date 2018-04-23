@@ -32,6 +32,7 @@ import java.nio.file.FileAlreadyExistsException;
 
 import sudoku.newgame.dancinglinks.Algorithm;
 import sudoku.newgame.dancinglinks.Structure;
+import sudoku.newgame.datahelpers.UserTime;
 import sudoku.newgame.draw.DrawBoard;
 import sudoku.newgame.sudoku.Board;
 
@@ -199,6 +200,7 @@ public class DrawView extends View{
         }
         Log.d("Creation",bd+"");
         board = new DrawBoard(10,10,(w - 2 * 10)/n,bd.areas,bd,n);
+        UserTime.addCreationTime("4", "easy", System.currentTimeMillis()-start);
         Toast.makeText(context,System.currentTimeMillis()-start+"",Toast.LENGTH_SHORT).show();
     }
     class Creation extends Thread {
