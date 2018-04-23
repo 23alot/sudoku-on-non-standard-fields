@@ -33,6 +33,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import sudoku.newgame.datahelpers.Size;
+import sudoku.newgame.datahelpers.UserTime;
 import sudoku.newgame.draw.DrawCell;
 import sudoku.newgame.sudoku.Cell;
 
@@ -389,6 +390,21 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             cell.bestTime = time;
         }
         editor.putString("Array", gson.toJson(stat));
+        UserTime winner = new UserTime(time, "Matt");
+        String difficulty;
+        switch(2-dif) {
+            case 0:
+                difficulty = "easy";
+                break;
+            case 1:
+                difficulty = "medium";
+                break;
+            case 2:
+                difficulty = "hard";
+                break;
+            default: difficulty = "error";
+        }
+        winner.addToDataBase(n+"", difficulty);
         editor.apply();
     }
     View.OnClickListener createOnClick() {

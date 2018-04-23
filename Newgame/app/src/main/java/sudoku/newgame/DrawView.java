@@ -200,7 +200,24 @@ public class DrawView extends View{
         }
         Log.d("Creation",bd+"");
         board = new DrawBoard(10,10,(w - 2 * 10)/n,bd.areas,bd,n);
-        UserTime.addCreationTime("4", "easy", System.currentTimeMillis()-start);
+        int dir = sharedPreferences.getInt("Difficulty",8);
+        Log.d("TestBD", dir+"");
+        dir = (dir - 3) / 5;
+        Log.d("TestBD2", dir+"");
+        String difficultys;
+        switch(2-dir) {
+            case 0:
+                difficultys = "easy";
+                break;
+            case 1:
+                difficultys = "medium";
+                break;
+            case 2:
+                difficultys = "hard";
+                break;
+            default: difficultys = "error";
+        }
+        UserTime.addCreationTime(n+"", difficultys, System.currentTimeMillis()-start);
         Toast.makeText(context,System.currentTimeMillis()-start+"",Toast.LENGTH_SHORT).show();
     }
     class Creation extends Thread {
