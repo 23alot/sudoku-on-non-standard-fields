@@ -22,5 +22,14 @@ public class SettingsActivity extends Activity {
                 finish();
             }
         });
+        bt = findViewById(R.id.leaderboards);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingsActivity.this, LeaderboardActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }

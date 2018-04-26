@@ -6,6 +6,9 @@ import com.google.firebase.database.FirebaseDatabase;
 public class UserTime {
     long time;
     String username;
+    public UserTime() {
+
+    }
     public UserTime(long time, String username) {
         this.time = time;
         this.username = username;
@@ -19,5 +22,11 @@ public class UserTime {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         DatabaseReference creation = databaseReference.child("generation_time").child(dim).child(dif);
         creation.push().setValue(time);
+    }
+    public String getUsername() {
+        return username;
+    }
+    public long getTime() {
+        return time;
     }
 }

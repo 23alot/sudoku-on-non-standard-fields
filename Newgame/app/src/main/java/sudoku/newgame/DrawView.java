@@ -137,8 +137,6 @@ public class DrawView extends View{
             return gson.toJson(board);
     }
     public void creation(){
-        long start = System.currentTimeMillis();
-
         String boardik = sharedPreferences.getString("Boardik",null);
         if(boardik != null){
             GsonBuilder builder = new GsonBuilder();
@@ -164,6 +162,8 @@ public class DrawView extends View{
             Gson gson = builder.create();
             area = gson.fromJson(boardik,byte[].class);
         }
+        long start1, start2, end2, end1;
+        start1 = System.nanoTime();
         int difficulty = (20 + sharedPreferences.getInt("Difficulty",8))*n*n/81;
         difficulty = n*n - difficulty;
         bd = null;
@@ -198,6 +198,7 @@ public class DrawView extends View{
                 creation();
             }
         }
+        end1 = System.nanoTime();
         Log.d("Creation",bd+"");
         board = new DrawBoard(10,10,(w - 2 * 10)/n,bd.areas,bd,n);
         int dir = sharedPreferences.getInt("Difficulty",8);
@@ -217,8 +218,8 @@ public class DrawView extends View{
                 break;
             default: difficultys = "error";
         }
-        UserTime.addCreationTime(n+"", difficultys, System.currentTimeMillis()-start);
-        Toast.makeText(context,System.currentTimeMillis()-start+"",Toast.LENGTH_SHORT).show();
+        UserTime.addCreationTime(n+"", difficultys, end1-start1);
+        Toast.makeText(context,end1-start1+"",Toast.LENGTH_SHORT).show();
     }
     class Creation extends Thread {
         Algorithm algorithm;

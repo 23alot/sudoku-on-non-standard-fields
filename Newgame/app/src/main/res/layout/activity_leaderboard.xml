@@ -9,12 +9,16 @@
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
-        <LinearLayout
-            android:id="@+id/leaders"
+        <TableLayout
+            android:id="@+id/leaders_table"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-        </LinearLayout>
+            android:layout_height="wrap_content">
+            <TableRow>
+                <TextView
+                    android:text="Username"/>
+                <TextView
+                    android:text="Time"/>
+            </TableRow>
+        </TableLayout>
     </ScrollView>
 </LinearLayout>

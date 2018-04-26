@@ -316,7 +316,7 @@ public class Algorithm {
             isFailed = true;
             return null;
         }
-        //Log.d("Algorithm","Algo finished " + (System.currentTimeMillis()-startTime));
+
         int[][] answer = toArray();
         int[] finalSolution = result.solution.clone();
         boolean[] isVisited= new boolean[structure.N*structure.N];
@@ -352,6 +352,7 @@ public class Algorithm {
             }
         }
         Log.d("Algorithm","Final moves " + moves);
+        Log.d("Sudokus solved", t+"");
         return new Board(structure.N,areas,finalSolution,answer);
     }
     private int countVisited(boolean[] isVisited){

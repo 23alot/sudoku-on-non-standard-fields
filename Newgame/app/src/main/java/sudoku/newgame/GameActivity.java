@@ -35,6 +35,7 @@ import com.google.gson.GsonBuilder;
 import sudoku.newgame.datahelpers.Size;
 import sudoku.newgame.datahelpers.UserTime;
 import sudoku.newgame.draw.DrawCell;
+import sudoku.newgame.firebaseauth.ChooserActivity;
 import sudoku.newgame.sudoku.Cell;
 
 public class GameActivity extends Activity implements View.OnTouchListener {
@@ -520,7 +521,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 gameStat();
                 editor.putLong("Time",0);
                 editor.apply();
-                Intent intent = new Intent(getApplicationContext(), DimensionActivity.class);
+                Intent intent = new Intent(getApplicationContext(), BoardsActivity.class);
                 startActivity(intent);
                 pw.dismiss();
                 finish();
