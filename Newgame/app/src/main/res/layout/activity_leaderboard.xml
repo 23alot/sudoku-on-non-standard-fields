@@ -132,15 +132,17 @@
     </RadioGroup>
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="*">
+        android:layout_height="wrap_content">
         <TableRow>
             <TextView
+                android:id="@+id/headerUsername"
                 android:text="@string/username"
+                android:layout_weight="5"
                 android:gravity="center"
                 android:textSize="12pt"/>
             <TextView
                 android:text="@string/time"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:textSize="12pt"/>
         </TableRow>
@@ -151,8 +153,7 @@
         <TableLayout
             android:id="@+id/leaders_table"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="*">
+            android:layout_height="wrap_content">
 
         </TableLayout>
     </ScrollView>

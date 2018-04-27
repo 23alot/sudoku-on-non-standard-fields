@@ -101,9 +101,12 @@ public class LeaderBoardFragment extends Fragment {
     }
 
     private void getInfo(UserTime user) {
+        if(getActivity() == null) {
+            return;
+        }
         TableLayout tableLayout = fragment.findViewById(R.id.leaders_table);
         Log.d("LeaderBoardFragmentinfo",user.getUsername());
-        tableLayout.addView(makeRow(user),0);
+        tableLayout.addView(makeRow(user));
     }
     private TableRow makeRow(UserTime user)
     {
@@ -112,12 +115,16 @@ public class LeaderBoardFragment extends Fragment {
         tableRow.setLayoutParams(params);
         tableRow.setBackgroundResource(R.drawable.table_border);
         TextView username = new TextView(getActivity());
+        params.weight = 2.5f;
+        username.setLayoutParams(params);
         username.setGravity(Gravity.CENTER);
         username.setTextSize(20);
         username.setPadding(5,5,5,5);
         username.setText(user.getUsername());
         tableRow.addView(username);
         TextView time = new TextView(getActivity());
+        params.weight = 0.5f;
+        time.setLayoutParams(params);
         time.setGravity(Gravity.CENTER);
         time.setTextSize(20);
         time.setText(TimeHelper.millisecondsToTime(user.getTime()));
