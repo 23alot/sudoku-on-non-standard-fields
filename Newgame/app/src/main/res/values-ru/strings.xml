@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="desc_google_sign_in">Используйте аккаунт Google для авторизации</string>
+    <string name="sign_in">Войти</string>
+    <string name="create_account">Регистрация</string>
+    <string name="sign_out">Выйти</string>
+    <string name="verify_email">Подтвердить email</string>
+    <string name="disconnect">Отключиться</string>
+    <string name="loading">Загрузка...</string>
+    <string name="signed_in">В сети</string>
+    <string name="signed_out">Не в сети</string>
+    <string name="hint_password">Пароль</string>
+    <string name="auth_failed">Авторизация неудачна</string>
+    <string name="new_game">Новая игра</string>
+    <string name="new_field">Другое поле</string>
+    <string name="new_easy">Лёгкая</string>
+    <string name="new_medium">Средняя</string>
+    <string name="new_hard">Сложная</string>
+    <string name="settings">Настройки</string>
+    <string name="statistics">Статистика</string>
+    <string name="rules">Правила</string>
+    <string name="repeat_game">Начать заново</string>
+    <string name="history">История</string>
+</resources>
