@@ -2,23 +2,158 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
+    <RadioGroup
+        android:id="@+id/radioGroupBoard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="hello"/>
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/radio4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="4x4"
+            android:textColor="@drawable/radiobutton_text" />
+        <RadioButton
+            android:id="@+id/radio5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="false"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="5x5"
+            android:textColor="@drawable/radiobutton_text" />
+        <RadioButton
+            android:id="@+id/radio6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="false"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="6x6"
+            android:textColor="@drawable/radiobutton_text" />
+
+        <RadioButton
+            android:id="@+id/radio7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="7x7"
+            android:textColor="@drawable/radiobutton_text" />
+
+        <RadioButton
+            android:id="@+id/radio8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="8x8"
+            android:textColor="@drawable/radiobutton_text" />
+        <RadioButton
+            android:id="@+id/radio9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="9x9"
+            android:textColor="@drawable/radiobutton_text" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/radioGroupDifficulty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginBottom="30dp">
+
+        <RadioButton
+            android:id="@+id/radioEasy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/new_easy"
+            android:textColor="@drawable/radiobutton_text" />
+        <RadioButton
+            android:id="@+id/radioMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="false"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/new_medium"
+            android:textColor="@drawable/radiobutton_text" />
+        <RadioButton
+            android:id="@+id/radioHard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton"
+            android:button="@null"
+            android:checked="false"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/new_hard"
+            android:textColor="@drawable/radiobutton_text" />
+
+    </RadioGroup>
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*">
+        <TableRow>
+            <TextView
+                android:text="@string/username"
+                android:gravity="center"
+                android:textSize="12pt"/>
+            <TextView
+                android:text="@string/time"
+                android:gravity="center"
+                android:textSize="12pt"/>
+        </TableRow>
+    </TableLayout>
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent">
         <TableLayout
             android:id="@+id/leaders_table"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TableRow>
-                <TextView
-                    android:text="Username"/>
-                <TextView
-                    android:text="Time"/>
-            </TableRow>
+            android:layout_height="wrap_content"
+            android:stretchColumns="*">
+
         </TableLayout>
     </ScrollView>
 </LinearLayout>

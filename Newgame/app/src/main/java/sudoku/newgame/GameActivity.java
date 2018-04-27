@@ -29,6 +29,7 @@ import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -631,7 +632,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                         break;
                     case R.id.menuStatistics:
                         Log.d("Popup menu", "Statistics choice");
-                        intent = new Intent(getApplicationContext(), StatisticsActivity.class);
+                        intent = new Intent(getApplicationContext(), TuturuActivity.class);
                         startActivity(intent);
                         break;
                     case R.id.menuHistory:

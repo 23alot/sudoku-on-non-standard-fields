@@ -21,4 +21,12 @@
     <string name="rules">Правила</string>
     <string name="repeat_game">Начать заново</string>
     <string name="history">История</string>
+    <string name="personal">Личные</string>
+    <string name="leaderboard">Лучшие</string>
+    <string name="username">Игрок</string>
+    <string name="time">Время</string>
+    <string name="num_game">"Количество игр: "</string>
+    <string name="win_game">"Выиграно игр: "</string>
+    <string name="best_time">"Лучшее время: "</string>
+    <string name="avg_time">"Среднее время: "</string>
 </resources>

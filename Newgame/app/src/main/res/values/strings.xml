@@ -84,4 +84,12 @@
     <string name="rules">Rules</string>
     <string name="repeat_game">Restart game</string>
     <string name="history">History</string>
+    <string name="personal">Personal</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="username">Username</string>
+    <string name="time">Time</string>
+    <string name="num_game">Number of Games:</string>
+    <string name="win_game">Game wins:</string>
+    <string name="best_time">Best time:</string>
+    <string name="avg_time">Average time:</string>
 </resources>

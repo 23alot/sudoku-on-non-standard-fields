@@ -3,7 +3,7 @@
     package="sudoku.newgame">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -28,5 +28,6 @@
         <activity android:name=".firebaseauth.FirebaseUIActivity"></activity>
         <activity android:name=".firebaseauth.GoogleSignInActivity"></activity>
         <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".TuturuActivity" />
     </application>
 </manifest>

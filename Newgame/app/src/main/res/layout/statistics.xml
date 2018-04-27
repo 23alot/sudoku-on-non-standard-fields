@@ -105,7 +105,7 @@
             android:checked="true"
             android:gravity="center"
             android:padding="5dp"
-            android:text="Easy"
+            android:text="@string/new_easy"
             android:textColor="@drawable/radiobutton_text" />
         <RadioButton
             android:id="@+id/radioMedium"
@@ -117,7 +117,7 @@
             android:checked="false"
             android:gravity="center"
             android:padding="5dp"
-            android:text="Medium"
+            android:text="@string/new_medium"
             android:textColor="@drawable/radiobutton_text" />
         <RadioButton
             android:id="@+id/radioHard"
@@ -129,7 +129,7 @@
             android:checked="false"
             android:gravity="center"
             android:padding="5dp"
-            android:text="Hard"
+            android:text="@string/new_hard"
             android:textColor="@drawable/radiobutton_text" />
 
     </RadioGroup>
@@ -140,7 +140,7 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textSize="12pt"
-        android:text="Количество игр: " />
+        android:text="@string/num_game" />
 
     <TextView
         android:id="@+id/textViewBest"
@@ -148,7 +148,7 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textSize="12pt"
-        android:text="Лучшее время: " />
+        android:text="@string/best_time" />
 
     <TextView
         android:id="@+id/textViewAvg"
@@ -156,6 +156,6 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textSize="12pt"
-        android:text="Среднее время: " />
+        android:text="@string/avg_time" />
 
 </LinearLayout>
