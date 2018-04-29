@@ -23,6 +23,7 @@
                 android:textSize="20sp"
                 android:layout_centerVertical="true"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+
             <Chronometer
                 android:id="@+id/chronometer2"
                 android:layout_width="wrap_content"
@@ -30,6 +31,13 @@
                 android:layout_centerVertical="true"
                 android:textSize="20sp"
                 android:layout_toRightOf="@id/button20"/>
+            <Button
+                android:id="@+id/button_pause"
+                android:layout_width="15pt"
+                android:layout_height="15pt"
+                android:background="@drawable/pause"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/chronometer2"/>
             <ImageButton
                 android:id="@+id/buttonOverflow"
                 android:layout_width="wrap_content"
@@ -45,6 +53,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/relativeCondition"/>
+        <LinearLayout
+            android:id="@+id/pause_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/relativeCondition"
+            android:orientation="vertical">
+        </LinearLayout>
+
 
     </RelativeLayout>
 </FrameLayout>

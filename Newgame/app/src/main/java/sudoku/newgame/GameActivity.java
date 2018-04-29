@@ -46,6 +46,7 @@ import sudoku.newgame.sudoku.Cell;
 
 public class GameActivity extends Activity implements View.OnTouchListener, RewardedVideoAdListener {
     boolean isPen;
+    boolean isPause = true;
     private Button mbutton;
     private Cell focusedCell = null;
     private DrawCell focusedDrawCell = null;
@@ -60,6 +61,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     PopupWindow pw;
     HistoryFragment fragmentHistory;
     RulesFragment fragmentRules;
+    PauseFragment fragmentPause;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     FragmentTransaction fTrans;
@@ -86,6 +88,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         createButtons();
         fragmentHistory = new HistoryFragment();
         fragmentRules = new RulesFragment();
+        fragmentPause = new PauseFragment();
         Button button = findViewById(R.id.button20);
         final Activity act = this;
         pw = initiatePopupWindow();
@@ -271,12 +274,30 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             clearButton.setLayoutParams(viewParamsB);
             hintButton.setLayoutParams(viewParamsB);
             undoButton.setLayoutParams(viewParamsB);
+            Button pause = findViewById(R.id.button_pause);
+            pause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(isPause) {
+                        view.setBackgroundResource(R.drawable.play);
+                        setPause();
+                    }
+                    else {
+                        view.setBackgroundResource(R.drawable.pause);
+                        setPlay();
+                    }
+                    isPause = !isPause;
+                }
+            });
         }
 
         penButton.setX(size.x - 6*sizeButtons / 15 - sizeButtons);
         penButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isPause) {
+                    return;
+                }
                 if(isPen)
                     penButton.setBackgroundResource(R.drawable.pencil);
                     //penButton.setBackgroundColor(Color.RED);
@@ -293,6 +314,9 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isPause) {
+                    return;
+                }
                 db.refreshAll();
                 db.setValue(x, y, w, "-1");
                 db.clearPencil(x,y,w);
@@ -306,6 +330,9 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         hintButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isPause) {
+                    return;
+                }
                 hint();
             }
         });
@@ -315,6 +342,9 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         undoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isPause) {
+                    return;
+                }
                 db.refreshAll();
                 db.undo();
             }
@@ -443,6 +473,9 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isPause) {
+                    return;
+                }
                 if(isPen) {
                     db.refreshAll();
                     db.setValue(x, y, w, (String) ((Button) view).getText());
@@ -710,7 +743,25 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         editor.putLong("Time", time + 30000);
         editor.apply();
     }
-
+    private void setPause() {
+        Chronometer ch = findViewById(R.id.chronometer2);
+        ch.stop();
+        long time = SystemClock.elapsedRealtime() - ch.getBase();
+        editor.putLong("Time", time);
+        editor.apply();
+        fTrans = getFragmentManager().beginTransaction();
+        fTrans.add(R.id.pause_layout, fragmentPause);
+        fTrans.commit();
+    }
+    private void setPlay() {
+        Chronometer ch = findViewById(R.id.chronometer2);
+        long time = sharedPreferences.getLong("Time", 0);
+        ch.setBase(SystemClock.elapsedRealtime() - time);
+        fTrans = getFragmentManager().beginTransaction();
+        fTrans.remove(fragmentPause);
+        fTrans.commit();
+        ch.start();
+    }
     @Override
     public void onRewardedVideoStarted() {
         Log.d("AdStarted","op");

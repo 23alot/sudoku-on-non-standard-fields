@@ -221,6 +221,7 @@ public class DrawView extends View{
         UserTime.addCreationTime(n+"", difficultys, end1-start1);
         Toast.makeText(context,end1-start1+"",Toast.LENGTH_SHORT).show();
     }
+
     class Creation extends Thread {
         Algorithm algorithm;
         Board board;

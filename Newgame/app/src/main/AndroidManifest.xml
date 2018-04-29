@@ -29,5 +29,6 @@
         <activity android:name=".firebaseauth.GoogleSignInActivity"></activity>
         <activity android:name=".SettingsActivity"></activity>
         <activity android:name=".TuturuActivity" />
+        <activity android:name=".DemoActivity" />
     </application>
 </manifest>
