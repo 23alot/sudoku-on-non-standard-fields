@@ -28,18 +28,23 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.Toast;
-
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import sudoku.newgame.datahelpers.SecretKeys;
 import sudoku.newgame.datahelpers.Size;
 import sudoku.newgame.datahelpers.UserTime;
 import sudoku.newgame.draw.DrawCell;
 import sudoku.newgame.firebaseauth.ChooserActivity;
 import sudoku.newgame.sudoku.Cell;
 
-public class GameActivity extends Activity implements View.OnTouchListener {
+public class GameActivity extends Activity implements View.OnTouchListener, RewardedVideoAdListener {
     boolean isPen;
     private Button mbutton;
     private Cell focusedCell = null;
@@ -58,6 +63,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     FragmentTransaction fTrans;
+    private RewardedVideoAd mRewardedVideoAd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +99,10 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
         });
         setupStatistics();
+        MobileAds.initialize(this, SecretKeys.ADMOD_APP_ID);
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
+        mRewardedVideoAd.setRewardedVideoAdListener(this);
+        loadRewardedVideoAd();
     }
     void createButtons(){
         FrameLayout fl = findViewById(R.id.framelayout);
@@ -114,7 +124,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         penButton.setStateListAnimator(null);
         clearButton.setBackgroundResource(R.drawable.eraser);
         clearButton.setStateListAnimator(null);
-        hintButton.setBackgroundResource(R.drawable.hint);
+        hintButton.setBackgroundResource(R.drawable.no_hint);
         hintButton.setStateListAnimator(null);
         undoButton.setBackgroundResource(R.drawable.undo);
         undoButton.setStateListAnimator(null);
@@ -292,11 +302,12 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         fl.addView(clearButton);
 
         hintButton.setX(size.x - 3*6*sizeButtons/15 - 3*sizeButtons);
+        hintButton.setEnabled(false);
+        hintButton.setId(R.id.hint_button);
         hintButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                db.refreshAll();
-                db.hint(x, y);
+                hint();
             }
         });
         fl.addView(hintButton);
@@ -319,8 +330,24 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
         });
     }
+    private void hint() {
+        db.refreshAll();
+        Button hint = findViewById(R.id.hint_button);
+        hint.setBackgroundResource(R.drawable.no_hint);
+        hint.setEnabled(false);
+        Log.d("Hint button", "Ad click");
+        if (mRewardedVideoAd.isLoaded()) {
+            mRewardedVideoAd.show();
+        }
+    }
+    private void loadRewardedVideoAd() {
+        mRewardedVideoAd.loadAd(SecretKeys.ADMOD_VIDEO_HINT,
+                new AdRequest.Builder()
+                        .build());
+    }
     @Override
     protected void onPause() {
+        mRewardedVideoAd.pause(this);
         super.onPause();
         Chronometer ch = findViewById(R.id.chronometer2);
         Log.d("onPause", SystemClock.elapsedRealtime()-ch.getBase()+"");
@@ -467,6 +494,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     }
     @Override
     protected void onResume() {
+        mRewardedVideoAd.resume(this);
         super.onResume();
         long time = sharedPreferences.getLong("Time", 0);
         Chronometer ch = findViewById(R.id.chronometer2);
@@ -662,5 +690,65 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         Chronometer ch = findViewById(R.id.chronometer2);
         Log.d("setTimer", SystemClock.elapsedRealtime()-ch.getBase()+"");
         ch.setBase(SystemClock.elapsedRealtime() - time);
+    }
+
+    @Override
+    public void onRewardedVideoAdLoaded() {
+        Button hint = findViewById(R.id.hint_button);
+        hint.setBackgroundResource(R.drawable.hint);
+        hint.setEnabled(true);
+        Log.d("AdLoaded","op");
+    }
+
+    @Override
+    public void onRewardedVideoAdOpened() {
+        Log.d("AdOpened","op");
+    }
+
+    @Override
+    public void onRewardedVideoStarted() {
+        Log.d("AdStarted","op");
+    }
+
+    @Override
+    public void onRewardedVideoAdClosed() {
+        Log.d("AdClosed","op");
+        loadRewardedVideoAd();
+    }
+
+    @Override
+    public void onRewarded(RewardItem rewardItem) {
+        Log.d("AdRewarded","op");
+        db.hint(x, y);
+        if (db.checkSudoku()) {
+            Toast.makeText(GameActivity.this, "Судоку решено верно",
+                    Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(GameActivity.this, CongratulationActivity.class);
+            Chronometer ch = findViewById(R.id.chronometer2);
+            editor.putLong("Time",0);
+            editor.putString("Boardik", null);
+            editor.apply();
+            long time = SystemClock.elapsedRealtime() - ch.getBase();
+            winStat(time);
+            intent.putExtra("Time", time);
+            intent.putExtra("Difficulty", sharedPreferences.getInt("Difficulty", 0));
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onRewardedVideoAdLeftApplication() {
+        Log.d("AdLeft","op");
+    }
+
+    @Override
+    public void onRewardedVideoAdFailedToLoad(int i) {
+        Log.d("AdFailed","op");
+    }
+
+    @Override
+    public void onRewardedVideoCompleted() {
+        Log.d("AdCompleted","op");
     }
 }
