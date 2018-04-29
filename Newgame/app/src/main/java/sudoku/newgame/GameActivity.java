@@ -236,6 +236,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             Point s = Size.getNavigationBarSize(getApplicationContext());
             Log.d("Down", "Down: " + down + " s.y: " + s.y + " s.x: " + s.x);
             Button bt = null;
+            sizeButtons = size.x / 6;
             for (int i = 1; i < n + 1; ++i) {
                 bt = new Button(getApplicationContext());
                 Log.d("Create Buttons","Button"+i+" is created");
@@ -243,7 +244,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
                 viewParams.gravity = Gravity.BOTTOM;
-                viewParams.bottomMargin = marginButtons;
+                viewParams.bottomMargin = sizeButtons + 4*marginButtons;
                 bt.setLayoutParams(viewParams);
                 Log.d("Create buttons", "Width: " + width);
                 bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);
@@ -257,7 +258,6 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
                 bt.setStateListAnimator(null);
                 fl.addView(bt);
             }
-            sizeButtons = size.x / 6;
 
             Chronometer clock = findViewById(R.id.chronometer2);
             clock.setTextSize(20);
@@ -266,12 +266,11 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
                     sizeButtons);
             viewParamsB.gravity = Gravity.BOTTOM;
-            viewParamsB.bottomMargin = (width + 2*marginButtons);
+            viewParamsB.bottomMargin = (marginButtons);
             penButton.setLayoutParams(viewParamsB);
             clearButton.setLayoutParams(viewParamsB);
             hintButton.setLayoutParams(viewParamsB);
             undoButton.setLayoutParams(viewParamsB);
-            Log.d("Button Y", "Y: " + bt.getY());
         }
 
         penButton.setX(size.x - 6*sizeButtons / 15 - sizeButtons);
