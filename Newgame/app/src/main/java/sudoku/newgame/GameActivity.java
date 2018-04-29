@@ -380,6 +380,10 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         editor.apply();
     }
     private void gameStat() {
+        Chronometer ch = findViewById(R.id.chronometer2);
+        if(SystemClock.elapsedRealtime() - ch.getBase() < 15000)
+            return;
+
         SharedPreferences sp = GameActivity.this.getSharedPreferences("Statistics", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         GsonBuilder builder = new GsonBuilder();
@@ -702,6 +706,9 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     @Override
     public void onRewardedVideoAdOpened() {
         Log.d("AdOpened","op");
+        long time = sharedPreferences.getLong("Time", 0);
+        editor.putLong("Time", time + 30000);
+        editor.apply();
     }
 
     @Override
