@@ -175,8 +175,11 @@ public class DrawBoardGeneratorView extends View {
             refreshPossibleCells();
         }
         if(currentSize == n) {
-            if(!checkCell())
+            if(!checkCell()) {
+                declineArea();
+                currentArea++;
                 Toast.makeText(context, "Такая себе поляна", Toast.LENGTH_LONG).show();
+            }
             else
                 getRootView().findViewById(R.id.button50).setVisibility(VISIBLE);
 
@@ -211,8 +214,11 @@ public class DrawBoardGeneratorView extends View {
             refreshPossibleCells();
         }
         if(currentSize == n) {
-            if(!checkCell())
+            if(!checkCell()) {
+                declineArea();
+                currentArea++;
                 Toast.makeText(context, "Такая себе поляна", Toast.LENGTH_LONG).show();
+            }
             else
                 getRootView().findViewById(R.id.button50).setVisibility(VISIBLE);
 
