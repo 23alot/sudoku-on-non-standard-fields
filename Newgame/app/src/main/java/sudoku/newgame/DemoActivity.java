@@ -17,7 +17,10 @@ import sudoku.newgame.datahelpers.SecretKeys;
 import sudoku.newgame.sudoku.Board;
 
 public class DemoActivity extends Activity {
-    History game;
+    int[] game;
+    Board board;
+    int n;
+    DrawView dw;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,8 +28,28 @@ public class DemoActivity extends Activity {
     }
     private void demoCreation(byte[] area, byte dim, int dif, byte n) {
         Algorithm algorithm = new Algorithm(new Structure(n, area));
-        Board board = algorithm.create(dif-3, dif+7, area, dim*dim);
+        board = algorithm.create(dif-3, dif+7, area, dim*dim);
         algorithm = new Algorithm(board);
         game = algorithm.demoSolve();
+    }
+
+    //Set all pencil values
+    private void firstStep() {
+        dw.board.setBasicPencilValues();
+    }
+
+    // Place first pen value
+    private void secondStep() {
+        int a = game[0];
+        int row = (a / (n*n));
+        int column = (a / n) % n;
+
+    }
+    private void game() {
+//        for(int a: result.solution){
+//            int row = (a / (structure.N * structure.N));
+//            int column = ((a / structure.N) % structure.N);
+//            answer[row][column] = (byte) (a % structure.N + 1);
+//        }
     }
 }

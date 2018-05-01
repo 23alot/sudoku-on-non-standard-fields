@@ -189,6 +189,32 @@ public class DrawBoard {
                     board[i][j].setFillColor(highlightColor);
             }
     }
+    public void setBasicPencilValues() {
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < n; ++i) {
+                if(!bd.cells[i][j].isInput) {
+                    for(int q = 0; q < n; ++q) {
+                        bd.cells[i][j].possibleValues[q] = true;
+                    }
+                }
+            }
+        }
+        removeAllPencilValues();
+    }
+    private void removeAllPencilValues() {
+        for(int x = 0; x < n; ++x) {
+            for(int y = 0; y < n; ++y) {
+                if(bd.cells[x][y].isInput) {
+                    for(int i = 0; i < n; ++i) {
+                        for(int j = 0; j < n; ++j) {
+                            if(j == x || i == y || bd.areas[n * y + x] == bd.areas[n * i + j])
+                                bd.cells[i][j].possibleValues[bd.cells[x][y].value-1] = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
     private boolean isCorrect(int x, int y){
         for(int i = 0; i < n; ++i)
             for(int j = 0; j < n; ++j)

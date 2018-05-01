@@ -372,15 +372,11 @@ public class Algorithm {
         }
         return answer;
     }
-    public History demoSolve() {
+    public int[] demoSolve() {
         History history = new History();
         start();
-        for (int a: solution) {
-            int row = (a / (structure.N * structure.N));
-            int column = ((a / structure.N) % structure.N);
-            history.addEvent(a % structure.N + 1, true, true, column, row);
-        }
-        return history;
+
+        return solution;
     }
     public Solution getSolution(){
         return result;
