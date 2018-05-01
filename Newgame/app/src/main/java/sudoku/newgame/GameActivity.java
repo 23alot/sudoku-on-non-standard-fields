@@ -46,6 +46,7 @@ import sudoku.newgame.sudoku.Cell;
 
 public class GameActivity extends Activity implements View.OnTouchListener, RewardedVideoAdListener {
     boolean isPen;
+    boolean isAd = false;
     boolean isPause = true;
     private Button mbutton;
     private Cell focusedCell = null;
@@ -127,7 +128,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         penButton.setStateListAnimator(null);
         clearButton.setBackgroundResource(R.drawable.eraser);
         clearButton.setStateListAnimator(null);
-        hintButton.setBackgroundResource(R.drawable.no_hint);
+        hintButton.setBackgroundResource(R.drawable.hint);
         hintButton.setStateListAnimator(null);
         undoButton.setBackgroundResource(R.drawable.undo);
         undoButton.setStateListAnimator(null);
@@ -279,14 +280,11 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
                 @Override
                 public void onClick(View view) {
                     if(isPause) {
-                        view.setBackgroundResource(R.drawable.play);
                         setPause();
                     }
                     else {
-                        view.setBackgroundResource(R.drawable.pause);
                         setPlay();
                     }
-                    isPause = !isPause;
                 }
             });
         }
@@ -325,7 +323,6 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         fl.addView(clearButton);
 
         hintButton.setX(size.x - 3*6*sizeButtons/15 - 3*sizeButtons);
-        hintButton.setEnabled(false);
         hintButton.setId(R.id.hint_button);
         hintButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -362,12 +359,18 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     private void hint() {
         db.refreshAll();
         Button hint = findViewById(R.id.hint_button);
-        hint.setBackgroundResource(R.drawable.no_hint);
         hint.setEnabled(false);
         Log.d("Hint button", "Ad click");
         if (mRewardedVideoAd.isLoaded()) {
             mRewardedVideoAd.show();
         }
+        else {
+            setPause();
+            hintReward();
+        }
+        long time = sharedPreferences.getLong("Time", 0);
+        editor.putLong("Time", time + 30000);
+        editor.apply();
     }
     private void loadRewardedVideoAd() {
         mRewardedVideoAd.loadAd(SecretKeys.ADMOD_VIDEO_HINT,
@@ -387,7 +390,10 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             DrawView dw = findViewById(R.id.drawView);
             db.refreshAll();
             editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
-            editor.putLong("Time",SystemClock.elapsedRealtime() - ch.getBase());
+            if(!isAd) {
+                editor.putLong("Time",SystemClock.elapsedRealtime() - ch.getBase());
+            }
+
             editor.apply();
         }
     }
@@ -515,7 +521,6 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         y = event.getY();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN: // нажатие
-                db.refreshAll();
                 tutu();
                 break;
             case MotionEvent.ACTION_MOVE: // движение
@@ -532,6 +537,9 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     protected void onResume() {
         mRewardedVideoAd.resume(this);
         super.onResume();
+        if(isAd) {
+            return;
+        }
         long time = sharedPreferences.getLong("Time", 0);
         Chronometer ch = findViewById(R.id.chronometer2);
         setTimer(time);
@@ -739,21 +747,24 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     @Override
     public void onRewardedVideoAdOpened() {
         Log.d("AdOpened","op");
-        long time = sharedPreferences.getLong("Time", 0);
-        editor.putLong("Time", time + 30000);
-        editor.apply();
     }
     private void setPause() {
+        Button pause = findViewById(R.id.button_pause);
+        pause.setBackgroundResource(R.drawable.play);
         Chronometer ch = findViewById(R.id.chronometer2);
         ch.stop();
         long time = SystemClock.elapsedRealtime() - ch.getBase();
         editor.putLong("Time", time);
+        isAd = true;
         editor.apply();
         fTrans = getFragmentManager().beginTransaction();
         fTrans.add(R.id.pause_layout, fragmentPause);
         fTrans.commit();
+        isPause = !isPause;
     }
     private void setPlay() {
+        Button pause = findViewById(R.id.button_pause);
+        pause.setBackgroundResource(R.drawable.pause);
         Chronometer ch = findViewById(R.id.chronometer2);
         long time = sharedPreferences.getLong("Time", 0);
         ch.setBase(SystemClock.elapsedRealtime() - time);
@@ -761,6 +772,10 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         fTrans.remove(fragmentPause);
         fTrans.commit();
         ch.start();
+        isAd = false;
+        Button hint = findViewById(R.id.hint_button);
+        hint.setEnabled(true);
+        isPause = !isPause;
     }
     @Override
     public void onRewardedVideoStarted() {
@@ -776,6 +791,9 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     @Override
     public void onRewarded(RewardItem rewardItem) {
         Log.d("AdRewarded","op");
+        hintReward();
+    }
+    private void hintReward() {
         db.hint(x, y);
         if (db.checkSudoku()) {
             Toast.makeText(GameActivity.this, "Судоку решено верно",
