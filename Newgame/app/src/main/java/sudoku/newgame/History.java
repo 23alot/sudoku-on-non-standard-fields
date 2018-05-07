@@ -12,12 +12,17 @@ public class History {
     public History(){
         history = new Stack<>();
     }
-    public void addEvent(int value, boolean isPen, boolean isEnter){
+    public void addEvent(int value, boolean isPen, boolean isEnter, int posx, int posy){
         String s = (isEnter?"Write ":"Delete ") + value + " by " + (isPen?"pen":"pencil") + ".";
         Log.d("addEvent", s);
-        history.push(new Event(value,isPen,isEnter));
+        history.push(new Event(value, isPen, isEnter, posx, posy));
     }
     public Event getLastEvent() {
-        return history.pop();
+        if(history.empty()) {
+            return null;
+        }
+        else {
+            return history.pop();
+        }
     }
 }

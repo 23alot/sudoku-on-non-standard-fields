@@ -2,6 +2,7 @@ package sudoku.newgame.dancinglinks;
 
 import android.util.Log;
 
+import sudoku.newgame.History;
 import sudoku.newgame.sudoku.Board;
 import sudoku.newgame.sudoku.Cell;
 
@@ -316,7 +317,6 @@ public class Algorithm {
             isFailed = true;
             return null;
         }
-        //Log.d("Algorithm","Algo finished " + (System.currentTimeMillis()-startTime));
         int[][] answer = toArray();
         int[] finalSolution = result.solution.clone();
         boolean[] isVisited= new boolean[structure.N*structure.N];
@@ -352,8 +352,10 @@ public class Algorithm {
             }
         }
         Log.d("Algorithm","Final moves " + moves);
+        Log.d("Sudokus solved", t+"");
         return new Board(structure.N,areas,finalSolution,answer);
     }
+
     private int countVisited(boolean[] isVisited){
         int t = 0;
         for(int i = 0; i < isVisited.length; ++i)
@@ -369,6 +371,12 @@ public class Algorithm {
             answer[row][column] = (byte) (a % structure.N + 1);
         }
         return answer;
+    }
+    public int[] demoSolve() {
+        History history = new History();
+        start();
+
+        return solution;
     }
     public Solution getSolution(){
         return result;

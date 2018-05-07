@@ -1,6 +1,7 @@
 package sudoku.newgame;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,15 +12,11 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,19 +27,27 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import sudoku.newgame.datahelpers.CleanData;
+import sudoku.newgame.datahelpers.SecretKeys;
+import sudoku.newgame.datahelpers.Size;
+import sudoku.newgame.datahelpers.UserTime;
 import sudoku.newgame.draw.DrawCell;
+import sudoku.newgame.firebaseauth.ChooserActivity;
 import sudoku.newgame.sudoku.Cell;
 
-public class GameActivity extends Activity implements View.OnTouchListener {
+public class GameActivity extends Activity implements View.OnTouchListener, RewardedVideoAdListener {
     boolean isPen;
+    boolean isAd = false;
+    boolean isPause = true;
     private Button mbutton;
     private Cell focusedCell = null;
     private DrawCell focusedDrawCell = null;
@@ -55,8 +60,13 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     float y;
     DrawView db;
     PopupWindow pw;
+    HistoryFragment fragmentHistory;
+    RulesFragment fragmentRules;
+    PauseFragment fragmentPause;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    FragmentTransaction fTrans;
+    private RewardedVideoAd mRewardedVideoAd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,9 +87,13 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         editor = sharedPreferences.edit();
 
         createButtons();
+        fragmentHistory = new HistoryFragment();
+        fragmentRules = new RulesFragment();
+        fragmentPause = new PauseFragment();
         Button button = findViewById(R.id.button20);
         final Activity act = this;
         pw = initiatePopupWindow();
+        pw.setAnimationStyle(R.style.Animation);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,10 +102,14 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 pw.showAtLocation(v, Gravity.BOTTOM, 0 , 0);
             }
         });
-
+        setupStatistics();
+        MobileAds.initialize(this, SecretKeys.ADMOD_APP_ID);
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
+        mRewardedVideoAd.setRewardedVideoAdListener(this);
+        loadRewardedVideoAd();
     }
     void createButtons(){
-        FrameLayout fl = (FrameLayout)findViewById(R.id.framelayout);
+        FrameLayout fl = findViewById(R.id.framelayout);
         int n = sharedPreferences.getInt("Dimension",9);
         Point size = new Point();
         Display display = getWindowManager().getDefaultDisplay();
@@ -100,12 +118,21 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         int width;
         Resources resources = getApplicationContext().getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-        int marginButtons;
+        int marginButtons = 20;
         int sizeButtons;
-        final ImageButton penButton = new ImageButton(getApplicationContext());
+        final Button penButton = new Button(getApplicationContext());
         final Button clearButton = new Button(getApplicationContext());
+        final Button hintButton = new Button(getApplicationContext());
+        final Button undoButton = new Button(getApplicationContext());
         penButton.setBackgroundResource(R.drawable.pen);
+        penButton.setStateListAnimator(null);
         clearButton.setBackgroundResource(R.drawable.eraser);
+        clearButton.setStateListAnimator(null);
+        hintButton.setBackgroundResource(R.drawable.hint);
+        hintButton.setStateListAnimator(null);
+        undoButton.setBackgroundResource(R.drawable.undo);
+        undoButton.setStateListAnimator(null);
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             int margin = 5;
             int r = n>4?(n%2==0?n/2:n/2+1):n;
@@ -118,18 +145,22 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setBackgroundColor(Color.WHITE);
                 //bt.setBackgroundResource(R.drawable.val_button);
                 bt.setText(i + "");
+                bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
+                viewParams.gravity = Gravity.BOTTOM;
+                if(r == n)
+                    viewParams.bottomMargin = marginButtons;
+                else
+                    viewParams.bottomMargin = width + 2*marginButtons;
                 bt.setLayoutParams(viewParams);
                 bt.setX(size.y + margin/2 + i * margin + (i-1)*width);
                 bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
-                if(r == n)
-                    bt.setY(size.y - 75 - width);
-                else
-                    bt.setY(size.y - 75 - 2*width - margin);
+
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
+                bt.setStateListAnimator(null);
                 fl.addView(bt);
             }
             int k = n%2==0?0:width/2;
@@ -140,13 +171,17 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
                 bt.setLayoutParams(viewParams);
+                bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);
+                viewParams.gravity = Gravity.BOTTOM;
+                viewParams.bottomMargin = marginButtons;
                 bt.setX(size.y + k + margin/2 + i%r * margin + ((i-1)%r)*width);
                 bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
-                bt.setY(size.y - 75 - width);
+//                bt.setY(size.y - 75 - width);
                 Log.d("Create Buttons","Button"+i+" is created " + bt.getX());
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
+                bt.setStateListAnimator(null);
                 fl.addView(bt);
             }
 
@@ -163,13 +198,22 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
             FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
                     sizeButtons);
+            viewParamsB.gravity = Gravity.BOTTOM;
+            if(r == n) {
+                viewParamsB.bottomMargin = width + 2*marginButtons;
+            }
+            else {
+                viewParamsB.bottomMargin = 2*width + 3*marginButtons;
+            }
             penButton.setLayoutParams(viewParamsB);
-            viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
-                    sizeButtons);
             clearButton.setLayoutParams(viewParamsB);
+            hintButton.setLayoutParams(viewParamsB);
+            undoButton.setLayoutParams(viewParamsB);
 
-            penButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
-            clearButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
+//            penButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
+//            clearButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
+//            hintButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
+//            undoButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
             Chronometer clock = findViewById(R.id.chronometer2);
 //            clock.setY(10+clock.getHeight());
             clock.setTextSize(20);
@@ -183,8 +227,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
             width = (size.x-5*(n+1))/n;
             int down;
+
             if (resourceId > 0) {
-                DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
                 Log.d("Down","resources: " + resources.getDimensionPixelSize(resourceId));
                 Log.d("Down","resources: " + displayMetrics.density);
                 down = (int)(resources.getDimensionPixelSize(resourceId) / displayMetrics.density);
@@ -192,25 +237,31 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             else {
                 down = 0;
             }
-            Log.d("Down", "Down: " + down);
+            Point s = Size.getNavigationBarSize(getApplicationContext());
+            Log.d("Down", "Down: " + down + " s.y: " + s.y + " s.x: " + s.x);
             Button bt = null;
+            sizeButtons = size.x / 6;
             for (int i = 1; i < n + 1; ++i) {
                 bt = new Button(getApplicationContext());
                 Log.d("Create Buttons","Button"+i+" is created");
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
+                viewParams.gravity = Gravity.BOTTOM;
+                viewParams.bottomMargin = sizeButtons + 4*marginButtons;
                 bt.setLayoutParams(viewParams);
+                Log.d("Create buttons", "Width: " + width);
+                bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);
                 bt.setX(i * margin + (i-1)*width);
-                bt.setHeight(width);
+//                bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
-                bt.setY(size.y - width - down);
+                //bt.setY(size.y - width - down);
                 bt.setBackgroundColor(Color.WHITE);
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
+                bt.setStateListAnimator(null);
                 fl.addView(bt);
             }
-            sizeButtons = size.x / 6;
 
             Chronometer clock = findViewById(R.id.chronometer2);
             clock.setTextSize(20);
@@ -218,20 +269,33 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
             FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
                     sizeButtons);
+            viewParamsB.gravity = Gravity.BOTTOM;
+            viewParamsB.bottomMargin = (marginButtons);
             penButton.setLayoutParams(viewParamsB);
-
             clearButton.setLayoutParams(viewParamsB);
-            penButton.setMinimumWidth(0);
-            penButton.setMinimumHeight(0);
-            penButton.setY(size.y - sizeButtons - width - down - margin);
-            clearButton.setY(size.y - sizeButtons - width - down - margin);
+            hintButton.setLayoutParams(viewParamsB);
+            undoButton.setLayoutParams(viewParamsB);
+            Button pause = findViewById(R.id.button_pause);
+            pause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(isPause) {
+                        setPause();
+                    }
+                    else {
+                        setPlay();
+                    }
+                }
+            });
         }
 
         penButton.setX(size.x - 6*sizeButtons / 15 - sizeButtons);
-
         penButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isPause) {
+                    return;
+                }
                 if(isPen)
                     penButton.setBackgroundResource(R.drawable.pencil);
                     //penButton.setBackgroundColor(Color.RED);
@@ -248,12 +312,42 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isPause) {
+                    return;
+                }
                 db.refreshAll();
                 db.setValue(x, y, w, "-1");
                 db.clearPencil(x,y,w);
             }
         });
         fl.addView(clearButton);
+
+        hintButton.setX(size.x - 3*6*sizeButtons/15 - 3*sizeButtons);
+        hintButton.setId(R.id.hint_button);
+        hintButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isPause) {
+                    return;
+                }
+                hint();
+            }
+        });
+        fl.addView(hintButton);
+
+        undoButton.setX(size.x - 4*6*sizeButtons/15 - 4*sizeButtons);
+        undoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isPause) {
+                    return;
+                }
+                db.refreshAll();
+                db.undo();
+            }
+        });
+        fl.addView(undoButton);
+
         ImageButton menu = findViewById(R.id.buttonOverflow);
         menu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -262,8 +356,30 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
         });
     }
+    private void hint() {
+        db.refreshAll();
+        Button hint = findViewById(R.id.hint_button);
+        hint.setEnabled(false);
+        Log.d("Hint button", "Ad click");
+        if (mRewardedVideoAd.isLoaded()) {
+            mRewardedVideoAd.show();
+        }
+        else {
+            setPause();
+            hintReward();
+        }
+        long time = sharedPreferences.getLong("Time", 0);
+        editor.putLong("Time", time + 30000);
+        editor.apply();
+    }
+    private void loadRewardedVideoAd() {
+        mRewardedVideoAd.loadAd(SecretKeys.ADMOD_VIDEO_HINT,
+                new AdRequest.Builder()
+                        .build());
+    }
     @Override
     protected void onPause() {
+        mRewardedVideoAd.pause(this);
         super.onPause();
         Chronometer ch = findViewById(R.id.chronometer2);
         Log.d("onPause", SystemClock.elapsedRealtime()-ch.getBase()+"");
@@ -274,11 +390,36 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             DrawView dw = findViewById(R.id.drawView);
             db.refreshAll();
             editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
-            editor.putLong("Time",SystemClock.elapsedRealtime() - ch.getBase());
+            if(!isAd) {
+                editor.putLong("Time",SystemClock.elapsedRealtime() - ch.getBase());
+            }
+
             editor.apply();
         }
     }
+    private void setupStatistics() {
+        SharedPreferences sp = this.getSharedPreferences("Statistics", Context.MODE_PRIVATE);
+        String stat = sp.getString("Array", null);
+        if(stat != null) {
+            return;
+        }
+        Stat[][] data = new Stat[3][6];
+        for(int i = 0; i < 3; ++i) {
+            for(int z = 0; z < 6; ++z) {
+                data[i][z] = new Stat(0, 0, 0, 0);
+            }
+        }
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("Array", gson.toJson(data));
+        editor.apply();
+    }
     private void gameStat() {
+        Chronometer ch = findViewById(R.id.chronometer2);
+        if(SystemClock.elapsedRealtime() - ch.getBase() < 15000)
+            return;
+
         SharedPreferences sp = GameActivity.this.getSharedPreferences("Statistics", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         GsonBuilder builder = new GsonBuilder();
@@ -317,12 +458,30 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             cell.bestTime = time;
         }
         editor.putString("Array", gson.toJson(stat));
+        UserTime winner = new UserTime(time, "Matt");
+        String difficulty;
+        switch(2-dif) {
+            case 0:
+                difficulty = "easy";
+                break;
+            case 1:
+                difficulty = "medium";
+                break;
+            case 2:
+                difficulty = "hard";
+                break;
+            default: difficulty = "error";
+        }
+        winner.addToDataBase(n+"", difficulty);
         editor.apply();
     }
     View.OnClickListener createOnClick() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isPause) {
+                    return;
+                }
                 if(isPen) {
                     db.refreshAll();
                     db.setValue(x, y, w, (String) ((Button) view).getText());
@@ -337,6 +496,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                         long time = SystemClock.elapsedRealtime() - ch.getBase();
                         winStat(time);
                         intent.putExtra("Time", time);
+                        intent.putExtra("Difficulty", sharedPreferences.getInt("Difficulty", 0));
                         startActivity(intent);
                         finish();
                     }
@@ -361,7 +521,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         y = event.getY();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN: // нажатие
-                db.refreshAll();
                 tutu();
                 break;
             case MotionEvent.ACTION_MOVE: // движение
@@ -376,7 +535,11 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     }
     @Override
     protected void onResume() {
+        mRewardedVideoAd.resume(this);
         super.onResume();
+        if(isAd) {
+            return;
+        }
         long time = sharedPreferences.getLong("Time", 0);
         Chronometer ch = findViewById(R.id.chronometer2);
         setTimer(time);
@@ -431,7 +594,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 gameStat();
                 editor.putLong("Time",0);
                 editor.apply();
-                Intent intent = new Intent(getApplicationContext(), DimensionActivity.class);
+                Intent intent = new Intent(getApplicationContext(), BoardsActivity.class);
                 startActivity(intent);
                 pw.dismiss();
                 finish();
@@ -502,25 +665,58 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
         });
     }
+    @Override
+    public void onBackPressed() {
+        if(fragmentHistory.active) {
+            fTrans = getFragmentManager().beginTransaction();
+            fragmentHistory.active = false;
+            fTrans.remove(fragmentHistory);
+            fTrans.commit();
+        }
+        else if(fragmentRules.active) {
+            fTrans = getFragmentManager().beginTransaction();
+            fragmentRules.active = false;
+            fTrans.remove(fragmentRules);
+            fTrans.commit();
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
     private void showPopupMenu(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.inflate(R.menu.menu_stat);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                fTrans = getFragmentManager().beginTransaction();
+                Intent intent;
                 switch (item.getItemId()) {
                     case R.id.menuSettings:
                         Log.d("Popup menu", "Settings choice");
+                        intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.menuRules:
                         Log.d("Popup menu", "Rules choice");
+                        fragmentRules.active = true;
+                        fTrans.add(R.id.framelayout, fragmentRules);
                         break;
                     case R.id.menuStatistics:
                         Log.d("Popup menu", "Statistics choice");
+                        intent = new Intent(getApplicationContext(), TuturuActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.menuHistory:
+                        Log.d("Popup menu", "History choice");
+                        fragmentHistory.active = true;
+                        fragmentHistory.setHistory(db.board.gameHistory);
+                        fTrans.add(R.id.framelayout, fragmentHistory);
                         break;
                     default:
                         return false;
                 }
+                fTrans.commit();
                 return true;
             }
         });
@@ -538,5 +734,96 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         Chronometer ch = findViewById(R.id.chronometer2);
         Log.d("setTimer", SystemClock.elapsedRealtime()-ch.getBase()+"");
         ch.setBase(SystemClock.elapsedRealtime() - time);
+    }
+
+    @Override
+    public void onRewardedVideoAdLoaded() {
+        Button hint = findViewById(R.id.hint_button);
+        hint.setBackgroundResource(R.drawable.hint);
+        hint.setEnabled(true);
+        Log.d("AdLoaded","op");
+    }
+
+    @Override
+    public void onRewardedVideoAdOpened() {
+        Log.d("AdOpened","op");
+    }
+    private void setPause() {
+        Button pause = findViewById(R.id.button_pause);
+        pause.setBackgroundResource(R.drawable.play);
+        Chronometer ch = findViewById(R.id.chronometer2);
+        ch.stop();
+        long time = SystemClock.elapsedRealtime() - ch.getBase();
+        editor.putLong("Time", time);
+        isAd = true;
+        editor.apply();
+        fTrans = getFragmentManager().beginTransaction();
+        fTrans.add(R.id.pause_layout, fragmentPause);
+        fTrans.commit();
+        isPause = !isPause;
+    }
+    private void setPlay() {
+        Button pause = findViewById(R.id.button_pause);
+        pause.setBackgroundResource(R.drawable.pause);
+        Chronometer ch = findViewById(R.id.chronometer2);
+        long time = sharedPreferences.getLong("Time", 0);
+        ch.setBase(SystemClock.elapsedRealtime() - time);
+        fTrans = getFragmentManager().beginTransaction();
+        fTrans.remove(fragmentPause);
+        fTrans.commit();
+        ch.start();
+        isAd = false;
+        Button hint = findViewById(R.id.hint_button);
+        hint.setEnabled(true);
+        isPause = !isPause;
+    }
+    @Override
+    public void onRewardedVideoStarted() {
+        Log.d("AdStarted","op");
+    }
+
+    @Override
+    public void onRewardedVideoAdClosed() {
+        Log.d("AdClosed","op");
+        loadRewardedVideoAd();
+    }
+
+    @Override
+    public void onRewarded(RewardItem rewardItem) {
+        Log.d("AdRewarded","op");
+        hintReward();
+    }
+    private void hintReward() {
+        db.hint(x, y);
+        if (db.checkSudoku()) {
+            Toast.makeText(GameActivity.this, "Судоку решено верно",
+                    Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(GameActivity.this, CongratulationActivity.class);
+            Chronometer ch = findViewById(R.id.chronometer2);
+            editor.putLong("Time",0);
+            editor.putString("Boardik", null);
+            editor.apply();
+            long time = SystemClock.elapsedRealtime() - ch.getBase();
+            winStat(time);
+            intent.putExtra("Time", time);
+            intent.putExtra("Difficulty", sharedPreferences.getInt("Difficulty", 0));
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onRewardedVideoAdLeftApplication() {
+        Log.d("AdLeft","op");
+    }
+
+    @Override
+    public void onRewardedVideoAdFailedToLoad(int i) {
+        Log.d("AdFailed","op");
+    }
+
+    @Override
+    public void onRewardedVideoCompleted() {
+        Log.d("AdCompleted","op");
     }
 }

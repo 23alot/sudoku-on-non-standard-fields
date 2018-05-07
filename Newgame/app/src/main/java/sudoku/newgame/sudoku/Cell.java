@@ -19,4 +19,7 @@ public class Cell {
     public boolean isCorrect(){
         return value == correctValue;
     }
+    public void writeCorrectValue() {
+        this.value = this.correctValue;
+    }
 }

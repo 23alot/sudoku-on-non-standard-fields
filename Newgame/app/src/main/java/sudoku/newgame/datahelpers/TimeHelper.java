@@ -1,7 +1,7 @@
 package sudoku.newgame.datahelpers;
 
 public class TimeHelper {
-    public String millisecondsToTime(long time) {
+    public static String millisecondsToTime(long time) {
         String result = "";
         int hours = (int)(time / 1000 / 60 / 60);
         int minutes = (int)(time / 1000 / 60 % 60);

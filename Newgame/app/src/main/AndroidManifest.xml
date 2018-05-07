@@ -1,16 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 
     package="sudoku.newgame">
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".GameActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,14 +18,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".GeneratorActivity"></activity>
-        <activity android:name=".GameActivity"></activity>
+        <activity android:name=".LeaderboardActivity"></activity>
+        <activity android:name=".MainActivity"></activity>
         <activity android:name=".DimensionActivity"></activity>
         <activity android:name=".BoardsActivity"></activity>
         <activity android:name=".CongratulationActivity"></activity>
-        <activity android:name=".Statictics"></activity>
+        <activity android:name=".StatisticsActivity"></activity>
         <activity android:name=".firebaseauth.ChooserActivity"></activity>
         <activity android:name=".firebaseauth.FirebaseUIActivity"></activity>
         <activity android:name=".firebaseauth.GoogleSignInActivity"></activity>
+        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".TuturuActivity" />
+        <activity android:name=".DemoActivity" />
     </application>
-
 </manifest>

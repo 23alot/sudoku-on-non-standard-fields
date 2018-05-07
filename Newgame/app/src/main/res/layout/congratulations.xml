@@ -35,4 +35,9 @@
         android:layout_height="wrap_content"
         android:text="Новая игра"
         android:layout_below="@+id/bestTime"/>
+    <View
+        android:id="@+id/popupView"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:layout_marginBottom="0dp"/>
 </RelativeLayout>

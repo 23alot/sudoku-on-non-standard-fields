@@ -32,6 +32,7 @@ import java.nio.file.FileAlreadyExistsException;
 
 import sudoku.newgame.dancinglinks.Algorithm;
 import sudoku.newgame.dancinglinks.Structure;
+import sudoku.newgame.datahelpers.UserTime;
 import sudoku.newgame.draw.DrawBoard;
 import sudoku.newgame.sudoku.Board;
 
@@ -136,8 +137,6 @@ public class DrawView extends View{
             return gson.toJson(board);
     }
     public void creation(){
-        long start = System.currentTimeMillis();
-
         String boardik = sharedPreferences.getString("Boardik",null);
         if(boardik != null){
             GsonBuilder builder = new GsonBuilder();
@@ -163,6 +162,8 @@ public class DrawView extends View{
             Gson gson = builder.create();
             area = gson.fromJson(boardik,byte[].class);
         }
+        long start1, start2, end2, end1;
+        start1 = System.nanoTime();
         int difficulty = (20 + sharedPreferences.getInt("Difficulty",8))*n*n/81;
         difficulty = n*n - difficulty;
         bd = null;
@@ -197,10 +198,30 @@ public class DrawView extends View{
                 creation();
             }
         }
+        end1 = System.nanoTime();
         Log.d("Creation",bd+"");
         board = new DrawBoard(10,10,(w - 2 * 10)/n,bd.areas,bd,n);
-        Toast.makeText(context,System.currentTimeMillis()-start+"",Toast.LENGTH_SHORT).show();
+        int dir = sharedPreferences.getInt("Difficulty",8);
+        Log.d("TestBD", dir+"");
+        dir = (dir - 3) / 5;
+        Log.d("TestBD2", dir+"");
+        String difficultys;
+        switch(2-dir) {
+            case 0:
+                difficultys = "easy";
+                break;
+            case 1:
+                difficultys = "medium";
+                break;
+            case 2:
+                difficultys = "hard";
+                break;
+            default: difficultys = "error";
+        }
+        UserTime.addCreationTime(n+"", difficultys, end1-start1);
+        Toast.makeText(context,end1-start1+"",Toast.LENGTH_SHORT).show();
     }
+
     class Creation extends Thread {
         Algorithm algorithm;
         Board board;
@@ -241,8 +262,16 @@ public class DrawView extends View{
         board.focusOnCell(x,y,w,color,highlightColor);
         invalidate();
     }
+    void hint(float x, float y) {
+        board.hint(x, y);
+        invalidate();
+    }
     void setValue(float x, float y,int w, String value){
         board.setValue(x,y,value,w);
+        invalidate();
+    }
+    void undo() {
+        board.undo();
         invalidate();
     }
     void clearPencil(float x, float y, int w){
