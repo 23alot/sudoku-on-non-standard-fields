@@ -171,14 +171,14 @@ public class Algorithm {
         }
     }
     private void solve(){
-        if(result!=null && result.isMultiple)
+        if(result != null && result.isMultiple)
             return;
         if(isBadEnd())
             return;
         if(isEnd()) {
             //Log.d("solve","End");
             if(result == null)
-                result = new Solution(moves,solution,false);
+                result = new Solution(moves, solution,false);
             else
                 result.isMultiple = true;
             return;
@@ -373,7 +373,6 @@ public class Algorithm {
         return answer;
     }
     public int[] demoSolve() {
-        History history = new History();
         start();
 
         return solution;

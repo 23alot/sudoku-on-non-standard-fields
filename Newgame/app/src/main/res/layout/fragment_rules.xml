@@ -13,6 +13,7 @@
             android:layout_height="wrap_content"
             android:text="Правило одно: выжить"/>
         <Button
+            android:id="@+id/demo_game"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|bottom"/>

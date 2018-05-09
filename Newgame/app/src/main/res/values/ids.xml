@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="hint_button" type="id"/>
+    <item name="pen_button" type="id"/>
+    <item name="clear_button" type="id"/>
+    <item name="undo_button" type="id"/>
 </resources>

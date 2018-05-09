@@ -69,15 +69,21 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     private RewardedVideoAd mRewardedVideoAd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        long start = System.currentTimeMillis();
         super.onCreate(savedInstanceState);
-        isPen = true;
-        Point size = new Point();
-        Display display = getWindowManager().getDefaultDisplay();
-        display.getSize(size);
-        if(size.x < size.y)
-            w = size.x;
-        else
-            w = size.y;
+        setup();
+        MobileAds.initialize(this, SecretKeys.ADMOD_APP_ID);
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
+        mRewardedVideoAd.setRewardedVideoAdListener(this);
+
+//        isPen = true;
+//        Point size = new Point();
+//        Display display = getWindowManager().getDefaultDisplay();
+//        display.getSize(size);
+//        if(size.x < size.y)
+//            w = size.x;
+//        else
+//            w = size.y;
         setContentView(R.layout.game);
         db = findViewById(R.id.drawView);
         db.setOnTouchListener(this);
@@ -87,13 +93,12 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         editor = sharedPreferences.edit();
 
         createButtons();
-        fragmentHistory = new HistoryFragment();
-        fragmentRules = new RulesFragment();
-        fragmentPause = new PauseFragment();
+//        fragmentHistory = new HistoryFragment();
+//        fragmentRules = new RulesFragment();
+//        fragmentPause = new PauseFragment();
         Button button = findViewById(R.id.button20);
-        final Activity act = this;
-        pw = initiatePopupWindow();
-        pw.setAnimationStyle(R.style.Animation);
+//        pw = initiatePopupWindow();
+//        pw.setAnimationStyle(R.style.Animation);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,11 +107,36 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
                 pw.showAtLocation(v, Gravity.BOTTOM, 0 , 0);
             }
         });
-        setupStatistics();
-        MobileAds.initialize(this, SecretKeys.ADMOD_APP_ID);
-        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
-        mRewardedVideoAd.setRewardedVideoAdListener(this);
+
         loadRewardedVideoAd();
+//        setupStatistics();
+//        MobileAds.initialize(this, SecretKeys.ADMOD_APP_ID);
+//        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
+//        mRewardedVideoAd.setRewardedVideoAdListener(this);
+//        loadRewardedVideoAd();
+        Log.d("OnCreate", "Create time: " + (System.currentTimeMillis() - start));
+    }
+    private void setup() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                isPen = true;
+                Point size = new Point();
+                Display display = getWindowManager().getDefaultDisplay();
+                display.getSize(size);
+                if(size.x < size.y)
+                    w = size.x;
+                else
+                    w = size.y;
+                fragmentHistory = new HistoryFragment();
+                fragmentRules = new RulesFragment();
+                fragmentPause = new PauseFragment();
+                setupStatistics();
+                pw = initiatePopupWindow();
+                pw.setAnimationStyle(R.style.Animation);
+            }
+        });
+        thread.start();
     }
     void createButtons(){
         FrameLayout fl = findViewById(R.id.framelayout);
@@ -143,6 +173,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             for(;i < r+1; ++i){
                 bt = new Button(getApplicationContext());
                 bt.setBackgroundColor(Color.WHITE);
+                bt.setTextColor(Color.BLACK);
                 //bt.setBackgroundResource(R.drawable.val_button);
                 bt.setText(i + "");
                 bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);
@@ -166,6 +197,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             int k = n%2==0?0:width/2;
             for(;i < n+1; ++i){
                 bt = new Button(getApplicationContext());
+                bt.setTextColor(Color.BLACK);
                 bt.setBackgroundColor(Color.WHITE);
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
@@ -244,6 +276,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             for (int i = 1; i < n + 1; ++i) {
                 bt = new Button(getApplicationContext());
                 Log.d("Create Buttons","Button"+i+" is created");
+                bt.setTextColor(Color.BLACK);
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
@@ -384,17 +417,22 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         Chronometer ch = findViewById(R.id.chronometer2);
         Log.d("onPause", SystemClock.elapsedRealtime()-ch.getBase()+"");
         ch.stop();
-        if(!db.checkSudoku() && !newGame) {
+        try {
+            if (db != null && !db.checkSudoku() && !newGame) {
 //            SharedPreferences sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
 //            SharedPreferences.Editor editor = sharedPreferences.edit();
-            DrawView dw = findViewById(R.id.drawView);
-            db.refreshAll();
-            editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
-            if(!isAd) {
-                editor.putLong("Time",SystemClock.elapsedRealtime() - ch.getBase());
-            }
+                DrawView dw = findViewById(R.id.drawView);
+                db.refreshAll();
+                editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
+                if (!isAd) {
+                    editor.putLong("Time", SystemClock.elapsedRealtime() - ch.getBase());
+                }
 
-            editor.apply();
+                editor.apply();
+            }
+        }
+        catch(Exception e) {
+            Log.d("Pause", "Error in pause");
         }
     }
     private void setupStatistics() {

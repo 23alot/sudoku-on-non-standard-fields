@@ -190,8 +190,9 @@ public class DrawBoard {
             }
     }
     public void setBasicPencilValues() {
+
         for(int i = 0; i < n; ++i) {
-            for(int j = 0; j < n; ++i) {
+            for(int j = 0; j < n; ++j) {
                 if(!bd.cells[i][j].isInput) {
                     for(int q = 0; q < n; ++q) {
                         bd.cells[i][j].possibleValues[q] = true;
@@ -204,11 +205,11 @@ public class DrawBoard {
     private void removeAllPencilValues() {
         for(int x = 0; x < n; ++x) {
             for(int y = 0; y < n; ++y) {
-                if(bd.cells[x][y].isInput) {
+                if(bd.cells[y][x].isInput) {
                     for(int i = 0; i < n; ++i) {
                         for(int j = 0; j < n; ++j) {
                             if(j == x || i == y || bd.areas[n * y + x] == bd.areas[n * i + j])
-                                bd.cells[i][j].possibleValues[bd.cells[x][y].value-1] = false;
+                                bd.cells[i][j].possibleValues[bd.cells[y][x].value-1] = false;
                         }
                     }
                 }
@@ -239,6 +240,10 @@ public class DrawBoard {
             gameHistory.addEvent(Integer.valueOf(value),true,true, posx, posy);
             highlightCell(posx,posy,Color.rgb(153,204,255));
         }
+    }
+    public void setValueInPosition(int x, int y, String value) {
+        bd.cells[x][y].value = Byte.valueOf(value);
+        highlightCell(y, x, Color.rgb(153,204,255));
     }
     public void clearPencil(float x, float y){
         x -= startX;
