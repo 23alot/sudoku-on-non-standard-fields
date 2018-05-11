@@ -202,17 +202,17 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 fl.addView(bt);
             }
 
-            LinearLayout layout = findViewById(R.id.linear);
+            RelativeLayout layout = findViewById(R.id.relativeCondition);
             layout.setX(size.y - 50);
 
-            ImageButton dots = findViewById(R.id.buttonOverflow);
-            if (resourceId > 0) {
-                int x = resources.getDimensionPixelSize(resourceId);
-                dots.setX(size.x - x);
-            }
-            else {
-                dots.setX(size.x);
-            }
+//            ImageButton dots = findViewById(R.id.buttonOverflow);
+//            if (resourceId > 0) {
+//                int x = resources.getDimensionPixelSize(resourceId);
+//                dots.setX(size.x - x);
+//            }
+//            else {
+//                dots.setX(size.x);
+//            }
             FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
                     sizeButtons);
             viewParamsB.gravity = Gravity.BOTTOM;
@@ -227,10 +227,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             hintButton.setLayoutParams(viewParamsB);
             undoButton.setLayoutParams(viewParamsB);
 
-//            penButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
-//            clearButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
-//            hintButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
-//            undoButton.setY(size.y - 2 * width - 2 * margin - 75 - sizeButtons);
             Chronometer clock = findViewById(R.id.chronometer2);
 //            clock.setY(10+clock.getHeight());
             clock.setTextSize(20);
@@ -293,19 +289,20 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             clearButton.setLayoutParams(viewParamsB);
             hintButton.setLayoutParams(viewParamsB);
             undoButton.setLayoutParams(viewParamsB);
-            Button pause = findViewById(R.id.button_pause);
-            pause.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(isPause) {
-                        setPause();
-                    }
-                    else {
-                        setPlay();
-                    }
-                }
-            });
+
         }
+        Button pause = findViewById(R.id.button_pause);
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isPause) {
+                    setPause();
+                }
+                else {
+                    setPlay();
+                }
+            }
+        });
 
         penButton.setX(size.x - 6*sizeButtons / 15 - sizeButtons);
         penButton.setOnClickListener(new View.OnClickListener() {
@@ -394,7 +391,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 DrawView dw = findViewById(R.id.drawView);
                 db.refreshAll();
                 editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
-                editor.putLong("Time", SystemClock.elapsedRealtime() - ch.getBase());
+                if(isPause) {
+                    editor.putLong("Time", SystemClock.elapsedRealtime() - ch.getBase());
+                }
                 editor.apply();
             }
         }
@@ -784,6 +783,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     }
 
     private void setPause() {
+        LinearLayout ll = findViewById(R.id.pause_layout);
+        ll.setVisibility(View.VISIBLE);
         fragmentPause.isActive = true;
         Button pause = findViewById(R.id.button_pause);
         pause.setBackgroundResource(R.drawable.play);
@@ -791,10 +792,11 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         fTrans = getFragmentManager().beginTransaction();
         fTrans.add(R.id.pause_layout, fragmentPause);
         fTrans.commit();
-        isPause = !isPause;
-        Log.d("setPause",""+isPause);
+        isPause = false;
     }
     private void setPlay() {
+        LinearLayout ll = findViewById(R.id.pause_layout);
+        ll.setVisibility(View.INVISIBLE);
         fragmentPause.isActive = false;
         Button pause = findViewById(R.id.button_pause);
         pause.setBackgroundResource(R.drawable.pause);
@@ -804,7 +806,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         // isAd = false;
         Button hint = findViewById(R.id.hint_button);
         hint.setEnabled(true);
-        isPause = !isPause;
+        isPause = true;
         resumeTime();
     }
 
@@ -827,6 +829,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         }
     }
     private void updateButtons() {
+        LinearLayout ll = findViewById(R.id.pause_layout);
+        ll.setBackgroundColor(DataConstants.getBackgroundColor(theme));
         if(fragmentPause.isActive) {
             RelativeLayout rl = fragmentPause.fragment.findViewById(R.id.fragment_pause);
             rl.setBackgroundColor(DataConstants.getBackgroundColor(theme));
@@ -838,6 +842,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         Button newGame = findViewById(R.id.button20);
         newGame.setTextColor(DataConstants.getMainTextColor(theme));
         // New game menu
+        while(layout == null);
         LinearLayout linearLayout = layout.findViewById(R.id.new_game_layout);
         linearLayout.setBackgroundColor(DataConstants.getBackgroundColor(theme));
         Button bt = layout.findViewById(R.id.new_game);

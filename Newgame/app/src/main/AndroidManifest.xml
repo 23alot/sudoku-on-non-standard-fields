@@ -11,8 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".GameActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,24 +19,31 @@
             </intent-filter>
         </activity>
         <activity android:name=".GeneratorActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".LeaderboardActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".DimensionActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".BoardsActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".CongratulationActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".firebaseauth.ChooserActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".firebaseauth.FirebaseUIActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".firebaseauth.GoogleSignInActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".TuturuActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"/>
         <activity android:name=".DemoActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"/>
     </application>
 </manifest>

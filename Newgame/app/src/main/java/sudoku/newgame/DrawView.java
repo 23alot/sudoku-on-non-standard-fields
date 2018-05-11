@@ -46,18 +46,15 @@ public class DrawView extends View{
     Point size;
     volatile Board bd;
     public DrawBoard board = null;
-    Canvas canvas;
     byte[] area = null;
     SharedPreferences sharedPreferences;
     int w;
     int h;
     int n;
     Paint p;
-    Context context;
     int theme = 0;
     public DrawView(Context context){
         super(context);
-        this.context = context;
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
         n = sharedPreferences.getInt("Dimension",9);
@@ -67,7 +64,6 @@ public class DrawView extends View{
     }
     public DrawView(Context context, AttributeSet attrs) {
         super(context,attrs);
-        this.context = context;
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
         n = sharedPreferences.getInt("Dimension",9);
@@ -77,7 +73,6 @@ public class DrawView extends View{
 
     public DrawView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.context = context;
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
         n = sharedPreferences.getInt("Dimension",9);
@@ -87,7 +82,6 @@ public class DrawView extends View{
 
     public DrawView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        this.context = context;
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
         n = sharedPreferences.getInt("Dimension",9);
@@ -232,7 +226,6 @@ public class DrawView extends View{
             default: difficultys = "error";
         }
         UserTime.addCreationTime(n+"", difficultys, end1-start1);
-        Toast.makeText(context,end1-start1+"",Toast.LENGTH_SHORT).show();
     }
 
     class Creation extends Thread {

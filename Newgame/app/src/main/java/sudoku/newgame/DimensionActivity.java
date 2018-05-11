@@ -42,7 +42,7 @@ public class DimensionActivity extends Activity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editor.putInt("Dimension", dimension);
+                editor.putInt("DimensionBoard", dimension);
                 editor.apply();
                 Intent intent = new Intent(DimensionActivity.this, GeneratorActivity.class);
                 startActivity(intent);

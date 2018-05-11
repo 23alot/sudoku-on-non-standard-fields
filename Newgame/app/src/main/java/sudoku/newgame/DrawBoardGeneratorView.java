@@ -53,7 +53,7 @@ public class DrawBoardGeneratorView extends View {
         super(context);
         this.context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        n = sharedPreferences.getInt("Dimension",9);
+        n = sharedPreferences.getInt("DimensionBoard",9);
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
         p = new Paint();
@@ -63,7 +63,7 @@ public class DrawBoardGeneratorView extends View {
         super(context,attrs);
         this.context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        n = sharedPreferences.getInt("Dimension",9);
+        n = sharedPreferences.getInt("DimensionBoard",9);
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
         p = new Paint();
@@ -73,7 +73,7 @@ public class DrawBoardGeneratorView extends View {
         super(context, attrs, defStyleAttr);
         this.context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        n = sharedPreferences.getInt("Dimension",9);
+        n = sharedPreferences.getInt("DimensionBoard",9);
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
         p = new Paint();
@@ -83,7 +83,7 @@ public class DrawBoardGeneratorView extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        n = sharedPreferences.getInt("Dimension",9);
+        n = sharedPreferences.getInt("DimensionBoard",9);
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
         p = new Paint();
@@ -141,18 +141,25 @@ public class DrawBoardGeneratorView extends View {
     }
     void declineArea(){
         currentArea--;
-        currentSize = 0;
         for(int i = 0; i < board.length * board.length; ++i)
             if(prpr[i] == currentArea) {
                 prpr[i] = -1;
                 board[i/board.length][i%board.length].setFillColor(DataConstants.getFillColor(theme));
             }
+        clearCurrentCells();
         refreshBorders();
+        getRootView().findViewById(R.id.button50).setVisibility(INVISIBLE);
         if(currentArea == 0) {
             Log.d("Decline area", "Button invisible");
             getRootView().findViewById(R.id.button51).setVisibility(INVISIBLE);
         }
         invalidate();
+    }
+    private void clearCurrentCells() {
+        for(int i = 0; i < currentSize; ++i) {
+            currentHighlighted[i].drawCell.setFillColor(DataConstants.getFillColor(theme));
+        }
+        currentSize = 0;
     }
     void refreshBorders(){
         for(int i = 0; i < board.length; ++i) {
@@ -179,7 +186,9 @@ public class DrawBoardGeneratorView extends View {
                 return;
 
             if(!(possibleCells[board.length*posy+posx] || (currentSize == 0 && board[posy][posx].getFillColor() == DataConstants.getFillColor(theme)))){
-                Toast.makeText(context, "Не в ту степь", Toast.LENGTH_LONG).show();
+                TextView text = getRootView().findViewById(R.id.error_text);
+                text.setText("Не в ту степь");
+                text.setTextColor(DataConstants.getMainTextColor(theme));
                 return;
             }
             currentHighlighted[currentSize++] = new CellPosition(posx,posy,board[posy][posx]);
@@ -222,7 +231,9 @@ public class DrawBoardGeneratorView extends View {
                 return;
             }
             if(!(possibleCells[board.length*posy+posx] || (currentSize==0 && board[posy][posx].getFillColor() == DataConstants.getFillColor(theme)))){
-                Toast.makeText(context, "Не в ту степь", Toast.LENGTH_LONG).show();
+                TextView text = getRootView().findViewById(R.id.error_text);
+                text.setText("Не в ту степь");
+                text.setTextColor(DataConstants.getMainTextColor(theme));
                 return;
             }
             currentHighlighted[currentSize++] = new CellPosition(posx,posy,board[posy][posx]);
