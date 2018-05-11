@@ -13,13 +13,16 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import sudoku.newgame.datahelpers.BoardBitmap;
+import sudoku.newgame.datahelpers.DataConstants;
 
 /**
  * Created by sanya on 14.01.2018.
@@ -32,29 +35,35 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
     private Button declineButton;
     float x;
     float y;
+    int theme = 0;
     DrawBoardGeneratorView db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_board);
         sharedPreferences = this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
+        FrameLayout fl = findViewById(R.id.create_board);
+        fl.setBackgroundColor(DataConstants.getBackgroundColor(theme));
         editor = sharedPreferences.edit();
         db = findViewById(R.id.drawBoardGeneratorView);
         db.setOnTouchListener(this);
         acceptButton = findViewById(R.id.button50);
+        acceptButton.setBackgroundColor(DataConstants.getSameColor(theme));
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                acceptButton.setBackgroundColor(Color.WHITE);
+                acceptButton.setBackgroundColor(DataConstants.getSameColor(theme));
                 acceptButton.setVisibility(View.INVISIBLE);
                 if(db.saveArea()) {
                     showPopupMenu(view);
-                    acceptButton.setBackgroundColor(Color.WHITE);
+                    acceptButton.setBackgroundColor(DataConstants.getSameColor(theme));
                     acceptButton.setVisibility(View.VISIBLE);
                 }
             }
         });
         declineButton = findViewById(R.id.button51);
+        declineButton.setBackgroundColor(DataConstants.getSameColor(theme));
         declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,10 +96,12 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
     }
 
     void tutu(){
-        db.focusOnCell(x,y, Color.BLUE);
+        TextView text = findViewById(R.id.error_text);
+        text.setText("");
+        db.focusOnCell(x,y);
     }
     void tutuMove(){
-        db.focusOnCellMove(x,y, Color.BLUE);
+        db.focusOnCellMove(x,y);
     }
     @Override
     public boolean onTouch(View v, MotionEvent event){
@@ -141,7 +152,8 @@ public class GeneratorActivity extends Activity implements View.OnTouchListener 
         popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
             @Override
             public void onDismiss(PopupMenu menu) {
-
+                db.declineArea();
+                acceptButton.setVisibility(View.INVISIBLE);
             }
         });
         popupMenu.show();

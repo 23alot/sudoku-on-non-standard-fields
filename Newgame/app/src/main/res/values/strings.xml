@@ -108,4 +108,6 @@
     <string name="set_error">And what if we will place a wrong value? It will be highlighted</string>
     <string name="fix_error">So let\'s fix it fast</string>
     <string name="rest_game">Let\'s have a rest and enjoy rest of the game</string>
+    <string name="dark_theme">Dark</string>
+    <string name="light_theme">Light</string>
 </resources>

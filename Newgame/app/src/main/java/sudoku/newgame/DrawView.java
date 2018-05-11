@@ -32,6 +32,7 @@ import java.nio.file.FileAlreadyExistsException;
 
 import sudoku.newgame.dancinglinks.Algorithm;
 import sudoku.newgame.dancinglinks.Structure;
+import sudoku.newgame.datahelpers.DataConstants;
 import sudoku.newgame.datahelpers.UserTime;
 import sudoku.newgame.draw.DrawBoard;
 import sudoku.newgame.sudoku.Board;
@@ -53,10 +54,12 @@ public class DrawView extends View{
     int n;
     Paint p;
     Context context;
+    int theme = 0;
     public DrawView(Context context){
         super(context);
         this.context = context;
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
         n = sharedPreferences.getInt("Dimension",9);
         size = new Point();
         p = new Paint();
@@ -66,6 +69,7 @@ public class DrawView extends View{
         super(context,attrs);
         this.context = context;
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
         n = sharedPreferences.getInt("Dimension",9);
         size = new Point();
         p = new Paint();
@@ -75,6 +79,7 @@ public class DrawView extends View{
         super(context, attrs, defStyleAttr);
         this.context = context;
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
         n = sharedPreferences.getInt("Dimension",9);
         size = new Point();
         p = new Paint();
@@ -84,6 +89,7 @@ public class DrawView extends View{
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
         sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
         n = sharedPreferences.getInt("Dimension",9);
         size = new Point();
         p = new Paint();
@@ -91,14 +97,22 @@ public class DrawView extends View{
     @Override
     protected void onDraw(Canvas canvas) {
         Log.d("onDraw","draw begin "+w);
-        canvas.drawColor(Color.WHITE);
-        p.setColor(Color.BLACK);
+        Log.d("Theme",theme+"");
+        theme = sharedPreferences.getInt("Theme", 0);
+        canvas.drawColor(DataConstants.getBackgroundColor(theme));
+        p.setColor(DataConstants.getMainTextColor(theme));
 
         //boolean newGame = sharedPreferences.getBoolean("New game",false);
 
         if(board == null) {
             creation();
         }
+
+        if(board.theme != theme) {
+            board.theme = theme;
+            board.refreshFillColor(theme);
+        }
+
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if(board.board[0][0].length != (h - 2*10) / n) {
                 board.changeLength((h - 2*10) / n);
@@ -108,8 +122,7 @@ public class DrawView extends View{
         else if(board.board[0][0].length != (w-2*10) / n) {
             board.changeLength((w - 2 * 10) / n);
         }
-
-        board.draw(canvas, p);
+        board.draw(canvas, p, theme);
     }
 
     @Override
@@ -200,7 +213,7 @@ public class DrawView extends View{
         }
         end1 = System.nanoTime();
         Log.d("Creation",bd+"");
-        board = new DrawBoard(10,10,(w - 2 * 10)/n,bd.areas,bd,n);
+        board = new DrawBoard(10,10,(w - 2 * 10)/n, bd.areas, bd, n);
         int dir = sharedPreferences.getInt("Difficulty",8);
         Log.d("TestBD", dir+"");
         dir = (dir - 3) / 5;
@@ -259,7 +272,7 @@ public class DrawView extends View{
         invalidate();
     }
     void focusOnCell(float x, float y,int w, int color, int highlightColor){
-        board.focusOnCell(x,y,w,color,highlightColor);
+        board.focusOnCell(x,y);
         invalidate();
     }
     void hint(float x, float y) {

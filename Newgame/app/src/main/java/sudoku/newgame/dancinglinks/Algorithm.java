@@ -343,7 +343,7 @@ public class Algorithm {
                 if(finalSolution[i]!=-1 && i != pos)
                     cover(structure.getNode(finalSolution[i]));
 
-            if(!result.isMultiple && moves <= difficultyr) {
+            if(result != null && !result.isMultiple && moves <= difficultyr) {
                 finalSolution[pos] = -1;
             }
             if(countVisited(isVisited) == structure.N*structure.N) {

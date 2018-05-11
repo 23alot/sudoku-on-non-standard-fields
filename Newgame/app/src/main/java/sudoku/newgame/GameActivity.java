@@ -27,27 +27,25 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.reward.RewardItem;
+
 import com.google.android.gms.ads.reward.RewardedVideoAd;
-import com.google.android.gms.ads.reward.RewardedVideoAdListener;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import sudoku.newgame.datahelpers.SecretKeys;
+import sudoku.newgame.datahelpers.DataConstants;
 import sudoku.newgame.datahelpers.Size;
 import sudoku.newgame.datahelpers.UserTime;
 import sudoku.newgame.draw.DrawCell;
-import sudoku.newgame.firebaseauth.ChooserActivity;
 import sudoku.newgame.sudoku.Cell;
 
-public class GameActivity extends Activity implements View.OnTouchListener, RewardedVideoAdListener {
+public class GameActivity extends Activity implements View.OnTouchListener {
     boolean isPen;
-    boolean isAd = false;
+    boolean isAd;
+    View layout;
     boolean isPause = true;
+    boolean isFragment = false;
     private Button mbutton;
     private Cell focusedCell = null;
     private DrawCell focusedDrawCell = null;
@@ -56,6 +54,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     long stopTime;
     boolean newGame = false;
     int w;
+    public int theme = 0;
     float x;
     float y;
     DrawView db;
@@ -63,6 +62,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     HistoryFragment fragmentHistory;
     RulesFragment fragmentRules;
     PauseFragment fragmentPause;
+    SettingsFragment fragmentSettings;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     FragmentTransaction fTrans;
@@ -70,35 +70,20 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         long start = System.currentTimeMillis();
+        sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
         super.onCreate(savedInstanceState);
         setup();
-        MobileAds.initialize(this, SecretKeys.ADMOD_APP_ID);
-        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
-        mRewardedVideoAd.setRewardedVideoAdListener(this);
-
-//        isPen = true;
-//        Point size = new Point();
-//        Display display = getWindowManager().getDefaultDisplay();
-//        display.getSize(size);
-//        if(size.x < size.y)
-//            w = size.x;
-//        else
-//            w = size.y;
         setContentView(R.layout.game);
         db = findViewById(R.id.drawView);
+        db.invalidate();
         db.setOnTouchListener(this);
-        sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         long time = sharedPreferences.getLong("Time", 0);
         setTimer(time);
         editor = sharedPreferences.edit();
 
         createButtons();
-//        fragmentHistory = new HistoryFragment();
-//        fragmentRules = new RulesFragment();
-//        fragmentPause = new PauseFragment();
         Button button = findViewById(R.id.button20);
-//        pw = initiatePopupWindow();
-//        pw.setAnimationStyle(R.style.Animation);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,12 +93,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             }
         });
 
-        loadRewardedVideoAd();
-//        setupStatistics();
-//        MobileAds.initialize(this, SecretKeys.ADMOD_APP_ID);
-//        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
-//        mRewardedVideoAd.setRewardedVideoAdListener(this);
-//        loadRewardedVideoAd();
+
         Log.d("OnCreate", "Create time: " + (System.currentTimeMillis() - start));
     }
     private void setup() {
@@ -131,6 +111,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
                 fragmentHistory = new HistoryFragment();
                 fragmentRules = new RulesFragment();
                 fragmentPause = new PauseFragment();
+                fragmentSettings = new SettingsFragment();
                 setupStatistics();
                 pw = initiatePopupWindow();
                 pw.setAnimationStyle(R.style.Animation);
@@ -138,7 +119,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         });
         thread.start();
     }
-    void createButtons(){
+    void createButtons() {
         FrameLayout fl = findViewById(R.id.framelayout);
         int n = sharedPreferences.getInt("Dimension",9);
         Point size = new Point();
@@ -154,6 +135,10 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         final Button clearButton = new Button(getApplicationContext());
         final Button hintButton = new Button(getApplicationContext());
         final Button undoButton = new Button(getApplicationContext());
+        penButton.setId(R.id.pen_button);
+        clearButton.setId(R.id.clear_button);
+        hintButton.setId(R.id.hint_button);
+        undoButton.setId(R.id.undo_button);
         penButton.setBackgroundResource(R.drawable.pen);
         penButton.setStateListAnimator(null);
         clearButton.setBackgroundResource(R.drawable.eraser);
@@ -172,8 +157,8 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             Button bt = null;
             for(;i < r+1; ++i){
                 bt = new Button(getApplicationContext());
-                bt.setBackgroundColor(Color.WHITE);
-                bt.setTextColor(Color.BLACK);
+                bt.setBackgroundColor(DataConstants.getBackgroundColor(theme));
+                bt.setTextColor(DataConstants.getMainTextColor(theme));
                 //bt.setBackgroundResource(R.drawable.val_button);
                 bt.setText(i + "");
                 bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);
@@ -197,8 +182,8 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             int k = n%2==0?0:width/2;
             for(;i < n+1; ++i){
                 bt = new Button(getApplicationContext());
-                bt.setTextColor(Color.BLACK);
-                bt.setBackgroundColor(Color.WHITE);
+                bt.setTextColor(DataConstants.getMainTextColor(theme));
+                bt.setBackgroundColor(DataConstants.getBackgroundColor(theme));
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
@@ -276,7 +261,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             for (int i = 1; i < n + 1; ++i) {
                 bt = new Button(getApplicationContext());
                 Log.d("Create Buttons","Button"+i+" is created");
-                bt.setTextColor(Color.BLACK);
+                bt.setTextColor(DataConstants.getMainTextColor(theme));
                 bt.setText(i + "");
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
@@ -289,7 +274,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
 //                bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
                 //bt.setY(size.y - width - down);
-                bt.setBackgroundColor(Color.WHITE);
+                bt.setBackgroundColor(DataConstants.getBackgroundColor(theme));
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
                 bt.setStateListAnimator(null);
@@ -329,12 +314,13 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
                 if(!isPause) {
                     return;
                 }
-                if(isPen)
+                if(isPen) {
                     penButton.setBackgroundResource(R.drawable.pencil);
-                    //penButton.setBackgroundColor(Color.RED);
-                else
+                }
+                else {
                     penButton.setBackgroundResource(R.drawable.pen);
-                    //penButton.setBackgroundColor(Color.BLUE);
+                }
+                updateButtons();
                 isPen = !isPen;
             }
         });
@@ -388,46 +374,27 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
                 showPopupMenu(view);
             }
         });
+        updateButtons();
     }
     private void hint() {
         db.refreshAll();
-        Button hint = findViewById(R.id.hint_button);
-        hint.setEnabled(false);
-        Log.d("Hint button", "Ad click");
-        if (mRewardedVideoAd.isLoaded()) {
-            mRewardedVideoAd.show();
-        }
-        else {
-            setPause();
-            hintReward();
-        }
+        hintReward();
         long time = sharedPreferences.getLong("Time", 0);
         editor.putLong("Time", time + 30000);
         editor.apply();
     }
-    private void loadRewardedVideoAd() {
-        mRewardedVideoAd.loadAd(SecretKeys.ADMOD_VIDEO_HINT,
-                new AdRequest.Builder()
-                        .build());
-    }
+
     @Override
     protected void onPause() {
-        mRewardedVideoAd.pause(this);
         super.onPause();
         Chronometer ch = findViewById(R.id.chronometer2);
-        Log.d("onPause", SystemClock.elapsedRealtime()-ch.getBase()+"");
         ch.stop();
         try {
             if (db != null && !db.checkSudoku() && !newGame) {
-//            SharedPreferences sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
-//            SharedPreferences.Editor editor = sharedPreferences.edit();
                 DrawView dw = findViewById(R.id.drawView);
                 db.refreshAll();
                 editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
-                if (!isAd) {
-                    editor.putLong("Time", SystemClock.elapsedRealtime() - ch.getBase());
-                }
-
+                editor.putLong("Time", SystemClock.elapsedRealtime() - ch.getBase());
                 editor.apply();
             }
         }
@@ -573,15 +540,16 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     }
     @Override
     protected void onResume() {
-        mRewardedVideoAd.resume(this);
         super.onResume();
-        if(isAd) {
-            return;
+        theme = sharedPreferences.getInt("Theme", 0);
+        updateButtons();
+        Log.d("onResume",""+isPause);
+        if(isPause && !isFragment) {
+            long time = sharedPreferences.getLong("Time", 0);
+            Chronometer ch = findViewById(R.id.chronometer2);
+            setTimer(time);
+            ch.start();
         }
-        long time = sharedPreferences.getLong("Time", 0);
-        Chronometer ch = findViewById(R.id.chronometer2);
-        setTimer(time);
-        ch.start();
     }
     private PopupWindow initiatePopupWindow() {
         PopupWindow mDropdown = null;
@@ -589,7 +557,7 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
 
             LayoutInflater mInflater = (LayoutInflater) getApplicationContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View layout = mInflater.inflate(R.layout.newgame_menu, null);
+            layout = mInflater.inflate(R.layout.newgame_menu, null);
             setupNewGameMenu(layout);
             layout.measure(View.MeasureSpec.UNSPECIFIED,
                     View.MeasureSpec.UNSPECIFIED);
@@ -705,21 +673,55 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
     }
     @Override
     public void onBackPressed() {
-        if(fragmentHistory.active) {
+        if(fragmentHistory.isActive) {
             fTrans = getFragmentManager().beginTransaction();
-            fragmentHistory.active = false;
+            fragmentHistory.isActive = false;
             fTrans.remove(fragmentHistory);
             fTrans.commit();
+            isFragment = false;
+            resumeTime();
         }
-        else if(fragmentRules.active) {
+        else if(fragmentRules.isActive) {
             fTrans = getFragmentManager().beginTransaction();
-            fragmentRules.active = false;
+            fragmentRules.isActive = false;
             fTrans.remove(fragmentRules);
             fTrans.commit();
+            isFragment = false;
+            resumeTime();
+        }
+        else if(fragmentSettings.isActive) {
+            fTrans = getFragmentManager().beginTransaction();
+            fragmentSettings.isActive = false;
+            theme = sharedPreferences.getInt("Theme", 0);
+            updateButtons();
+            db.invalidate();
+            fTrans.remove(fragmentSettings);
+            fTrans.commit();
+            isFragment = false;
+            resumeTime();
         }
         else {
             super.onBackPressed();
         }
+    }
+    private void stopTime() {
+        if(!isPause) {
+            return;
+        }
+        Chronometer ch = findViewById(R.id.chronometer2);
+        ch.stop();
+        long time = SystemClock.elapsedRealtime() - ch.getBase();
+        editor.putLong("Time", time);
+        editor.apply();
+    }
+    private void resumeTime() {
+        if(!isPause) {
+            return;
+        }
+        Chronometer ch = findViewById(R.id.chronometer2);
+        long time = sharedPreferences.getLong("Time", 0);
+        ch.setBase(SystemClock.elapsedRealtime() - time);
+        ch.start();
     }
     private void showPopupMenu(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
@@ -732,24 +734,31 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
                 switch (item.getItemId()) {
                     case R.id.menuSettings:
                         Log.d("Popup menu", "Settings choice");
-                        intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                        startActivity(intent);
+                        fragmentSettings.isActive = true;
+                        fTrans.add(R.id.framelayout, fragmentSettings);
+                        isFragment = true;
+                        stopTime();
                         break;
                     case R.id.menuRules:
                         Log.d("Popup menu", "Rules choice");
-                        fragmentRules.active = true;
+                        fragmentRules.isActive = true;
                         fTrans.add(R.id.framelayout, fragmentRules);
+                        isFragment = true;
+                        stopTime();
                         break;
                     case R.id.menuStatistics:
                         Log.d("Popup menu", "Statistics choice");
                         intent = new Intent(getApplicationContext(), TuturuActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
                         break;
                     case R.id.menuHistory:
                         Log.d("Popup menu", "History choice");
-                        fragmentHistory.active = true;
+                        fragmentHistory.isActive = true;
                         fragmentHistory.setHistory(db.board.gameHistory);
                         fTrans.add(R.id.framelayout, fragmentHistory);
+                        isFragment = true;
+                        stopTime();
                         break;
                     default:
                         return false;
@@ -774,63 +783,31 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
         ch.setBase(SystemClock.elapsedRealtime() - time);
     }
 
-    @Override
-    public void onRewardedVideoAdLoaded() {
-        Button hint = findViewById(R.id.hint_button);
-        hint.setBackgroundResource(R.drawable.hint);
-        hint.setEnabled(true);
-        Log.d("AdLoaded","op");
-    }
-
-    @Override
-    public void onRewardedVideoAdOpened() {
-        Log.d("AdOpened","op");
-    }
     private void setPause() {
+        fragmentPause.isActive = true;
         Button pause = findViewById(R.id.button_pause);
         pause.setBackgroundResource(R.drawable.play);
-        Chronometer ch = findViewById(R.id.chronometer2);
-        ch.stop();
-        long time = SystemClock.elapsedRealtime() - ch.getBase();
-        editor.putLong("Time", time);
-        isAd = true;
-        editor.apply();
+        stopTime();
         fTrans = getFragmentManager().beginTransaction();
         fTrans.add(R.id.pause_layout, fragmentPause);
         fTrans.commit();
         isPause = !isPause;
+        Log.d("setPause",""+isPause);
     }
     private void setPlay() {
+        fragmentPause.isActive = false;
         Button pause = findViewById(R.id.button_pause);
         pause.setBackgroundResource(R.drawable.pause);
-        Chronometer ch = findViewById(R.id.chronometer2);
-        long time = sharedPreferences.getLong("Time", 0);
-        ch.setBase(SystemClock.elapsedRealtime() - time);
         fTrans = getFragmentManager().beginTransaction();
         fTrans.remove(fragmentPause);
         fTrans.commit();
-        ch.start();
-        isAd = false;
+        // isAd = false;
         Button hint = findViewById(R.id.hint_button);
         hint.setEnabled(true);
         isPause = !isPause;
-    }
-    @Override
-    public void onRewardedVideoStarted() {
-        Log.d("AdStarted","op");
+        resumeTime();
     }
 
-    @Override
-    public void onRewardedVideoAdClosed() {
-        Log.d("AdClosed","op");
-        loadRewardedVideoAd();
-    }
-
-    @Override
-    public void onRewarded(RewardItem rewardItem) {
-        Log.d("AdRewarded","op");
-        hintReward();
-    }
     private void hintReward() {
         db.hint(x, y);
         if (db.checkSudoku()) {
@@ -849,19 +826,42 @@ public class GameActivity extends Activity implements View.OnTouchListener, Rewa
             finish();
         }
     }
+    private void updateButtons() {
+        if(fragmentPause.isActive) {
+            RelativeLayout rl = fragmentPause.fragment.findViewById(R.id.fragment_pause);
+            rl.setBackgroundColor(DataConstants.getBackgroundColor(theme));
+        }
+        RelativeLayout rl = findViewById(R.id.relativeCondition);
+        rl.setBackgroundColor(DataConstants.getHeaderColor(theme));
+        Chronometer ch = findViewById(R.id.chronometer2);
+        ch.setTextColor(DataConstants.getMainTextColor(theme));
+        Button newGame = findViewById(R.id.button20);
+        newGame.setTextColor(DataConstants.getMainTextColor(theme));
+        // New game menu
+        LinearLayout linearLayout = layout.findViewById(R.id.new_game_layout);
+        linearLayout.setBackgroundColor(DataConstants.getBackgroundColor(theme));
+        Button bt = layout.findViewById(R.id.new_game);
+        bt.setTextColor(DataConstants.getMainTextColor(theme));
+        bt = layout.findViewById(R.id.repeat_game);
+        bt.setTextColor(DataConstants.getMainTextColor(theme));
+        bt = layout.findViewById(R.id.new_field);
+        bt.setTextColor(DataConstants.getMainTextColor(theme));
+        bt = layout.findViewById(R.id.new_easy);
+        bt.setTextColor(DataConstants.getMainTextColor(theme));
+        bt = layout.findViewById(R.id.new_medium);
+        bt.setTextColor(DataConstants.getMainTextColor(theme));
+        bt = layout.findViewById(R.id.new_hard);
+        bt.setTextColor(DataConstants.getMainTextColor(theme));
+        int n = sharedPreferences.getInt("Dimension",9);
+        Button check = findViewById(n);
+        if(check.getCurrentTextColor() == DataConstants.getMainTextColor(theme)) {
+            return;
+        }
+        for(int i = 1; i < n+1; ++i) {
+            Button btr = findViewById(i);
+            btr.setBackgroundColor(DataConstants.getBackgroundColor(theme));
+            btr.setTextColor(DataConstants.getMainTextColor(theme));
+        }
 
-    @Override
-    public void onRewardedVideoAdLeftApplication() {
-        Log.d("AdLeft","op");
-    }
-
-    @Override
-    public void onRewardedVideoAdFailedToLoad(int i) {
-        Log.d("AdFailed","op");
-    }
-
-    @Override
-    public void onRewardedVideoCompleted() {
-        Log.d("AdCompleted","op");
     }
 }

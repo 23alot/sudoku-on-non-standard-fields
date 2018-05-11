@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class RulesFragment extends Fragment {
-    public boolean active = false;
+    public boolean isActive = false;
     View fragment;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

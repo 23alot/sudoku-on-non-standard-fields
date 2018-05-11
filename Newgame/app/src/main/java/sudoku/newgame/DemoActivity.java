@@ -1,6 +1,8 @@
 package sudoku.newgame;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -13,9 +15,11 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import sudoku.newgame.datahelpers.DataConstants;
 import sudoku.newgame.sudoku.Board;
 
 public class DemoActivity extends Activity {
@@ -24,10 +28,14 @@ public class DemoActivity extends Activity {
     int n = 9;
     DemoDrawView dw;
     TextView tip;
+    SharedPreferences sharedPreferences;
+    int theme = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
+        sharedPreferences = DemoActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
         dw = findViewById(R.id.drawView);
         tip = findViewById(R.id.text_tip);
         createButtons();
@@ -107,8 +115,8 @@ public class DemoActivity extends Activity {
 //                bt.setHeight(width);
             bt.setPadding(0,0,0,0);
             //bt.setY(size.y - width - down);
-            bt.setBackgroundColor(Color.WHITE);
-            bt.setTextColor(Color.BLACK);
+            bt.setBackgroundColor(DataConstants.getBackgroundColor(theme));
+            bt.setTextColor(DataConstants.getMainTextColor(theme));
             bt.setId(i);
             bt.setStateListAnimator(null);
             fl.addView(bt,1);
@@ -142,7 +150,7 @@ public class DemoActivity extends Activity {
         undoButton.setX(size.x - 4*6*sizeButtons/15 - 4*sizeButtons);
         undoButton.setId(R.id.undo_button);
         fl.addView(undoButton,1);
-
+        updateButtons();
     }
     private void sleep(long t) {
         try {
@@ -352,6 +360,24 @@ public class DemoActivity extends Activity {
             catch (Exception e) {
 
             }
+        }
+    }
+    private void updateButtons() {
+        RelativeLayout rl = findViewById(R.id.relativeCondition);
+        rl.setBackgroundColor(DataConstants.getHeaderColor(theme));
+        Chronometer ch = findViewById(R.id.chronometer2);
+        ch.setTextColor(DataConstants.getMainTextColor(theme));
+        Button newGame = findViewById(R.id.button20);
+        newGame.setTextColor(DataConstants.getMainTextColor(theme));
+        int n = sharedPreferences.getInt("Dimension",9);
+        Button check = findViewById(n);
+        if(check.getCurrentTextColor() == DataConstants.getMainTextColor(theme)) {
+            return;
+        }
+        for(int i = 1; i < n+1; ++i) {
+            Button bt = findViewById(i);
+            bt.setBackgroundColor(DataConstants.getBackgroundColor(theme));
+            bt.setTextColor(DataConstants.getMainTextColor(theme));
         }
     }
 }

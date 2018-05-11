@@ -135,12 +135,13 @@
         android:layout_height="wrap_content">
         <TableRow>
             <TextView
-                android:id="@+id/headerUsername"
+                android:id="@+id/header_username"
                 android:text="@string/username"
                 android:layout_weight="5"
                 android:gravity="center"
                 android:textSize="12pt"/>
             <TextView
+                android:id="@+id/header_time"
                 android:text="@string/time"
                 android:layout_weight="1"
                 android:gravity="center"

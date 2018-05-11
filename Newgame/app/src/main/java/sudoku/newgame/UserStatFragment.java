@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import sudoku.newgame.datahelpers.DataConstants;
 import sudoku.newgame.datahelpers.TimeHelper;
 
 public class UserStatFragment extends Fragment {
@@ -103,8 +104,11 @@ public class UserStatFragment extends Fragment {
 
     private void refreshText() {
         TextView num = fragment.findViewById(R.id.textViewNum);
+        num.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
         TextView best = fragment.findViewById(R.id.textViewBest);
+        best.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
         TextView avg = fragment.findViewById(R.id.textViewAvg);
+        avg.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
         TimeHelper timeHelper = new TimeHelper();
         num.setText("Сыграно игр: " + stat[curDifficulty][curBoard].numGames);
         best.setText("Лучшее время: " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].bestTime));

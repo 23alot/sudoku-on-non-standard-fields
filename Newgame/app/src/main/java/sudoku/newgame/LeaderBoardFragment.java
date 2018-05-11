@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import sudoku.newgame.datahelpers.DataConstants;
 import sudoku.newgame.datahelpers.TimeHelper;
 import sudoku.newgame.datahelpers.UserTime;
 
@@ -40,6 +41,11 @@ public class LeaderBoardFragment extends Fragment {
         loadInfo(curBoard,curDifficulty);
         radioGroupBoard.setOnCheckedChangeListener(listenerBoard());
         radioGroupDif.setOnCheckedChangeListener(listenerDifficulty());
+        TextView text = fragment.findViewById(R.id.header_username);
+        text.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
+        text = fragment.findViewById(R.id.header_time);
+        text.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
+
         return fragment;
     }
     private RadioGroup.OnCheckedChangeListener listenerBoard() {
@@ -112,15 +118,19 @@ public class LeaderBoardFragment extends Fragment {
     {
         TableRow tableRow = new TableRow(getActivity());
         TableRow.LayoutParams params = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0,1,0,0);
         tableRow.setLayoutParams(params);
-        tableRow.setBackgroundResource(R.drawable.table_border);
+//        tableRow.setBackgroundResource(R.drawable.table_border);
+        tableRow.setBackgroundColor(DataConstants.getBackgroundColor(((TuturuActivity)getActivity()).theme));
         TextView username = new TextView(getActivity());
+        params.setMargins(0,0,0,0);
         params.weight = 2.5f;
         username.setLayoutParams(params);
         username.setGravity(Gravity.CENTER);
         username.setTextSize(20);
         username.setPadding(5,5,5,5);
         username.setText(user.getUsername());
+        username.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
         tableRow.addView(username);
         TextView time = new TextView(getActivity());
         params.weight = 0.5f;
@@ -128,12 +138,14 @@ public class LeaderBoardFragment extends Fragment {
         time.setGravity(Gravity.CENTER);
         time.setTextSize(20);
         time.setText(TimeHelper.millisecondsToTime(user.getTime()));
+        time.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
         tableRow.addView(time);
         return tableRow;
     }
     private void loadInfo(String dim, String dif) {
         TableLayout tableLayout = fragment.findViewById(R.id.leaders_table);
         tableLayout.removeAllViews();
+        tableLayout.setBackgroundColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
         databaseReference = FirebaseDatabase.getInstance().getReference();
         Query leaderboard = databaseReference.child("leaderboard").child(dim).child(dif).orderByChild("time").limitToLast(20);
         leaderboard.addChildEventListener(new ChildEventListener() {

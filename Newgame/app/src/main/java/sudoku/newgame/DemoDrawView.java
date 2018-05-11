@@ -13,6 +13,7 @@ import android.view.View;
 
 import sudoku.newgame.dancinglinks.Algorithm;
 import sudoku.newgame.dancinglinks.Structure;
+import sudoku.newgame.datahelpers.DataConstants;
 import sudoku.newgame.draw.DrawBoard;
 import sudoku.newgame.sudoku.Board;
 
@@ -28,6 +29,7 @@ public class DemoDrawView extends View {
     int w;
     int h;
     int n;
+    int theme = 0;
     int errorValue;
     Paint p;
     Context context;
@@ -35,6 +37,7 @@ public class DemoDrawView extends View {
         super(context);
         this.context = context;
         n = 9;
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         size = new Point();
         p = new Paint();
 
@@ -43,6 +46,7 @@ public class DemoDrawView extends View {
         super(context,attrs);
         this.context = context;
         n = 9;
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         size = new Point();
         p = new Paint();
     }
@@ -51,6 +55,7 @@ public class DemoDrawView extends View {
         super(context, attrs, defStyleAttr);
         this.context = context;
         n = 9;
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         size = new Point();
         p = new Paint();
     }
@@ -59,18 +64,23 @@ public class DemoDrawView extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
         n = 9;
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         size = new Point();
         p = new Paint();
     }
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.WHITE);
-        p.setColor(Color.BLACK);
-
+        theme = sharedPreferences.getInt("Theme", 0);
+        canvas.drawColor(DataConstants.getBackgroundColor(theme));
+        p.setColor(DataConstants.getMainTextColor(theme));
         //boolean newGame = sharedPreferences.getBoolean("New game",false);
 
         if(board == null) {
             creation();
+        }
+        if(board.theme != theme) {
+            board.theme = theme;
+            board.refreshFillColor(theme);
         }
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if(board.board[0][0].length != (h - 2*10) / n) {
@@ -82,7 +92,7 @@ public class DemoDrawView extends View {
             board.changeLength((w - 2 * 10) / n);
         }
 
-        board.draw(canvas, p);
+        board.draw(canvas, p, theme);
     }
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -144,7 +154,6 @@ public class DemoDrawView extends View {
             Log.d("DrawView", "null board");
             bd = algorithm.create(dif-6, dif+9, area, n*n);
         }
-        bd.areas = area;
         board = new DrawBoard(10,10,(w - 2 * 10)/n,bd.areas,bd,n);
         algorithm = new Algorithm(bd);
         game = algorithm.demoSolve();

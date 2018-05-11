@@ -16,10 +16,12 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import sudoku.newgame.dancinglinks.Algorithm;
 import sudoku.newgame.dancinglinks.Structure;
+import sudoku.newgame.datahelpers.DataConstants;
 import sudoku.newgame.draw.Border;
 import sudoku.newgame.draw.DrawBoard;
 import sudoku.newgame.draw.DrawCell;
@@ -44,6 +46,7 @@ public class DrawBoardGeneratorView extends View {
     float startY = 40;
     float startX = 10;
     Paint p;
+    int theme = 0;
     Context context;
     boolean[][] isVisited;
     public DrawBoardGeneratorView(Context context){
@@ -51,6 +54,8 @@ public class DrawBoardGeneratorView extends View {
         this.context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         n = sharedPreferences.getInt("Dimension",9);
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
         p = new Paint();
 
     }
@@ -59,6 +64,8 @@ public class DrawBoardGeneratorView extends View {
         this.context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         n = sharedPreferences.getInt("Dimension",9);
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
         p = new Paint();
     }
 
@@ -67,6 +74,8 @@ public class DrawBoardGeneratorView extends View {
         this.context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         n = sharedPreferences.getInt("Dimension",9);
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
         p = new Paint();
     }
 
@@ -75,20 +84,22 @@ public class DrawBoardGeneratorView extends View {
         this.context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         n = sharedPreferences.getInt("Dimension",9);
+        sharedPreferences = context.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sharedPreferences.getInt("Theme", 0);
         p = new Paint();
     }
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.WHITE);
-        p.setColor(Color.BLACK);
+        canvas.drawColor(DataConstants.getBackgroundColor(theme));
+        p.setColor(DataConstants.getMainTextColor(theme));
         if(board == null)
             creation();
         for(int i = 0; i < n; ++i)
             for(int z = 0; z < n; ++z)
-                board[i][z].draw(p,canvas);
+                board[i][z].draw(p,canvas, theme);
         for(int i = 0; i < n; ++i)
             for(int z = 0; z < n; ++z)
-                board[i][z].drawBoard(p,canvas);
+                board[i][z].drawBoard(p, canvas, theme);
     }
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -122,7 +133,7 @@ public class DrawBoardGeneratorView extends View {
                         z == (n - 1),
                         i == 0,
                         i == (n - 1)),
-                        sizeX, sizeY, length);
+                        sizeX, sizeY, length, theme);
                 sizeX += length;
             }
             sizeY += length;
@@ -134,7 +145,7 @@ public class DrawBoardGeneratorView extends View {
         for(int i = 0; i < board.length * board.length; ++i)
             if(prpr[i] == currentArea) {
                 prpr[i] = -1;
-                board[i/board.length][i%board.length].setFillColor(Color.WHITE);
+                board[i/board.length][i%board.length].setFillColor(DataConstants.getFillColor(theme));
             }
         refreshBorders();
         if(currentArea == 0) {
@@ -153,32 +164,35 @@ public class DrawBoardGeneratorView extends View {
             }
         }
     }
-    public void focusOnCellMove(float x, float y, int color){
+    public void focusOnCellMove(float x, float y){
         x -= startX;
         y -= startY;
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
         if(currentSize == n) {
-            getRootView().findViewById(R.id.button50).setBackgroundColor(Color.RED);
+            getRootView().findViewById(R.id.button50).setBackgroundColor(DataConstants.getSameColor(theme));
             return;
         }
         if(posy < n && posx < n)
         {
-            if(board[posy][posx].getFillColor()!=Color.WHITE)
+            if(board[posy][posx].getFillColor() != DataConstants.getFillColor(theme))
                 return;
-            if(!(possibleCells[board.length*posy+posx]||(currentSize==0 && board[posy][posx].getFillColor()==Color.WHITE))){
+
+            if(!(possibleCells[board.length*posy+posx] || (currentSize == 0 && board[posy][posx].getFillColor() == DataConstants.getFillColor(theme)))){
                 Toast.makeText(context, "Не в ту степь", Toast.LENGTH_LONG).show();
                 return;
             }
             currentHighlighted[currentSize++] = new CellPosition(posx,posy,board[posy][posx]);
-            board[posy][posx].setFillColor(color);
+            board[posy][posx].setFillColor(DataConstants.getTouchColor(theme));
             refreshPossibleCells();
         }
         if(currentSize == n) {
             if(!checkCell()) {
-                declineArea();
-                currentArea++;
-                Toast.makeText(context, "Такая себе поляна", Toast.LENGTH_LONG).show();
+                currentSize--;
+                board[posy][posx].setFillColor(DataConstants.getFillColor(theme));
+                TextView text = getRootView().findViewById(R.id.error_text);
+                text.setText("Такая себе поляна");
+                text.setTextColor(DataConstants.getMainTextColor(theme));
             }
             else
                 getRootView().findViewById(R.id.button50).setVisibility(VISIBLE);
@@ -186,38 +200,42 @@ public class DrawBoardGeneratorView extends View {
         }
         invalidate();
     }
-    public void focusOnCell(float x, float y, int color){
+
+    public void focusOnCell(float x, float y){
         x -= startX;
         y -= startY;
         int posx = (int)x/((w-2*10)/n);
         int posy = (int)y/((w-2*10)/n);
         if(currentSize == n) {
-            getRootView().findViewById(R.id.button50).setBackgroundColor(Color.RED);
+            getRootView().findViewById(R.id.button50).setBackgroundColor(DataConstants.getSameColor(theme));
             return;
         }
         if(posy < n && posx < n)
         {
-            if(board[posy][posx].getFillColor()==Color.YELLOW)
+            if(board[posy][posx].getFillColor() == DataConstants.getAreaColor(theme))
                 return;
-            if(board[posy][posx].getFillColor()==color) {
+
+            if(board[posy][posx].getFillColor() == DataConstants.getTouchColor(theme)) {
                 deleteFromSequence(posx, posy);
                 refreshPossibleCells();
                 invalidate();
                 return;
             }
-            if(!(possibleCells[board.length*posy+posx]||(currentSize==0 && board[posy][posx].getFillColor()==Color.WHITE))){
+            if(!(possibleCells[board.length*posy+posx] || (currentSize==0 && board[posy][posx].getFillColor() == DataConstants.getFillColor(theme)))){
                 Toast.makeText(context, "Не в ту степь", Toast.LENGTH_LONG).show();
                 return;
             }
             currentHighlighted[currentSize++] = new CellPosition(posx,posy,board[posy][posx]);
-            board[posy][posx].setFillColor(color);
+            board[posy][posx].setFillColor(DataConstants.getTouchColor(theme));
             refreshPossibleCells();
         }
         if(currentSize == n) {
             if(!checkCell()) {
-                declineArea();
-                currentArea++;
-                Toast.makeText(context, "Такая себе поляна", Toast.LENGTH_LONG).show();
+                currentSize--;
+                board[posy][posx].setFillColor(DataConstants.getFillColor(theme));
+                TextView text = getRootView().findViewById(R.id.error_text);
+                text.setText("Такая себе поляна");
+                text.setTextColor(DataConstants.getMainTextColor(theme));
             }
             else
                 getRootView().findViewById(R.id.button50).setVisibility(VISIBLE);
@@ -225,6 +243,7 @@ public class DrawBoardGeneratorView extends View {
         }
         invalidate();
     }
+
     void refreshPossibleCells(){
         for(int i = 0; i < board.length*board.length; ++i)
             possibleCells[i] = false;
@@ -241,7 +260,7 @@ public class DrawBoardGeneratorView extends View {
     }
     boolean saveArea(){
         for(int i = 0; i < board.length;++i){
-            currentHighlighted[i].drawCell.setFillColor(Color.YELLOW);
+            currentHighlighted[i].drawCell.setFillColor(DataConstants.getAreaColor(theme));
             prpr[currentHighlighted[i].y*board.length + currentHighlighted[i].x] = currentArea;
         }
         currentArea++;
@@ -257,14 +276,14 @@ public class DrawBoardGeneratorView extends View {
     }
 
     void deleteFromSequence(int x, int y){
-        board[y][x].setFillColor(Color.WHITE);
+        board[y][x].setFillColor(DataConstants.getFillColor(theme));
         if(!checkDeleteFromSequence()){
             Log.d("Delete highlighted", "Chain gap");
-            board[y][x].setFillColor(Color.BLUE);
+            board[y][x].setFillColor(DataConstants.getTouchColor(theme));
             return;
         }
         for(int i = 0; i < currentSize; ++i)
-            if(currentHighlighted[i].drawCell.getFillColor()==Color.WHITE) {
+            if(currentHighlighted[i].drawCell.getFillColor() == DataConstants.getFillColor(theme)) {
                 currentHighlighted[i] = currentHighlighted[--currentSize];
                 return;
             }
@@ -274,9 +293,9 @@ public class DrawBoardGeneratorView extends View {
         int y = currentHighlighted[0].y;
         for(int i = 0; i < board.length; ++i)
             for(int z = 0; z < board.length; ++z)
-                isVisited[i][z] = board[z][i].getFillColor()!=Color.BLUE;
+                isVisited[i][z] = board[z][i].getFillColor() != DataConstants.getTouchColor(theme);
         for(int i = 1; i < currentSize; ++i)
-            if(currentHighlighted[i].drawCell.getFillColor()==Color.BLUE) {
+            if(currentHighlighted[i].drawCell.getFillColor() == DataConstants.getTouchColor(theme)) {
                 x = currentHighlighted[i].x;
                 y = currentHighlighted[i].y;
                 break;
@@ -309,10 +328,10 @@ public class DrawBoardGeneratorView extends View {
     boolean checkCell(){
         for(int i = 0; i < board.length; ++i)
             for(int z = 0; z < board.length; ++z)
-                isVisited[i][z] = board[z][i].getFillColor()==Color.BLUE;
+                isVisited[i][z] = board[z][i].getFillColor() == DataConstants.getTouchColor(theme);
         for(int i = 0; i < board.length; ++i)
             for(int z = 0; z < board.length; ++z){
-                if(!isVisited[i][z]&&board[z][i].getFillColor()==Color.WHITE) {
+                if(!isVisited[i][z]&&board[z][i].getFillColor() == DataConstants.getFillColor(theme)) {
                     counter = 1;
                     isFullArea(i, z);
                     if(counter % board.length != 0)
@@ -323,19 +342,19 @@ public class DrawBoardGeneratorView extends View {
     }
     void isFullArea(int x, int y){
         isVisited[x][y] = true;
-        if(x-1 >= 0 && board[y][x-1].getFillColor()==Color.WHITE && !isVisited[x-1][y]){
+        if(x-1 >= 0 && board[y][x-1].getFillColor() == DataConstants.getFillColor(theme) && !isVisited[x-1][y]){
             counter++;
             isFullArea(x-1, y);
         }
-        if(x+1 < board.length && board[y][x+1].getFillColor()==Color.WHITE && !isVisited[x+1][y]){
+        if(x+1 < board.length && board[y][x+1].getFillColor() == DataConstants.getFillColor(theme) && !isVisited[x+1][y]){
             counter++;
             isFullArea(x+1, y);
         }
-        if(y-1 >= 0 && board[y-1][x].getFillColor()==Color.WHITE && !isVisited[x][y-1]){
+        if(y-1 >= 0 && board[y-1][x].getFillColor() == DataConstants.getFillColor(theme) && !isVisited[x][y-1]){
             counter++;
             isFullArea(x, y-1);
         }
-        if(y+1 < board.length && board[y+1][x].getFillColor()==Color.WHITE && !isVisited[x][y+1]){
+        if(y+1 < board.length && board[y+1][x].getFillColor() == DataConstants.getFillColor(theme) && !isVisited[x][y+1]){
             counter++;
             isFullArea(x, y+1);
         }
