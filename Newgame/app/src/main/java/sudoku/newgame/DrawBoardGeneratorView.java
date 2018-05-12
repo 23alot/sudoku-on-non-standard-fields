@@ -197,8 +197,7 @@ public class DrawBoardGeneratorView extends View {
         }
         if(currentSize == n) {
             if(!checkCell()) {
-                currentSize--;
-                board[posy][posx].setFillColor(DataConstants.getFillColor(theme));
+                clearCurrentCells();
                 TextView text = getRootView().findViewById(R.id.error_text);
                 text.setText("Такая себе поляна");
                 text.setTextColor(DataConstants.getMainTextColor(theme));
@@ -242,8 +241,7 @@ public class DrawBoardGeneratorView extends View {
         }
         if(currentSize == n) {
             if(!checkCell()) {
-                currentSize--;
-                board[posy][posx].setFillColor(DataConstants.getFillColor(theme));
+                clearCurrentCells();
                 TextView text = getRootView().findViewById(R.id.error_text);
                 text.setText("Такая себе поляна");
                 text.setTextColor(DataConstants.getMainTextColor(theme));
@@ -254,7 +252,6 @@ public class DrawBoardGeneratorView extends View {
         }
         invalidate();
     }
-
     void refreshPossibleCells(){
         for(int i = 0; i < board.length*board.length; ++i)
             possibleCells[i] = false;

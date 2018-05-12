@@ -36,8 +36,10 @@ public class Event {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        result.append("Значение: ");
+        result.append("Значение ");
+        result.append(isPen?"ручкой: ":"карандашом: ");
         result.append(value);
+        result.append(isEnter?" введено":" очищено");
         result.append(" в ячейке (");
         result.append(posx+1);
         result.append(", ");

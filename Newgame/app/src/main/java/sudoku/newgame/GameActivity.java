@@ -261,7 +261,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
                 viewParams.gravity = Gravity.BOTTOM;
-                viewParams.bottomMargin = sizeButtons + 4*marginButtons;
+                viewParams.bottomMargin = sizeButtons + 2*marginButtons;
                 bt.setLayoutParams(viewParams);
                 Log.d("Create buttons", "Width: " + width);
                 bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);

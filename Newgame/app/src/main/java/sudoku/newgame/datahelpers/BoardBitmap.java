@@ -1,13 +1,16 @@
 package sudoku.newgame.datahelpers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Display;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,6 +34,67 @@ import sudoku.newgame.sudoku.Board;
  */
 
 public class BoardBitmap {
+    private byte[][] basicStructures = { {0,0,0,0,
+                                1,1,1,1,
+                                2,2,2,2,
+                                3,3,3,3},
+                                {0,0,1,1,
+                                0,0,1,1,
+                                2,2,3,3,
+                                2,2,3,3},
+                                {0,0,0,0,0,0,0,0,0,
+                                1,1,1,1,1,1,1,1,1,
+                                2,2,2,2,2,2,2,2,2,
+                                3,3,3,3,3,3,3,3,3,
+                                4,4,4,4,4,4,4,4,4,
+                                5,5,5,5,5,5,5,5,5,
+                                6,6,6,6,6,6,6,6,6,
+                                7,7,7,7,7,7,7,7,7,
+                                8,8,8,8,8,8,8,8,8},
+                                {0,0,0,1,1,
+                                0,0,1,1,1,
+                                2,2,2,2,2,
+                                3,3,4,4,4,
+                                3,3,3,4,4},
+                                {0,0,0,0,1,1,
+                                0,0,2,2,1,1,
+                                2,2,2,2,1,1,
+                                3,3,3,3,3,4,
+                                3,4,4,4,4,4,
+                                5,5,5,5,5,5},
+                                {0,0,1,1,2,2,2,
+                                0,0,0,1,1,2,2,
+                                0,0,1,1,1,2,2,
+                                3,3,3,3,4,4,4,
+                                3,3,5,5,4,4,4,
+                                3,5,5,5,5,5,4,
+                                6,6,6,6,6,6,6},
+                                {0,0,0,1,1,1,2,2,
+                                0,0,0,1,1,1,2,2,
+                                0,0,1,1,2,2,2,2,
+                                3,3,3,3,3,3,3,3,
+                                4,4,4,5,5,5,5,5,
+                                4,4,4,5,5,5,6,6,
+                                4,4,6,6,6,6,6,6,
+                                7,7,7,7,7,7,7,7},
+                                {0,0,0,1,1,1,1,1,1,
+                                0,0,0,0,0,0,1,1,1,
+                                2,2,2,3,3,3,3,3,3,
+                                2,2,2,3,3,3,4,4,4,
+                                2,2,2,4,4,4,4,4,4,
+                                5,5,5,6,6,6,7,7,7,
+                                5,5,5,6,6,6,7,7,7,
+                                5,5,5,6,6,6,7,7,7,
+                                8,8,8,8,8,8,8,8,8},
+                                {0,0,0,1,1,1,2,2,2,
+                                0,0,0,1,1,1,2,2,2,
+                                0,0,0,1,1,1,2,2,2,
+                                3,3,3,4,4,4,5,5,5,
+                                3,3,3,4,4,4,5,5,5,
+                                3,3,3,4,4,4,5,5,5,
+                                6,6,6,7,7,7,8,8,8,
+                                6,6,6,7,7,7,8,8,8,
+                                6,6,6,7,7,7,8,8,8}};
     DrawBoard db;
     byte[] structure;
     int len;
@@ -46,7 +110,7 @@ public class BoardBitmap {
 
     }
 
-    public Bitmap[] getBitmap(Context context) {
+    public Bitmap[] getBitmap(Context context, Activity activity) {
         File directory = context.getDir("boards", Context.MODE_PRIVATE);
         File[] files = directory.listFiles();
         if(files == null)
@@ -61,7 +125,7 @@ public class BoardBitmap {
             }
         }
         Arrays.sort(names);
-        Bitmap[] result = new Bitmap[names.length];
+        Bitmap[] result = new Bitmap[9];
         for(int i = 0; i < names.length; ++i) {
             try {
                 File f = new File(context.getDir("boards", Context.MODE_PRIVATE), "board"+i+".bmp");
@@ -72,12 +136,32 @@ public class BoardBitmap {
             }
             //result[i] = BitmapFactory.decodeStream(is);
         }
+        Point size = new Point();
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        float w;
+        if(size.x < size.y)
+            w = size.x;
+        else
+            w = size.y;
+        this.len = (int) (w - 20) >> 1;
+
+        for(int i = names.length; i < 9; ++i) {
+            this.structure = basicStructures[i];
+            byte[] arr = basicStructures[i];
+            float sizet = len / (int)Math.sqrt(arr.length)-2;
+            db = new DrawBoard(2, 2, sizet, arr, (int)Math.sqrt(arr.length));
+            toBitmap();
+            save(context);
+            result[i] = myBitmap;
+        }
         return result;
     }
     public void toBitmap() {
         myBitmap = Bitmap.createBitmap( len, len, Bitmap.Config.RGB_565 );
         Canvas canvas = new Canvas();
         canvas.setBitmap(myBitmap);
+        canvas.drawColor(DataConstants.getBackgroundColor(0));
         Paint p = new Paint();
         db.drawBitmap(canvas, p);
     }

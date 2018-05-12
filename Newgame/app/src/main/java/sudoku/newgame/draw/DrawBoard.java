@@ -152,23 +152,25 @@ public class DrawBoard {
         int posy = last.getY();
         if(last.isEnter()) {
             if(last.isPen()) {
-                bd.cells[posy][posx].value = -1;
+                undo();
                 highlightCell(posx, posy);
             }
             else {
-                bd.cells[posy][posx].possibleValues[last.getValue()-1] =
-                        !bd.cells[posy][posx].possibleValues[last.getValue()-1];
+                if(!bd.cells[posy][posx].possibleValues[last.getValue() - 1]) {
+                    undo();
+                }
+                bd.cells[posy][posx].possibleValues[last.getValue()-1] = false;
                 highlightCell(posx, posy);
             }
         }
-        else if(last.isPen()) {
-            bd.cells[posy][posx].value = (byte)last.getValue();
-            highlightCell(posx, posy);
-        }
         else {
-            bd.cells[posy][posx].possibleValues[last.getValue()-1] =
-                    !bd.cells[posy][posx].possibleValues[last.getValue()-1];
-            highlightCell(posx, posy);
+            if (last.isPen()) {
+                bd.cells[posy][posx].value = (byte) last.getValue();
+                highlightCell(posx, posy);
+            } else {
+                bd.cells[posy][posx].possibleValues[last.getValue() - 1] = true;
+                highlightCell(posx, posy);
+            }
         }
     }
     public void refreshAll(){
@@ -247,6 +249,7 @@ public class DrawBoard {
         int posx = (int)(x/(length));
         int posy = (int)(y/(length));
         if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
+            gameHistory.addEvent(bd.cells[posy][posx].value,true,false, posx, posy);
             bd.cells[posy][posx].value = Byte.valueOf(value);
             gameHistory.addEvent(Integer.valueOf(value),true,true, posx, posy);
             highlightCell(posx,posy);

@@ -49,10 +49,11 @@ public class BoardsActivity extends Activity {
     }
     private void setupBitmap() {
         BoardBitmap board = new BoardBitmap();
-        Bitmap[] boards = board.getBitmap(this);
+        Bitmap[] boards = board.getBitmap(this, this);
         if(boards == null)
             return;
-        for(int i = 0; i < boards.length; ++i) {
+        int i;
+        for(i = 0; i < boards.length; ++i) {
             String name = "imageView"+(i+1);
             int resID = this.getResources().getIdentifier(name, "id", this.getPackageName());
             ImageView img = findViewById(resID);
