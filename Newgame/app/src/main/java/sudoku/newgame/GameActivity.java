@@ -69,10 +69,11 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     private RewardedVideoAd mRewardedVideoAd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
+        super.onCreate(savedInstanceState);
         long start = System.currentTimeMillis();
         sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
-        super.onCreate(savedInstanceState);
         setup();
         setContentView(R.layout.game);
         db = findViewById(R.id.drawView);
