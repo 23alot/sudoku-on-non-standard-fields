@@ -31,6 +31,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -63,6 +65,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     RulesFragment fragmentRules;
     PauseFragment fragmentPause;
     SettingsFragment fragmentSettings;
+    LoginFragment fragmentLogin;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     FragmentTransaction fTrans;
@@ -77,24 +80,23 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         setup();
         setContentView(R.layout.game);
         db = findViewById(R.id.drawView);
-        db.invalidate();
+        // db.invalidate();
         db.setOnTouchListener(this);
         long time = sharedPreferences.getLong("Time", 0);
         setTimer(time);
         editor = sharedPreferences.edit();
-
         createButtons();
-        Button button = findViewById(R.id.button20);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                View v = findViewById(R.id.drawView);
-
-                pw.showAtLocation(v, Gravity.BOTTOM, 0 , 0);
-            }
-        });
-
-
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null && sharedPreferences.getBoolean("Auth", true)) {
+            fTrans = getFragmentManager().beginTransaction();
+            fragmentLogin.isActive = true;
+            fTrans.add(R.id.framelayout, fragmentLogin);
+            isFragment = true;
+            Log.d("Login","stopTime "+System.currentTimeMillis());
+            stopTime();
+            fTrans.commit();
+        }
         Log.d("OnCreate", "Create time: " + (System.currentTimeMillis() - start));
     }
     private void setup() {
@@ -113,6 +115,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 fragmentRules = new RulesFragment();
                 fragmentPause = new PauseFragment();
                 fragmentSettings = new SettingsFragment();
+                fragmentLogin = new LoginFragment();
                 setupStatistics();
                 pw = initiatePopupWindow();
                 pw.setAnimationStyle(R.style.Animation);
@@ -136,6 +139,15 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         final Button clearButton = new Button(getApplicationContext());
         final Button hintButton = new Button(getApplicationContext());
         final Button undoButton = new Button(getApplicationContext());
+        Button button = findViewById(R.id.button20);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View v = findViewById(R.id.drawView);
+
+                pw.showAtLocation(v, Gravity.BOTTOM, 0 , 0);
+            }
+        });
         penButton.setId(R.id.pen_button);
         clearButton.setId(R.id.clear_button);
         hintButton.setId(R.id.hint_button);
@@ -195,7 +207,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 bt.setX(size.y + k + margin/2 + i%r * margin + ((i-1)%r)*width);
                 bt.setHeight(width);
                 bt.setPadding(0,0,0,0);
-//                bt.setY(size.y - 75 - width);
                 Log.d("Create Buttons","Button"+i+" is created " + bt.getX());
                 bt.setId(i);
                 bt.setOnClickListener(createOnClick());
@@ -205,15 +216,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
             RelativeLayout layout = findViewById(R.id.relativeCondition);
             layout.setX(size.y - 50);
-
-//            ImageButton dots = findViewById(R.id.buttonOverflow);
-//            if (resourceId > 0) {
-//                int x = resources.getDimensionPixelSize(resourceId);
-//                dots.setX(size.x - x);
-//            }
-//            else {
-//                dots.setX(size.x);
-//            }
             FrameLayout.LayoutParams viewParamsB = new FrameLayout.LayoutParams(sizeButtons,
                     sizeButtons);
             viewParamsB.gravity = Gravity.BOTTOM;
@@ -229,12 +231,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             undoButton.setLayoutParams(viewParamsB);
 
             Chronometer clock = findViewById(R.id.chronometer2);
-//            clock.setY(10+clock.getHeight());
             clock.setTextSize(20);
             clock.start();
-//            clock.setHeight(100);
-//            Button ng = findViewById(R.id.button20);
-//            ng.setY(clock.getY() + 110);
         }
         else {
             int margin = 5;
@@ -392,7 +390,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 DrawView dw = findViewById(R.id.drawView);
                 db.refreshAll();
                 editor.putString("Boardik", dw.drawBoardtoJSON(dw.board));
-                if(isPause) {
+                if(isPause && !isFragment) {
                     editor.putLong("Time", SystemClock.elapsedRealtime() - ch.getBase());
                 }
                 editor.apply();
@@ -405,6 +403,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     private void setupStatistics() {
         SharedPreferences sp = this.getSharedPreferences("Statistics", Context.MODE_PRIVATE);
         String stat = sp.getString("Array", null);
+
         if(stat != null) {
             return;
         }
@@ -545,6 +544,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         updateButtons();
         Log.d("onResume",""+isPause);
         if(isPause && !isFragment) {
+            Log.d("onResume","stopTime "+System.currentTimeMillis());
             long time = sharedPreferences.getLong("Time", 0);
             Chronometer ch = findViewById(R.id.chronometer2);
             setTimer(time);
@@ -700,11 +700,23 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             isFragment = false;
             resumeTime();
         }
+        else if(fragmentLogin.isActive) {
+            fTrans = getFragmentManager().beginTransaction();
+            fragmentLogin.isActive = false;
+            theme = sharedPreferences.getInt("Theme", 0);
+            updateButtons();
+            db.invalidate();
+            fTrans.remove(fragmentLogin);
+            fTrans.commit();
+            isFragment = false;
+            resumeTime();
+        }
         else {
             super.onBackPressed();
         }
     }
     private void stopTime() {
+        Log.d("stopTime","stopTime "+System.currentTimeMillis());
         if(!isPause) {
             return;
         }
@@ -714,7 +726,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         editor.putLong("Time", time);
         editor.apply();
     }
-    private void resumeTime() {
+    public void resumeTime() {
         if(!isPause) {
             return;
         }

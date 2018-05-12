@@ -30,15 +30,6 @@
         <activity android:name=".CongratulationActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".firebaseauth.ChooserActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".firebaseauth.FirebaseUIActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".firebaseauth.GoogleSignInActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"></activity>
         <activity android:name=".TuturuActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"/>

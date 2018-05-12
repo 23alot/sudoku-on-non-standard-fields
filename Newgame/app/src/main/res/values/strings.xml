@@ -96,7 +96,7 @@
     <string name="pen_info">\nUse it to set a value if you sure</string>
     <string name="pencil_info">\nUse it to set possible values</string>
     <string name="eraser_info">\nUse it to delete a value</string>
-    <string name="hint_info">\nUse it only when you have no idea and be ready to watch an ad :)</string>
+    <string name="hint_info">\nUse it only when you have no idea</string>
     <string name="undo_info">\nUse it to undo your previous choice</string>
     <string name="button_info">\nOhh I forget. Use this buttons to place values</string>
     <string name="new_game_but">Starting new game starts now\n</string>
@@ -110,4 +110,10 @@
     <string name="rest_game">Let\'s have a rest and enjoy rest of the game</string>
     <string name="dark_theme">Dark</string>
     <string name="light_theme">Light</string>
+    <string name="watch_demo">Watch demo game</string>
+    <string name="account_settings">Account</string>
+    <string name="theme_settings">Theme</string>
+    <string name="skip_login">Skip login</string>
+    <string name="sign_on">On</string>
+    <string name="sign_off">Off</string>
 </resources>
