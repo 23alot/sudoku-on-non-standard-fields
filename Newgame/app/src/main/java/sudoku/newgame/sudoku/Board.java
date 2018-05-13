@@ -36,7 +36,12 @@ public class Board {
     public void resetValues() {
         for(int i = 0; i < N; ++i)
             for(int z = 0; z < N; ++z)
-                if(!cells[i][z].isInput)
+                if(!cells[i][z].isInput) {
                     cells[i][z].value = -1;
+                    for(int j = 0; j < N; ++j) {
+                        cells[i][z].possibleValues[j] = false;
+                    }
+                }
+
     }
 }

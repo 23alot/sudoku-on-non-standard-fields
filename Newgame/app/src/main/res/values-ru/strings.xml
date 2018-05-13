@@ -25,11 +25,11 @@
     <string name="leaderboard">Лучшие</string>
     <string name="username">Игрок</string>
     <string name="time">Время</string>
-    <string name="num_game">"Количество игр: "</string>
-    <string name="win_game">"Выиграно игр: "</string>
-    <string name="best_time">"Лучшее время: "</string>
-    <string name="avg_time">"Среднее время: "</string>
-    <string name="watch_demo">Посмотреть ознакомительную игру</string>
+    <string name="num_game">Количество игр</string>
+    <string name="win_game">Выиграно игр</string>
+    <string name="best_time">Лучшее время</string>
+    <string name="avg_time">Среднее время</string>
+    <string name="watch_demo"><u>Посмотреть ознакомительную игру</u></string>
     <string name="sign_on">Включено</string>
     <string name="sign_off">Выключено</string>
     <string name="skip_login">Пропустить</string>
@@ -49,8 +49,20 @@
     <string name="new_game_but">Начало новой игры начинается здесь</string>
     <string name="button_info">Совсем забыл. Тыкайте сюда, чтобы поставить значение</string>
     <string name="undo_info">Для отмены последнего хода</string>
-    <string name="hint_info">Используйте только если идей совсем не осталось</string>
+    <string name="hint_info">Используйте только, если идей совсем не осталось</string>
     <string name="eraser_info">Для очистки ячейки</string>
     <string name="pencil_info">Для вероятных значений</string>
     <string name="pen_info">Для уверенных значений</string>
+    <string name="difficulty">Сложность</string>
+    <string name="gratz">Мои поздравления</string>
+    <string name="text_rules">
+        <b><big>Правила игры</big></b>\n\n
+        Игровое <i>поле</i> размера NxN поделено на N секций, ограниченных жирными линиями.\n\n
+        <b>Цель:</b>\n\n
+        Расставить в ячейки числа от 1 до N. Числа расположены случайным образом, но с одним условием: число не может повторяться в <i>столбце, строке и внутри секции</i>.\n\n
+        <b>Пояснение:</b> Размер секции - N.
+    </string>
+    <string name="end_game">Конец игры</string>
+    <string name="accept">Выбор</string>
+    <string name="decline">Отмена</string>
 </resources>

@@ -21,13 +21,7 @@
         <activity android:name=".GeneratorActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".DimensionActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"></activity>
         <activity android:name=".BoardsActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".CongratulationActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".TuturuActivity"

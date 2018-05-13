@@ -20,7 +20,7 @@ public class Algorithm {
     private int[] solution;
     private int solutionCounter;
     private Solution result = null;
-    int q = 0;
+    private int q = 0;
     /**
      * Main constructor
      * @param structure of sudoku
@@ -95,16 +95,18 @@ public class Algorithm {
         }
         return null;
     }
-    private int findMinValue(){
+    private HeadNode findMinValue(){
         int d = structure.N + 1;
         HeadNode temp = (HeadNode)structure.root.right;
+        HeadNode result = null;
         while(temp!=structure.root) {
             if (!temp.deleted && length(temp) < d) {
                 d = length(temp);
+                result = temp;
             }
             temp = (HeadNode)temp.right;
         }
-        return d;
+        return result;
     }
     private boolean isEnd(){
         HeadNode temp = (HeadNode)structure.root.right;
@@ -184,7 +186,7 @@ public class Algorithm {
             return;
         }
 
-        HeadNode deleted = findMinNode();
+        HeadNode deleted = findMinValue();
         Node temp = deleted.down;
         while(temp!=deleted){
             delete(temp);
@@ -216,7 +218,7 @@ public class Algorithm {
      * Deletes from structure each solution
      * @param nd node of a column to delete
      */
-    public void delete(Node nd){
+    private void delete(Node nd){
         HeadNode head = nd.leftHead;
         Node temp = head.right;
         while(temp!=head){
@@ -231,7 +233,7 @@ public class Algorithm {
         }
 
     }
-    public void cover(Node nd){
+    private void cover(Node nd){
         HeadNode head = nd.leftHead;
         Node temp = head.left;
         while(temp!=head){

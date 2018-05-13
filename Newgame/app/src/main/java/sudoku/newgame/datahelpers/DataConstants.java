@@ -1,6 +1,10 @@
 package sudoku.newgame.datahelpers;
 
+import android.app.Application;
+import android.content.Context;
 import android.graphics.Color;
+
+import sudoku.newgame.R;
 
 public final class DataConstants {
     // Difficulty constants
@@ -11,14 +15,14 @@ public final class DataConstants {
     public static final int LIGHT = 0;
     public static final int DARK = 1;
 
-    public static String getDifficulty(int c) {
+    public static String getDifficulty(int c, Context context) {
         switch(c) {
             case EASY:
-                return "easy";
+                return context.getString(R.string.new_easy);
             case MEDIUM:
-                return "medium";
+                return context.getString(R.string.new_medium);
             case HARD:
-                return "hard";
+                return context.getString(R.string.new_hard);
             default:
                 return "error";
         }
@@ -28,7 +32,7 @@ public final class DataConstants {
             return Color.rgb(5, 14, 22);
         }
         else {
-            return Color.WHITE;
+            return Color.rgb(240,240,240);
         }
     }
     public static int getAreaColor(int theme) {
@@ -44,7 +48,7 @@ public final class DataConstants {
             return Color.rgb(0, 9, 17);
         }
         else {
-            return Color.WHITE;
+            return Color.rgb(219,219,219);
         }
     }
     public static int getSameColor(int theme) {
@@ -89,7 +93,7 @@ public final class DataConstants {
     }
     public static int getPenTextColor(int theme) {
         if(theme == DARK) {
-            return Color.rgb(0, 9, 17);
+            return Color.rgb(53, 95, 117);
         }
         else {
             return Color.rgb(76, 88, 181);
@@ -97,7 +101,7 @@ public final class DataConstants {
     }
     public static int getHelpTextColor(int theme) {
         if(theme == DARK) {
-            return Color.rgb(0, 9, 17);
+            return Color.rgb(53, 95, 117);
         }
         else {
             return Color.rgb(161, 177, 196);

@@ -1,6 +1,7 @@
 package sudoku.newgame;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import sudoku.newgame.datahelpers.BoardBitmap;
+import sudoku.newgame.datahelpers.DataConstants;
 
 /**
  * Created by sanya on 04.03.2018.
@@ -25,14 +27,22 @@ import sudoku.newgame.datahelpers.BoardBitmap;
 
 public class BoardsActivity extends Activity {
     SharedPreferences sharedPreferences;
+    SharedPreferences sp;
     SharedPreferences.Editor editor;
-
+    int dimension = 9;
+    int theme = 0;
+    FragmentTransaction fTrans;
+    DimensionFragment fragmentDimension;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.board_layout);
+        sp = BoardsActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        theme = sp.getInt("Theme", 0);
         sharedPreferences = BoardsActivity.this.getSharedPreferences("Boards", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        setContentView(R.layout.board_layout);
+        findViewById(R.id.board_layout).setBackgroundColor(DataConstants.getBackgroundColor(theme));
+        fragmentDimension = new DimensionFragment();
         setupBitmap();
         setupPlus();
     }
@@ -41,11 +51,24 @@ public class BoardsActivity extends Activity {
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(BoardsActivity.this, DimensionActivity.class);
-                startActivity(intent);
-                finish();
+                fTrans = getFragmentManager().beginTransaction();
+                fragmentDimension.isActive = true;
+                fTrans.add(R.id.board_layout, fragmentDimension);
+                fTrans.commit();
             }
         });
+    }
+    @Override
+    public void onBackPressed() {
+        if(fragmentDimension.isActive) {
+            fTrans = getFragmentManager().beginTransaction();
+            fragmentDimension.isActive = false;
+            fTrans.remove(fragmentDimension);
+            fTrans.commit();
+        }
+        else {
+            super.onBackPressed();
+        }
     }
     private void setupBitmap() {
         BoardBitmap board = new BoardBitmap();
@@ -92,6 +115,7 @@ public class BoardsActivity extends Activity {
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                SharedPreferences.Editor editor = sp.edit();
                 int t;
                 switch (item.getItemId()) {
                     case R.id.menuEasy:
@@ -108,6 +132,7 @@ public class BoardsActivity extends Activity {
                 }
                 editor.putInt("Difficulty", t);
                 editor.putString("Boardik", null);
+
                 editor.apply();
                 startGame();
                 return true;
@@ -123,7 +148,14 @@ public class BoardsActivity extends Activity {
         popupMenu.show();
     }
     private void startGame(){
-        Intent intent = new Intent(BoardsActivity.this, GameActivity.class);
+        finish();
+    }
+    void generator() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt("DimensionBoard", dimension);
+        editor.apply();
+        Intent intent = new Intent(BoardsActivity.this, GeneratorActivity.class);
         startActivity(intent);
         finish();
     }

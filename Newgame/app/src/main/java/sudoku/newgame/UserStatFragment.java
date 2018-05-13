@@ -110,8 +110,8 @@ public class UserStatFragment extends Fragment {
         TextView avg = fragment.findViewById(R.id.textViewAvg);
         avg.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
         TimeHelper timeHelper = new TimeHelper();
-        num.setText("Сыграно игр: " + stat[curDifficulty][curBoard].numGames);
-        best.setText("Лучшее время: " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].bestTime));
-        avg.setText("Среднее время: " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].avgTime));
+        num.setText(getActivity().getString(R.string.num_game)+": " + stat[curDifficulty][curBoard].numGames);
+        best.setText(getActivity().getString(R.string.best_time)+": " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].bestTime));
+        avg.setText(getActivity().getString(R.string.avg_time)+": " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].avgTime));
     }
 }

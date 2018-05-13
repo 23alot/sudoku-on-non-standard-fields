@@ -63,6 +63,8 @@ public class DemoActivity extends Activity {
                             fixError();
                             Thread.sleep(2500);
                             restGame();
+                            Thread.sleep(1000);
+                            finish();
                         }
                         catch (Exception e) {
                             Log.d("Thread exception", e.getMessage());
@@ -353,14 +355,15 @@ public class DemoActivity extends Activity {
         });
 
         for(int i = 1; i < dw.game.length; ++i) {
+            sleep(1000);
             dw.gameStep(i);
-            try {
-                Thread.sleep(1000);
-            }
-            catch (Exception e) {
-
-            }
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tip.setText(R.string.end_game);
+            }
+        });
     }
     private void updateButtons() {
         RelativeLayout rl = findViewById(R.id.relativeCondition);

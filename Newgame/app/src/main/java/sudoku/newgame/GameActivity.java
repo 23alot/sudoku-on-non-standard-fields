@@ -53,7 +53,10 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     private DrawCell focusedDrawCell = null;
     private int difficulty;
     private int board;
+    private boolean recreate = false;
     long stopTime;
+    long winTime;
+    int winDif;
     boolean newGame = false;
     int w;
     public int theme = 0;
@@ -66,6 +69,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     PauseFragment fragmentPause;
     SettingsFragment fragmentSettings;
     LoginFragment fragmentLogin;
+    CongratulationFragment fragmentCongratulation;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     FragmentTransaction fTrans;
@@ -83,8 +87,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         // db.invalidate();
         db.setOnTouchListener(this);
         long time = sharedPreferences.getLong("Time", 0);
-        setTimer(time);
         editor = sharedPreferences.edit();
+        setTimer(time);
         createButtons();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -104,6 +108,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             @Override
             public void run() {
                 isPen = true;
+                recreate = false;
                 Point size = new Point();
                 Display display = getWindowManager().getDefaultDisplay();
                 display.getSize(size);
@@ -116,6 +121,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 fragmentPause = new PauseFragment();
                 fragmentSettings = new SettingsFragment();
                 fragmentLogin = new LoginFragment();
+                fragmentCongratulation = new CongratulationFragment();
                 setupStatistics();
                 pw = initiatePopupWindow();
                 pw.setAnimationStyle(R.style.Animation);
@@ -143,6 +149,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(isFragment) {
+                    return;
+                }
                 View v = findViewById(R.id.drawView);
 
                 pw.showAtLocation(v, Gravity.BOTTOM, 0 , 0);
@@ -235,11 +244,14 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             clock.start();
         }
         else {
-            int margin = 5;
 
+            sizeButtons = size.x / 6;
             width = (size.x-5*(n+1))/n;
+            if(sizeButtons + width + 4*marginButtons + size.x + 100> size.y) {
+                width = size.y - size.x - sizeButtons - 3*marginButtons - 100;
+            }
             int down;
-
+            int margin = (size.x - n*width)/(n+1);
             if (resourceId > 0) {
 
                 Log.d("Down","resources: " + resources.getDimensionPixelSize(resourceId));
@@ -252,7 +264,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             Point s = Size.getNavigationBarSize(getApplicationContext());
             Log.d("Down", "Down: " + down + " s.y: " + s.y + " s.x: " + s.x);
             Button bt = null;
-            sizeButtons = size.x / 6;
             for (int i = 1; i < n + 1; ++i) {
                 bt = new Button(getApplicationContext());
                 Log.d("Create Buttons","Button"+i+" is created");
@@ -261,7 +272,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 FrameLayout.LayoutParams viewParams = new FrameLayout.LayoutParams(width,
                         width);
                 viewParams.gravity = Gravity.BOTTOM;
-                viewParams.bottomMargin = sizeButtons + 2*marginButtons;
+                viewParams.bottomMargin = sizeButtons + 3*marginButtons;
                 bt.setLayoutParams(viewParams);
                 Log.d("Create buttons", "Width: " + width);
                 bt.setTextSize((0.85f * width) / displayMetrics.scaledDensity);
@@ -294,6 +305,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(isFragment) {
+                    return;
+                }
                 if(isPause) {
                     setPause();
                 }
@@ -307,7 +321,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         penButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isPause) {
+                if(!isPause || isFragment) {
                     return;
                 }
                 if(isPen) {
@@ -327,7 +341,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isPause) {
+                if(!isPause || isFragment) {
                     return;
                 }
                 db.refreshAll();
@@ -342,7 +356,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         hintButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isPause) {
+                if(!isPause || isFragment) {
                     return;
                 }
                 hint();
@@ -354,7 +368,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         undoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isPause) {
+                if(!isPause || isFragment) {
                     return;
                 }
                 db.refreshAll();
@@ -367,6 +381,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(isFragment) {
+                    return;
+                }
                 showPopupMenu(view);
             }
         });
@@ -483,31 +500,35 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isPause) {
+                if(!isPause || isFragment) {
                     return;
                 }
                 if(isPen) {
                     db.refreshAll();
-                    db.setValue(x, y, w, (String) ((Button) view).getText());
+                    db.setValue(x, y, w, ((Button) view).getText().toString());
                     if (db.checkSudoku()) {
                         Toast.makeText(GameActivity.this, "Судоку решено верно",
                                 Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(GameActivity.this, CongratulationActivity.class);
                         Chronometer ch = findViewById(R.id.chronometer2);
+
+                        long time = SystemClock.elapsedRealtime() - ch.getBase();
                         editor.putLong("Time",0);
                         editor.putString("Boardik", null);
                         editor.apply();
-                        long time = SystemClock.elapsedRealtime() - ch.getBase();
                         winStat(time);
-                        intent.putExtra("Time", time);
-                        intent.putExtra("Difficulty", sharedPreferences.getInt("Difficulty", 0));
-                        startActivity(intent);
-                        finish();
+                        winTime = time;
+                        winDif = sharedPreferences.getInt("Difficulty", 0);
+                        fTrans = getFragmentManager().beginTransaction();
+                        fragmentCongratulation.isActive = true;
+                        fTrans.add(R.id.framelayout, fragmentCongratulation);
+                        isFragment = true;
+                        stopTime();
+                        fTrans.commit();
                     }
                 }
                 else {
                     Log.d("Button click","Pencil click");
-                    db.setPencilValue(x, y, (String) ((Button) view).getText());
+                    db.setPencilValue(x, y, ((Button) view).getText().toString());
                 }
             }
         };
@@ -540,6 +561,9 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     @Override
     protected void onResume() {
         super.onResume();
+        if(recreate) {
+            return;
+        }
         theme = sharedPreferences.getInt("Theme", 0);
         updateButtons();
         Log.d("onResume",""+isPause);
@@ -582,13 +606,11 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 Log.d("New game menu", "New game");
                 newGame = true;
                 gameStat();
-                editor.putLong("Time",0);
-                editor.putString("Boardik", null);
-                editor.apply();
-                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-                startActivity(intent);
+                setTimer(0);
+                db.board = null;
+                resumeTime();
+                db.invalidate();
                 pw.dismiss();
-                finish();
             }
         });
         button = popupView.findViewById(R.id.new_field);
@@ -601,9 +623,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 editor.putLong("Time",0);
                 editor.apply();
                 Intent intent = new Intent(getApplicationContext(), BoardsActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
                 pw.dismiss();
-                finish();
             }
         });
         button = popupView.findViewById(R.id.new_easy);
@@ -617,10 +638,11 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 editor.putString("Boardik", null);
                 editor.putInt("Difficulty", 13);
                 editor.apply();
-                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-                startActivity(intent);
+                setTimer(0);
+                db.board = null;
+                resumeTime();
+                db.invalidate();
                 pw.dismiss();
-                finish();
             }
         });
         button = popupView.findViewById(R.id.new_medium);
@@ -634,10 +656,11 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 editor.putString("Boardik", null);
                 editor.putInt("Difficulty", 8);
                 editor.apply();
-                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-                startActivity(intent);
+                setTimer(0);
+                db.board = null;
+                resumeTime();
+                db.invalidate();
                 pw.dismiss();
-                finish();
             }
         });
         button = popupView.findViewById(R.id.new_hard);
@@ -651,10 +674,11 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 editor.putString("Boardik", null);
                 editor.putInt("Difficulty", 3);
                 editor.apply();
-                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-                startActivity(intent);
+                setTimer(0);
+                db.board = null;
+                resumeTime();
+                db.invalidate();
                 pw.dismiss();
-                finish();
             }
         });
         button = popupView.findViewById(R.id.repeat_game);
@@ -710,6 +734,17 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             fTrans.commit();
             isFragment = false;
             resumeTime();
+        }
+        else if(fragmentCongratulation.isActive) {
+            fTrans = getFragmentManager().beginTransaction();
+            fragmentCongratulation.isActive = false;
+            fTrans.remove(fragmentCongratulation);
+            fTrans.commit();
+            setTimer(0);
+            db.board = null;
+            isFragment = false;
+            resumeTime();
+            db.invalidate();
         }
         else {
             super.onBackPressed();
@@ -791,7 +826,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
     void setTimer(long time) {
         Chronometer ch = findViewById(R.id.chronometer2);
-        Log.d("setTimer", SystemClock.elapsedRealtime()-ch.getBase()+"");
+        editor.putLong("Time", time);
+        editor.apply();
         ch.setBase(SystemClock.elapsedRealtime() - time);
     }
 
@@ -828,17 +864,21 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         if (db.checkSudoku()) {
             Toast.makeText(GameActivity.this, "Судоку решено верно",
                     Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(GameActivity.this, CongratulationActivity.class);
             Chronometer ch = findViewById(R.id.chronometer2);
+
+            long time = SystemClock.elapsedRealtime() - ch.getBase();
             editor.putLong("Time",0);
             editor.putString("Boardik", null);
             editor.apply();
-            long time = SystemClock.elapsedRealtime() - ch.getBase();
             winStat(time);
-            intent.putExtra("Time", time);
-            intent.putExtra("Difficulty", sharedPreferences.getInt("Difficulty", 0));
-            startActivity(intent);
-            finish();
+            winTime = time;
+            winDif = sharedPreferences.getInt("Difficulty", 0);
+            fTrans = getFragmentManager().beginTransaction();
+            fragmentCongratulation.isActive = true;
+            fTrans.add(R.id.framelayout, fragmentCongratulation);
+            isFragment = true;
+            stopTime();
+            fTrans.commit();
         }
     }
     private void updateButtons() {
@@ -871,6 +911,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         bt = layout.findViewById(R.id.new_hard);
         bt.setTextColor(DataConstants.getMainTextColor(theme));
         int n = sharedPreferences.getInt("Dimension",9);
+        Log.d("updateButtons", n+"");
         Button check = findViewById(n);
         if(check.getCurrentTextColor() == DataConstants.getMainTextColor(theme)) {
             return;
@@ -881,5 +922,11 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             btr.setTextColor(DataConstants.getMainTextColor(theme));
         }
 
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("onActivityResult", "recreate");
+        recreate = true;
+        this.recreate();
     }
 }
