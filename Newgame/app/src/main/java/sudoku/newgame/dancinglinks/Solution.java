@@ -6,7 +6,7 @@ import java.util.LinkedList;
  * Created by boscatov on 02.01.2018.
  */
 public class Solution {
-    int moves;
+    private int moves;
     boolean isMultiple = false;
     public int[] solution;
 

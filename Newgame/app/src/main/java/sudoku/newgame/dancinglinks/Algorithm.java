@@ -20,7 +20,6 @@ public class Algorithm {
     private int[] solution;
     private int solutionCounter;
     private Solution result = null;
-    int q = 0;
     /**
      * Main constructor
      * @param structure of sudoku
@@ -95,16 +94,18 @@ public class Algorithm {
         }
         return null;
     }
-    private int findMinValue(){
+    private HeadNode findMinValue(){
         int d = structure.N + 1;
         HeadNode temp = (HeadNode)structure.root.right;
+        HeadNode result = null;
         while(temp!=structure.root) {
             if (!temp.deleted && length(temp) < d) {
                 d = length(temp);
+                result = temp;
             }
             temp = (HeadNode)temp.right;
         }
-        return d;
+        return result;
     }
     private boolean isEnd(){
         HeadNode temp = (HeadNode)structure.root.right;
@@ -141,15 +142,10 @@ public class Algorithm {
         if(result!=null)
             return;
         if(isBadEnd()) {
-            q++;
             return;
         }
         if(isEnd()) {
-            Log.d("findFirstSolution","End " + q);
-            if(result == null)
-                result = new Solution(moves,solution,false);
-            else
-                result.isMultiple = true;
+            result = new Solution(moves,solution,false);
             return;
         }
 
@@ -171,20 +167,20 @@ public class Algorithm {
         }
     }
     private void solve(){
-        if(result!=null && result.isMultiple)
+        if(result != null && result.isMultiple)
             return;
         if(isBadEnd())
             return;
         if(isEnd()) {
             //Log.d("solve","End");
             if(result == null)
-                result = new Solution(moves,solution,false);
+                result = new Solution(moves, solution,false);
             else
                 result.isMultiple = true;
             return;
         }
 
-        HeadNode deleted = findMinNode();
+        HeadNode deleted = findMinValue();
         Node temp = deleted.down;
         while(temp!=deleted){
             delete(temp);
@@ -216,7 +212,7 @@ public class Algorithm {
      * Deletes from structure each solution
      * @param nd node of a column to delete
      */
-    public void delete(Node nd){
+    private void delete(Node nd){
         HeadNode head = nd.leftHead;
         Node temp = head.right;
         while(temp!=head){
@@ -231,7 +227,7 @@ public class Algorithm {
         }
 
     }
-    public void cover(Node nd){
+    private void cover(Node nd){
         HeadNode head = nd.leftHead;
         Node temp = head.left;
         while(temp!=head){
@@ -343,7 +339,7 @@ public class Algorithm {
                 if(finalSolution[i]!=-1 && i != pos)
                     cover(structure.getNode(finalSolution[i]));
 
-            if(!result.isMultiple && moves <= difficultyr) {
+            if(result != null && !result.isMultiple && moves <= difficultyr) {
                 finalSolution[pos] = -1;
             }
             if(countVisited(isVisited) == structure.N*structure.N) {
@@ -373,12 +369,8 @@ public class Algorithm {
         return answer;
     }
     public int[] demoSolve() {
-        History history = new History();
         start();
 
         return solution;
-    }
-    public Solution getSolution(){
-        return result;
     }
 }

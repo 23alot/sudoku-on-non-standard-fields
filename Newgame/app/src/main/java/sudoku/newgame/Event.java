@@ -5,12 +5,12 @@ package sudoku.newgame;
  */
 
 public class Event {
-    boolean isPen;
-    boolean isEnter;
+    private boolean isPen;
+    private  boolean isEnter;
     int value;
-    int posx;
-    int posy;
-    public Event(int value, boolean isPen, boolean isEnter, int posx, int posy) {
+    private int posx;
+    private int posy;
+    Event(int value, boolean isPen, boolean isEnter, int posx, int posy) {
         this.value = value;
         this.isPen = isPen;
         this.isEnter = isEnter;
@@ -36,8 +36,10 @@ public class Event {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        result.append("Значение: ");
+        result.append("Значение ");
+        result.append(isPen?"ручкой: ":"карандашом: ");
         result.append(value);
+        result.append(isEnter?" введено":" очищено");
         result.append(" в ячейке (");
         result.append(posx+1);
         result.append(", ");

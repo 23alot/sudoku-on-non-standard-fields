@@ -10,25 +10,25 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GameActivity">
+        <activity android:name=".GameActivity"
+            android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GeneratorActivity"></activity>
-        <activity android:name=".LeaderboardActivity"></activity>
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".DimensionActivity"></activity>
-        <activity android:name=".BoardsActivity"></activity>
-        <activity android:name=".CongratulationActivity"></activity>
-        <activity android:name=".StatisticsActivity"></activity>
-        <activity android:name=".firebaseauth.ChooserActivity"></activity>
-        <activity android:name=".firebaseauth.FirebaseUIActivity"></activity>
-        <activity android:name=".firebaseauth.GoogleSignInActivity"></activity>
-        <activity android:name=".SettingsActivity"></activity>
-        <activity android:name=".TuturuActivity" />
-        <activity android:name=".DemoActivity" />
+        <activity android:name=".GeneratorActivity"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".BoardsActivity"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".TuturuActivity"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".DemoActivity"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
     </application>
 </manifest>

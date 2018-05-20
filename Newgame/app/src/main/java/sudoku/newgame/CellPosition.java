@@ -10,7 +10,7 @@ public class CellPosition {
     public int x;
     public int y;
     public DrawCell drawCell;
-    public CellPosition(int x, int y, DrawCell drawCell){
+    CellPosition(int x, int y, DrawCell drawCell){
         this.x = x;
         this.y = y;
         this.drawCell = drawCell;

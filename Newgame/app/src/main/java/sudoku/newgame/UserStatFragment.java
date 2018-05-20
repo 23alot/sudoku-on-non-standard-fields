@@ -14,12 +14,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import sudoku.newgame.datahelpers.DataConstants;
 import sudoku.newgame.datahelpers.TimeHelper;
 
 public class UserStatFragment extends Fragment {
     View fragment;
-    private RadioGroup radioGroupDif;
-    private RadioGroup radioGroupBoard;
     private SharedPreferences sharedPreferences;
     private int curDifficulty;
     private int curBoard;
@@ -29,8 +28,8 @@ public class UserStatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragment = inflater.inflate(R.layout.statistics, container, false);
-        radioGroupBoard = fragment.findViewById(R.id.radioGroupBoard);
-        radioGroupDif = fragment.findViewById(R.id.radioGroupDifficulty);
+        RadioGroup radioGroupBoard = fragment.findViewById(R.id.radioGroupBoard);
+        RadioGroup radioGroupDif = fragment.findViewById(R.id.radioGroupDifficulty);
         sharedPreferences = this.getActivity().getSharedPreferences("Statistics", Context.MODE_PRIVATE);
         setupStatistics();
         radioGroupBoard.setOnCheckedChangeListener(listenerBoard());
@@ -103,11 +102,14 @@ public class UserStatFragment extends Fragment {
 
     private void refreshText() {
         TextView num = fragment.findViewById(R.id.textViewNum);
+        num.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
         TextView best = fragment.findViewById(R.id.textViewBest);
+        best.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
         TextView avg = fragment.findViewById(R.id.textViewAvg);
+        avg.setTextColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
         TimeHelper timeHelper = new TimeHelper();
-        num.setText("Сыграно игр: " + stat[curDifficulty][curBoard].numGames);
-        best.setText("Лучшее время: " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].bestTime));
-        avg.setText("Среднее время: " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].avgTime));
+        num.setText(getActivity().getString(R.string.num_game)+": " + stat[curDifficulty][curBoard].numGames);
+        best.setText(getActivity().getString(R.string.best_time)+": " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].bestTime));
+        avg.setText(getActivity().getString(R.string.avg_time)+": " + timeHelper.millisecondsToTime(stat[curDifficulty][curBoard].avgTime));
     }
 }

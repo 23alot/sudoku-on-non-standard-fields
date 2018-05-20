@@ -25,8 +25,44 @@
     <string name="leaderboard">Лучшие</string>
     <string name="username">Игрок</string>
     <string name="time">Время</string>
-    <string name="num_game">"Количество игр: "</string>
-    <string name="win_game">"Выиграно игр: "</string>
-    <string name="best_time">"Лучшее время: "</string>
-    <string name="avg_time">"Среднее время: "</string>
+    <string name="num_game">Количество игр</string>
+    <string name="win_game">Выиграно игр</string>
+    <string name="best_time">Лучшее время</string>
+    <string name="avg_time">Среднее время</string>
+    <string name="watch_demo"><u>Посмотреть ознакомительную игру</u></string>
+    <string name="sign_on">Включено</string>
+    <string name="sign_off">Выключено</string>
+    <string name="skip_login">Пропустить</string>
+    <string name="theme_settings">Тема</string>
+    <string name="account_settings">Учетная запись</string>
+    <string name="light_theme">Светлая</string>
+    <string name="dark_theme">Темная</string>
+    <string name="rest_game">А теперь отдохнем и насладимся процессом игры</string>
+    <string name="fix_error">Давайте быстро исправим</string>
+    <string name="start_demo">Нажмите на кнопку для начала</string>
+    <string name="set_error">А что если вписать неправильное значение? Оно будет подсвечено</string>
+    <string name="set_pen">Поставим первое значение ручкой. Подсветились зоны влияния</string>
+    <string name="basic_pencil">Расставим все возможные значения карандашом</string>
+    <string name="settings_button">Настройки, правила и лидеры</string>
+    <string name="play_button">Для паузы</string>
+    <string name="timer">Мальчик-таймер</string>
+    <string name="new_game_but">Начало новой игры начинается здесь</string>
+    <string name="button_info">Совсем забыл. Тыкайте сюда, чтобы поставить значение</string>
+    <string name="undo_info">Для отмены последнего хода</string>
+    <string name="hint_info">Используйте только, если идей совсем не осталось</string>
+    <string name="eraser_info">Для очистки ячейки</string>
+    <string name="pencil_info">Для вероятных значений</string>
+    <string name="pen_info">Для уверенных значений</string>
+    <string name="difficulty">Сложность</string>
+    <string name="gratz">Мои поздравления</string>
+    <string name="text_rules">
+        <b><big>Правила игры</big></b>\n\n
+        Игровое <i>поле</i> размера NxN поделено на N секций, ограниченных жирными линиями.\n\n
+        <b>Цель:</b>\n\n
+        Расставить в ячейки числа от 1 до N. Числа расположены случайным образом, но с одним условием: число не может повторяться в <i>столбце, строке и внутри секции</i>.\n\n
+        <b>Пояснение:</b> Размер секции - N.
+    </string>
+    <string name="end_game">Конец игры</string>
+    <string name="accept">Выбор</string>
+    <string name="decline">Отмена</string>
 </resources>

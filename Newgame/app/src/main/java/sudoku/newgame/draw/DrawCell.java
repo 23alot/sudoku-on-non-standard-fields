@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import sudoku.newgame.datahelpers.DataConstants;
+
 /**
  * Created by sanya on 13.01.2018.
  */
@@ -16,22 +18,22 @@ public class DrawCell {
     float startX;
     float startY;
     public float length;
-    public DrawCell(Border border, float startX, float startY, float length){
+    public DrawCell(Border border, float startX, float startY, float length, int theme){
         this.border = border;
         this.length = length;
         this.startX = startX;
         this.startY = startY;
-        fillColor = Color.WHITE;
-        textColor = Color.BLACK;
+        fillColor = DataConstants.getFillColor(theme);
+        textColor = DataConstants.getMainTextColor(theme);
     }
     public void changeLength(float startX, float startY, float length){
         this.startX = startX;
         this.startY = startY;
         this.length = length;
     }
-    public void draw(Paint p, Canvas canvas){
-        p.setStrokeWidth(2);
-        p.setColor(Color.rgb(207,207,207));
+    public void draw(Paint p, Canvas canvas, int theme){
+        p.setStrokeWidth(3);
+        p.setColor(DataConstants.getBackgroundColor(theme));
         if(!border.up){
             canvas.drawLine(startX,startY,startX+length,startY,p);
         }
@@ -48,7 +50,7 @@ public class DrawCell {
         if(!border.right){
             canvas.drawLine(startX+length,startY,startX+length,startY+length,p);
         }
-        fillCell(p,canvas);
+        fillCell(p, canvas, theme);
 
     }
     public void setFillColor(int fillColor){
@@ -58,13 +60,13 @@ public class DrawCell {
     public void setTextColor(int textColor){
         this.textColor = textColor;
     }
-    public void fillCell(Paint p, Canvas canvas){
+    public void fillCell(Paint p, Canvas canvas, int theme){
         p.setColor(fillColor);
         canvas.drawRect(startX+1,startY+1,startX+length-1,startY+length-1,p);
     }
-    public void drawBoard(Paint p, Canvas canvas){
+    public void drawBoard(Paint p, Canvas canvas, int theme){
         p.setStrokeWidth(4);
-        p.setColor(Color.BLACK);
+        p.setColor(DataConstants.getMainTextColor(theme));
         if(border.up){
             canvas.drawLine(startX,startY,startX+length,startY,p);
         }
@@ -82,8 +84,8 @@ public class DrawCell {
             canvas.drawLine(startX+length,startY,startX+length,startY+length,p);
         }
     }
-    void writePossibleValues(Paint paint, Canvas canvas, boolean[] possible){
-        paint.setColor(Color.GRAY);
+    void writePossibleValues(Paint paint, Canvas canvas, boolean[] possible, int theme){
+        paint.setColor(DataConstants.getHelpTextColor(theme));
         paint.setTextSize(length/3-2);
         int k = possible.length < 6? 2:3;
         int r = possible.length - 2*k;
@@ -155,11 +157,5 @@ public class DrawCell {
         paint.setTextSize(length-20);
         paint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(n.toString(),startX+length/2,startY+length-20,paint);
-    }
-    void writeText(Paint paint, Canvas canvas, String value, int color){
-        paint.setColor(color);
-        paint.setTextSize(length-20);
-        paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(value,startX+length/2,startY+length-20,paint);
     }
 }

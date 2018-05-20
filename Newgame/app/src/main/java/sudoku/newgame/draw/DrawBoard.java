@@ -3,6 +3,7 @@ package sudoku.newgame.draw;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -10,6 +11,7 @@ import org.json.JSONObject;
 
 import sudoku.newgame.Event;
 import sudoku.newgame.History;
+import sudoku.newgame.datahelpers.DataConstants;
 import sudoku.newgame.sudoku.Board;
 
 /**
@@ -25,6 +27,7 @@ public class DrawBoard {
     public History gameHistory;
     Paint p;
     int n;
+    public int theme = 0;
     public DrawBoard(float startX, float startY, float length, byte[] structure, Board bd, int n){
         p = new Paint();
         this.gameHistory = new History();
@@ -43,7 +46,7 @@ public class DrawBoard {
                         z%n==(n-1) || structure[n*i+z+1]!=structure[n*i+z],
                         i%n==0 || structure[n*i+z-n]!=structure[n*i+z],
                         i%n==(n-1) || structure[n*i+z+n]!=structure[n*i+z]),
-                        sizeX,sizeY,length);
+                        sizeX,sizeY,length,theme);
                 sizeX+=length;
             }
             sizeY+=length;
@@ -63,7 +66,7 @@ public class DrawBoard {
                         z%n==(n-1) || structure[n*i+z+1]!=structure[n*i+z],
                         i%n==0 || structure[n*i+z-n]!=structure[n*i+z],
                         i%n==(n-1) || structure[n*i+z+n]!=structure[n*i+z]),
-                        sizeX,sizeY,length);
+                        sizeX,sizeY,length,theme);
                 sizeX+=length;
             }
             sizeY+=length;
@@ -81,50 +84,53 @@ public class DrawBoard {
         }
     }
 
-    public void draw(Canvas canvas, Paint paint){
-
+    public void draw(Canvas canvas, Paint paint, int theme){
+        this.theme = theme;
         for(int i = 0; i < n; ++i)
-            for(int z = 0; z < n; ++z)
-                board[i][z].draw(paint,canvas);
+            for(int z = 0; z < n; ++z) {
+                board[i][z].draw(paint, canvas, theme);
+            }
+
 
         for(int i = 0; i < n; ++i){
             for(int z = 0; z < n;++z){
-                board[i][z].drawBoard(paint,canvas);
+                board[i][z].drawBoard(paint, canvas, theme);
                 if(bd.cells[i][z].isInput) {
-                    board[i][z].setTextColor(Color.BLACK);
+                    board[i][z].setTextColor(DataConstants.getMainTextColor(theme));
                     board[i][z].writeText(paint, canvas, bd.cells[i][z].value);
                 }
                 else if(bd.cells[i][z].value!=-1) {
-                    if(isCorrect(i,z))
-                        board[i][z].setTextColor(Color.BLUE);
+                    if(isCorrect(i,z)) {
+                        board[i][z].setTextColor(DataConstants.getPenTextColor(theme));
+                    }
                     else
-                        board[i][z].setTextColor(Color.RED);
+                        board[i][z].setTextColor(DataConstants.getErrorTextColor(theme));
                     board[i][z].writeText(paint, canvas, bd.cells[i][z].value);
                 }
                 else
-                    board[i][z].writePossibleValues(paint, canvas, bd.cells[i][z].possibleValues);
+                    board[i][z].writePossibleValues(paint, canvas, bd.cells[i][z].possibleValues, theme);
             }
         }
     }
     public void drawBitmap(Canvas canvas, Paint paint) {
         for(int i = 0; i < n; ++i)
             for(int z = 0; z < n; ++z)
-                board[i][z].draw(paint,canvas);
+                board[i][z].draw(paint,canvas, 0);
 
         for(int i = 0; i < n; ++i)
             for(int z = 0; z < n;++z)
-                board[i][z].drawBoard(paint,canvas);
+                board[i][z].drawBoard(paint, canvas, 0);
     }
 
-    public void focusOnCell(float x, float y, int w, int color, int highlightColor){
+    public void focusOnCell(float x, float y){
         x -= startX;
         y -= startY;
         float length = board[0][0].length;
         int posx = (int)(x/(length));
         int posy = (int)(y/(length));
         if(posy < n && posx < n) {
-            board[posy][posx].setFillColor(color);
-            highlightCell(posx,posy,highlightColor);
+            board[posy][posx].setFillColor(DataConstants.getTouchColor(theme));
+            highlightCell(posx,posy);
         }
     }
     public void hint(float x, float y) {
@@ -146,31 +152,33 @@ public class DrawBoard {
         int posy = last.getY();
         if(last.isEnter()) {
             if(last.isPen()) {
-                bd.cells[posy][posx].value = -1;
-                highlightCell(posx,posy,Color.rgb(153,204,255));
+                undo();
+                highlightCell(posx, posy);
             }
             else {
-                bd.cells[posy][posx].possibleValues[last.getValue()-1] =
-                        !bd.cells[posy][posx].possibleValues[last.getValue()-1];
-                highlightCell(posx,posy,Color.rgb(153,204,255));
+                if(!bd.cells[posy][posx].possibleValues[last.getValue() - 1]) {
+                    undo();
+                }
+                bd.cells[posy][posx].possibleValues[last.getValue()-1] = false;
+                highlightCell(posx, posy);
             }
         }
-        else if(last.isPen()) {
-            bd.cells[posy][posx].value = (byte)last.getValue();
-            highlightCell(posx,posy,Color.rgb(153,204,255));
-        }
         else {
-            bd.cells[posy][posx].possibleValues[last.getValue()-1] =
-                    !bd.cells[posy][posx].possibleValues[last.getValue()-1];
-            highlightCell(posx,posy,Color.rgb(153,204,255));
+            if (last.isPen()) {
+                bd.cells[posy][posx].value = (byte) last.getValue();
+                highlightCell(posx, posy);
+            } else {
+                bd.cells[posy][posx].possibleValues[last.getValue() - 1] = true;
+                highlightCell(posx, posy);
+            }
         }
     }
     public void refreshAll(){
         for(int i = 0; i < n; ++i)
             for(int j = 0; j < n; ++j)
-                    board[i][j].setFillColor(Color.WHITE);
+                    board[i][j].setFillColor(DataConstants.getFillColor(theme));
     }
-    void highlightCell(int x, int y, int highlightColor){
+    private void highlightCell(int x, int y){
         int value = bd.cells[y][x].value;
         if(value == -1)
             return;
@@ -180,18 +188,24 @@ public class DrawBoard {
                     bd.cells[i][j].possibleValues[value-1] = false;
                 if (bd.cells[i][j].value == value) {
                     if(!(i==y && j==x))
-                        board[i][j].setFillColor(Color.GREEN);
+                        board[i][j].setFillColor(DataConstants.getSameColor(theme));
                     if ((i == y && j != x) || (i != y && j == x) ||
                             (i != y && j != x && bd.areas[n * y + x] == bd.areas[n * i + j]))
-                        board[y][x].setFillColor(Color.rgb(255, 204, 204));
+                        board[y][x].setFillColor(DataConstants.getErrorFillColor(theme));
                 }
                 else if(i==y || j==x || bd.areas[n * y + x] == bd.areas[n * i + j])
-                    board[i][j].setFillColor(highlightColor);
+                    board[i][j].setFillColor(DataConstants.getAreaColor(theme));
             }
     }
+    public void refreshFillColor(int theme) {
+        for(int i = 0; i < n; ++i)
+            for(int z = 0; z < n; ++z)
+                board[i][z].setFillColor(DataConstants.getFillColor(theme));
+    }
     public void setBasicPencilValues() {
+
         for(int i = 0; i < n; ++i) {
-            for(int j = 0; j < n; ++i) {
+            for(int j = 0; j < n; ++j) {
                 if(!bd.cells[i][j].isInput) {
                     for(int q = 0; q < n; ++q) {
                         bd.cells[i][j].possibleValues[q] = true;
@@ -204,11 +218,11 @@ public class DrawBoard {
     private void removeAllPencilValues() {
         for(int x = 0; x < n; ++x) {
             for(int y = 0; y < n; ++y) {
-                if(bd.cells[x][y].isInput) {
+                if(bd.cells[y][x].isInput) {
                     for(int i = 0; i < n; ++i) {
                         for(int j = 0; j < n; ++j) {
                             if(j == x || i == y || bd.areas[n * y + x] == bd.areas[n * i + j])
-                                bd.cells[i][j].possibleValues[bd.cells[x][y].value-1] = false;
+                                bd.cells[i][j].possibleValues[bd.cells[y][x].value-1] = false;
                         }
                     }
                 }
@@ -234,11 +248,16 @@ public class DrawBoard {
         float length = board[0][0].length;
         int posx = (int)(x/(length));
         int posy = (int)(y/(length));
-        if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
+        if(posy < n && posx < n && !bd.cells[posy][posx].isInput && bd.cells[posy][posx].value != Byte.valueOf(value)) {
+            gameHistory.addEvent(bd.cells[posy][posx].value,true,false, posx, posy);
             bd.cells[posy][posx].value = Byte.valueOf(value);
             gameHistory.addEvent(Integer.valueOf(value),true,true, posx, posy);
-            highlightCell(posx,posy,Color.rgb(153,204,255));
+            highlightCell(posx,posy);
         }
+    }
+    public void setValueInPosition(int x, int y, String value) {
+        bd.cells[x][y].value = Byte.valueOf(value);
+        highlightCell(y, x);
     }
     public void clearPencil(float x, float y){
         x -= startX;
@@ -271,7 +290,7 @@ public class DrawBoard {
             }
             bd.cells[posy][posx].possibleValues[Byte.valueOf(value)-1] =
                     !bd.cells[posy][posx].possibleValues[Byte.valueOf(value)-1];
-            highlightCell(posx,posy,Color.rgb(153,204,255));
+            highlightCell(posx,posy);
         }
     }
 }

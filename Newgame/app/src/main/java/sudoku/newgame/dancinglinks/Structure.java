@@ -8,8 +8,8 @@ import sudoku.newgame.sudoku.Cell;
  */
 public class Structure {
 
-    int minLength;
-    HeadNode minNode;
+    private int minLength;
+    private HeadNode minNode;
     /**
      * Define borders of areas
      */
@@ -25,11 +25,11 @@ public class Structure {
     /**
      * Current width of structure
      */
-    int width;
+    private int width;
     /**
      * Current height of structure
      */
-    int height;
+    private int height;
     /**
      * Constructor with number of dimensions
      * creates base structure of classic Sudoku
@@ -77,7 +77,7 @@ public class Structure {
         minNode = (HeadNode)root.right;
         minLength = N;
     }
-    HeadNode insertNode(HeadNode currentColumn, HeadNode currentRow,int start,int value,int end){
+    private HeadNode insertNode(HeadNode currentColumn, HeadNode currentRow,int start,int value,int end){
         int z = start;
         for(; z < value; ++z)
             currentColumn = (HeadNode)currentColumn.right;
@@ -88,7 +88,7 @@ public class Structure {
             currentColumn = (HeadNode)currentColumn.right;
         return currentColumn;
     }
-    void insertAfter(HeadNode currentColumn, HeadNode currentRow){
+    private void insertAfter(HeadNode currentColumn, HeadNode currentRow){
 //        if(currentColumn.up == null)
 //            currentColumn.up = currentColumn;
 //        if(currentRow.left == null)
@@ -101,7 +101,7 @@ public class Structure {
         currentColumn.up = newNode;
         currentRow.left = newNode;
     }
-    void dump(){
+    private void dump(){
         byte[][] arr = new byte[N*N*N][4*N*N];
 
         for(int i = 0; i < N*N*N; ++i)
@@ -228,7 +228,7 @@ public class Structure {
      * using copy constructor
      * @return copy of current structure
      */
-    Structure copy(){
+    private Structure copy(){
         return new Structure(this);
     }
 
