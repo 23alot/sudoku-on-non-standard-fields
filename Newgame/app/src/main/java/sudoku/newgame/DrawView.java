@@ -176,15 +176,16 @@ public class DrawView extends View{
         bd = null;
         isDone = false;
         Log.d("Creation", "Difficulty " + difficulty);
-        Creation[] threads = new Creation[6];
-        for(int i = 0; i < 6; ++i){
+        int numThreads = 8;
+        Creation[] threads = new Creation[numThreads];
+        for(int i = 0; i < numThreads; ++i){
             threads[i] = new Creation(difficulty,area,i%4);
             threads[i].start();
         }
         outerloop:
         while(true){
             int t = 0;
-            for(int i = 0; i < 6;++i){
+            for(int i = 0; i < numThreads;++i){
                 if(isDone){
                     Log.d("Threads",i + " thread");
                     //bd = threads[i].bd;
@@ -200,7 +201,7 @@ public class DrawView extends View{
                 //Log.d("Thread loop","isDone="+threads[i].algorithm.isDone + " failed: " + t);
             }
             //Log.d("Thread loop","Failed: " + t);
-            if(t == 6){
+            if(t == numThreads){
                 Log.d("Loop threads","All threads failed");
                 creation();
             }
@@ -244,10 +245,12 @@ public class DrawView extends View{
             Log.d("Thread","End of thread " + algorithm.isFailed + " " +isDone);
             if(bd != null) {
                 Log.d("Thread "," "+bd);
+                board = null;
                 return;
             }
             if(board != null) {
                 bd = board;
+                board = null;
                 isDone = true;
             }
         }

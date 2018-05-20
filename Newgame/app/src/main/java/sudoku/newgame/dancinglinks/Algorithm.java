@@ -20,7 +20,6 @@ public class Algorithm {
     private int[] solution;
     private int solutionCounter;
     private Solution result = null;
-    private int q = 0;
     /**
      * Main constructor
      * @param structure of sudoku
@@ -143,15 +142,10 @@ public class Algorithm {
         if(result!=null)
             return;
         if(isBadEnd()) {
-            q++;
             return;
         }
         if(isEnd()) {
-            Log.d("findFirstSolution","End " + q);
-            if(result == null)
-                result = new Solution(moves,solution,false);
-            else
-                result.isMultiple = true;
+            result = new Solution(moves,solution,false);
             return;
         }
 
@@ -378,8 +372,5 @@ public class Algorithm {
         start();
 
         return solution;
-    }
-    public Solution getSolution(){
-        return result;
     }
 }

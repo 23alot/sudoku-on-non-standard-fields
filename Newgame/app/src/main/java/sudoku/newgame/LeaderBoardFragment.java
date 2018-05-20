@@ -25,17 +25,14 @@ import sudoku.newgame.datahelpers.UserTime;
 
 public class LeaderBoardFragment extends Fragment {
     View fragment;
-    private DatabaseReference databaseReference;
-    private android.widget.RadioGroup radioGroupDif;
-    private android.widget.RadioGroup radioGroupBoard;
     private String curDifficulty;
     private String curBoard;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragment = inflater.inflate(R.layout.activity_leaderboard, container, false);
-        radioGroupBoard = fragment.findViewById(R.id.radioGroupBoard);
-        radioGroupDif = fragment.findViewById(R.id.radioGroupDifficulty);
+        RadioGroup radioGroupBoard = fragment.findViewById(R.id.radioGroupBoard);
+        RadioGroup radioGroupDif = fragment.findViewById(R.id.radioGroupDifficulty);
         curBoard = "4";
         curDifficulty = "easy";
         loadInfo(curBoard,curDifficulty);
@@ -146,7 +143,7 @@ public class LeaderBoardFragment extends Fragment {
         TableLayout tableLayout = fragment.findViewById(R.id.leaders_table);
         tableLayout.removeAllViews();
         tableLayout.setBackgroundColor(DataConstants.getMainTextColor(((TuturuActivity)getActivity()).theme));
-        databaseReference = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         Query leaderboard = databaseReference.child("leaderboard").child(dim).child(dif).orderByChild("time").limitToLast(20);
         leaderboard.addChildEventListener(new ChildEventListener() {
             @Override

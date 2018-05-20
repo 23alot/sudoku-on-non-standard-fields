@@ -5,12 +5,12 @@ package sudoku.newgame;
  */
 
 public class Event {
-    boolean isPen;
-    boolean isEnter;
+    private boolean isPen;
+    private  boolean isEnter;
     int value;
-    int posx;
-    int posy;
-    public Event(int value, boolean isPen, boolean isEnter, int posx, int posy) {
+    private int posx;
+    private int posy;
+    Event(int value, boolean isPen, boolean isEnter, int posx, int posy) {
         this.value = value;
         this.isPen = isPen;
         this.isEnter = isEnter;

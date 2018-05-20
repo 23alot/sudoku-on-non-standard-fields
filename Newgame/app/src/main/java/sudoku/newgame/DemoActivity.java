@@ -24,7 +24,6 @@ import sudoku.newgame.sudoku.Board;
 
 public class DemoActivity extends Activity {
     int[] game;
-    Board board;
     int n = 9;
     DemoDrawView dw;
     TextView tip;

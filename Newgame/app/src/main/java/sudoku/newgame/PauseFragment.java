@@ -17,7 +17,6 @@ import com.google.android.gms.ads.MobileAds;
 import sudoku.newgame.datahelpers.DataConstants;
 
 public class PauseFragment extends Fragment {
-    private AdView mAdView;
     View fragment;
     boolean isActive = false;
     @Override

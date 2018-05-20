@@ -67,6 +67,7 @@ public class BoardsActivity extends Activity {
             fTrans.commit();
         }
         else {
+            setResult(0);
             super.onBackPressed();
         }
     }
@@ -148,6 +149,7 @@ public class BoardsActivity extends Activity {
         popupMenu.show();
     }
     private void startGame(){
+        setResult(1);
         finish();
     }
     void generator() {

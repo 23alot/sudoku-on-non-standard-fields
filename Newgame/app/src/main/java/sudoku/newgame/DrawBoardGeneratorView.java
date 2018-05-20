@@ -34,7 +34,6 @@ public class DrawBoardGeneratorView extends View {
     public DrawCell[][] board;
     SharedPreferences sharedPreferences;
     public byte[] prpr;
-    public Canvas canvas;
     int w;
     int h;
     int currentSize;

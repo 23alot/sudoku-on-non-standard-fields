@@ -248,7 +248,7 @@ public class DrawBoard {
         float length = board[0][0].length;
         int posx = (int)(x/(length));
         int posy = (int)(y/(length));
-        if(posy < n && posx < n && !bd.cells[posy][posx].isInput) {
+        if(posy < n && posx < n && !bd.cells[posy][posx].isInput && bd.cells[posy][posx].value != Byte.valueOf(value)) {
             gameHistory.addEvent(bd.cells[posy][posx].value,true,false, posx, posy);
             bd.cells[posy][posx].value = Byte.valueOf(value);
             gameHistory.addEvent(Integer.valueOf(value),true,true, posx, posy);

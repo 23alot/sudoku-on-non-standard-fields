@@ -83,3 +83,4 @@ Thumbs.db
 Newgame/app/google-services.json
 Newgame/app/src/main/java/sudoku/newgame/datahelpers/SecretKeys.java
 Newgame/app/build.gradle
+*.suml

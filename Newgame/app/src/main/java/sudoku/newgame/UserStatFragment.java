@@ -19,8 +19,6 @@ import sudoku.newgame.datahelpers.TimeHelper;
 
 public class UserStatFragment extends Fragment {
     View fragment;
-    private RadioGroup radioGroupDif;
-    private RadioGroup radioGroupBoard;
     private SharedPreferences sharedPreferences;
     private int curDifficulty;
     private int curBoard;
@@ -30,8 +28,8 @@ public class UserStatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragment = inflater.inflate(R.layout.statistics, container, false);
-        radioGroupBoard = fragment.findViewById(R.id.radioGroupBoard);
-        radioGroupDif = fragment.findViewById(R.id.radioGroupDifficulty);
+        RadioGroup radioGroupBoard = fragment.findViewById(R.id.radioGroupBoard);
+        RadioGroup radioGroupDif = fragment.findViewById(R.id.radioGroupDifficulty);
         sharedPreferences = this.getActivity().getSharedPreferences("Statistics", Context.MODE_PRIVATE);
         setupStatistics();
         radioGroupBoard.setOnCheckedChangeListener(listenerBoard());

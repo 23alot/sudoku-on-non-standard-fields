@@ -23,7 +23,6 @@ public class DemoDrawView extends View {
     Point size;
     volatile Board bd;
     public DrawBoard board = null;
-    Canvas canvas;
     byte[] area = null;
     SharedPreferences sharedPreferences;
     int w;
@@ -163,7 +162,7 @@ public class DemoDrawView extends View {
         Board board;
         int q;
         int difficulty;
-        public Creation(int difficulty, byte[] area, int q){
+        Creation(int difficulty, byte[] area, int q){
             algorithm = new Algorithm(new Structure((byte) n, area));
             this.q = q;
             this.difficulty = difficulty;

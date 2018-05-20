@@ -12,7 +12,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    public ViewPagerAdapter(FragmentManager fm) {
+    ViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

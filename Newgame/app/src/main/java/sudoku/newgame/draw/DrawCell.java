@@ -158,10 +158,4 @@ public class DrawCell {
         paint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(n.toString(),startX+length/2,startY+length-20,paint);
     }
-    void writeText(Paint paint, Canvas canvas, String value, int color){
-        paint.setColor(color);
-        paint.setTextSize(length-20);
-        paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(value,startX+length/2,startY+length-20,paint);
-    }
 }

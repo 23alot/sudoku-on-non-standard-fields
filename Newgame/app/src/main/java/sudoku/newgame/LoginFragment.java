@@ -37,7 +37,6 @@ public class LoginFragment extends Fragment {
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
     private FirebaseAuth mAuth;
-    private SharedPreferences sharedPreferences;
     int theme = 0;
     private GoogleSignInClient mGoogleSignInClient;
     @Override
@@ -45,7 +44,7 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         fragment = inflater.inflate(R.layout.fragment_login, container, false);
         fragment.findViewById(R.id.sign_in_button).setOnClickListener(onClick());
-        sharedPreferences = getActivity().getSharedPreferences("Structure", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
         fragment.findViewById(R.id.login_fragment).setBackgroundColor(DataConstants.getBackgroundColor(theme));
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

@@ -44,17 +44,10 @@ import sudoku.newgame.sudoku.Cell;
 
 public class GameActivity extends Activity implements View.OnTouchListener {
     boolean isPen;
-    boolean isAd;
     View layout;
     boolean isPause = true;
     boolean isFragment = false;
-    private Button mbutton;
-    private Cell focusedCell = null;
-    private DrawCell focusedDrawCell = null;
-    private int difficulty;
-    private int board;
     private boolean recreate = false;
-    long stopTime;
     long winTime;
     int winDif;
     boolean newGame = false;
@@ -64,20 +57,20 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     float y;
     DrawView db;
     PopupWindow pw;
-    HistoryFragment fragmentHistory;
-    RulesFragment fragmentRules;
-    PauseFragment fragmentPause;
-    SettingsFragment fragmentSettings;
-    LoginFragment fragmentLogin;
-    CongratulationFragment fragmentCongratulation;
+    HistoryFragment fragmentHistory = null;
+    RulesFragment fragmentRules = null;
+    PauseFragment fragmentPause = null;
+    SettingsFragment fragmentSettings = null;
+    LoginFragment fragmentLogin = null;
+    CongratulationFragment fragmentCongratulation = null;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     FragmentTransaction fTrans;
-    private RewardedVideoAd mRewardedVideoAd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+        Log.d("onCreate", "created");
         long start = System.currentTimeMillis();
         sharedPreferences = GameActivity.this.getSharedPreferences("Structure", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("Theme", 0);
@@ -116,10 +109,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                     w = size.x;
                 else
                     w = size.y;
-                fragmentHistory = new HistoryFragment();
-                fragmentRules = new RulesFragment();
                 fragmentPause = new PauseFragment();
-                fragmentSettings = new SettingsFragment();
                 fragmentLogin = new LoginFragment();
                 fragmentCongratulation = new CongratulationFragment();
                 setupStatistics();
@@ -533,9 +523,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             }
         };
     }
-    void refresh(float x, float y){
-        db.focusOnCell(x,y,w,Color.WHITE,Color.WHITE);
-    }
     void tutu(){
         db.refreshAll();
         db.focusOnCell(x,y,w,Color.rgb(150,150,150),Color.rgb(153,204,255));
@@ -608,6 +595,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 gameStat();
                 setTimer(0);
                 db.board = null;
+                editor.putString("Boardik", null);
+                editor.apply();
                 resumeTime();
                 db.invalidate();
                 pw.dismiss();
@@ -618,10 +607,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
             @Override
             public void onClick(View view) {
                 Log.d("New game menu", "New field");
-                newGame = true;
-                gameStat();
-                editor.putLong("Time",0);
-                editor.apply();
                 Intent intent = new Intent(getApplicationContext(), BoardsActivity.class);
                 startActivityForResult(intent, 1);
                 pw.dismiss();
@@ -697,30 +682,30 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     }
     @Override
     public void onBackPressed() {
-        if(fragmentHistory.isActive) {
+        if(fragmentHistory != null) {
             fTrans = getFragmentManager().beginTransaction();
-            fragmentHistory.isActive = false;
             fTrans.remove(fragmentHistory);
             fTrans.commit();
+            fragmentHistory = null;
             isFragment = false;
             resumeTime();
         }
-        else if(fragmentRules.isActive) {
+        else if(fragmentRules != null) {
             fTrans = getFragmentManager().beginTransaction();
-            fragmentRules.isActive = false;
             fTrans.remove(fragmentRules);
             fTrans.commit();
+            fragmentRules = null;
             isFragment = false;
             resumeTime();
         }
-        else if(fragmentSettings.isActive) {
+        else if(fragmentSettings != null) {
             fTrans = getFragmentManager().beginTransaction();
-            fragmentSettings.isActive = false;
             theme = sharedPreferences.getInt("Theme", 0);
             updateButtons();
             db.invalidate();
             fTrans.remove(fragmentSettings);
             fTrans.commit();
+            fragmentSettings = null;
             isFragment = false;
             resumeTime();
         }
@@ -781,6 +766,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                 switch (item.getItemId()) {
                     case R.id.menuSettings:
                         Log.d("Popup menu", "Settings choice");
+                        fragmentSettings = new SettingsFragment();
                         fragmentSettings.isActive = true;
                         fTrans.add(R.id.framelayout, fragmentSettings);
                         isFragment = true;
@@ -788,6 +774,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                         break;
                     case R.id.menuRules:
                         Log.d("Popup menu", "Rules choice");
+                        fragmentRules = new RulesFragment();
                         fragmentRules.isActive = true;
                         fTrans.add(R.id.framelayout, fragmentRules);
                         isFragment = true;
@@ -801,6 +788,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
                         break;
                     case R.id.menuHistory:
                         Log.d("Popup menu", "History choice");
+                        fragmentHistory = new HistoryFragment();
                         fragmentHistory.isActive = true;
                         fragmentHistory.setHistory(db.board.gameHistory);
                         fTrans.add(R.id.framelayout, fragmentHistory);
@@ -926,7 +914,12 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("onActivityResult", "recreate");
-        recreate = true;
-        this.recreate();
+        if(resultCode == 1) {
+            gameStat();
+            newGame = true;
+            recreate = true;
+            this.recreate();
+        }
+
     }
 }

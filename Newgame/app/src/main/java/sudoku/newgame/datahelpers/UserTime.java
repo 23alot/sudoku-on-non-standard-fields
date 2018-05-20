@@ -6,8 +6,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class UserTime {
-    long time;
-    String username;
+    private long time;
+    private String username;
     public UserTime() {
 
     }
