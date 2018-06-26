@@ -19,6 +19,9 @@ public class Board {
                 cells[i][z] = new Cell(N);
         this.emptyCells = (byte)(N*N);
     }
+    public Board(byte N, boolean[] input, byte[] correct, byte[] current, byte[] area, boolean[][] pencil) {
+
+    }
     public Board(byte N, byte[] areas, int[] input,int[][] solution) {
         this(N,areas);
         for(int a: input){
