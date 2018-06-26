@@ -1,5 +1,17 @@
 # Sudoku on Non Standard Fields #
 
+<table border="0">
+
+<tr><td>![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/game.png)</td><td>![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/generator.png)</td></tr>
+
+<tr><td>Game</td><td>Generator</td></tr>
+
+<tr><td>![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/history.png)</td><td>![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/statistics.png)</td></tr>
+
+<tr><td>History</td><td>Statistics</td></tr>
+
+</table>
+
 There are three ways to work on:
 
 + The algorithm of Sudoku solving
@@ -23,32 +35,3 @@ For the algorithm I have to choose *demands*. And here it is:
 + Every *column* has to contain **each** number in sequence 1..N
 + Every *section* has to contain **each** number in sequence 1..N
 + Every *cell* has to contain **unique** number in sequence 1..N
-
-
-
-## Traveler's Diary ##
-
-**14.11.2017 9:30** Woke up with a thought that I don't know how to generate game field and I must to think about this problem if I don't like to be murdered on the defense of course work (and I don't like : D). The game begins...
-
-**20.11.2017 16:05** Must introduce a concept *cell's potential*. We have to write number in *cell* with highest *cell's potential*. Also, it dawned on me that I can parallelize solution to cells with the same *cell's potential*.
-
-**02.12.2017** Create base structures for algorithm.
-
-**06.12.2017 17:06** Already done most part of structure implementation. Have to code only structure-to-array method.
-
-​		**17:19** Completed structure-to-array method. Ready to test!
-
-**29.12.2017 14:00** Start working on the algorithmic part of the solution. 
-
-**11.01.2018** Finish the algorithmic part and start thinking how to store and compare sudoku boards.
-
-**15.01.2018** Finish highlighting cells methods. Looks ugly, but, for sure, it will be cool.
-
-**19.01.2018** Add the generator to project to create your own board.
-*Note: Yes, I now that when you tap wrong field you have to start from the very begging and I'll fix it. I hope so...*
-
-**20.01.2018** Add rotation support and dimension activity. Now we can choose a dimension of the field.
-
-**21.01.2018** Add pencil support. Now we can note possible variables on each cell.
-
-**24.01.2018** Add stupid concurrence to finding solution because on some fields it takes too much time to find solution.
