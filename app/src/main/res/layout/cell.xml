@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <sudoku.newgame.board.possiblevalues.PossibleValuesView
+        android:id="@+id/possibleCell"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </sudoku.newgame.board.possiblevalues.PossibleValuesView>
+    <sudoku.newgame.board.textview.PenTextView
+        android:id="@+id/penText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:includeFontPadding="false"/>
+    <ImageView
+        android:id="@+id/border_left"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/horizontal_line"/>
+    <ImageView
+        android:id="@+id/border_right"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/horizontal_line"/>
+    <ImageView
+        android:id="@+id/border_top"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/horizontal_line"/>
+    <ImageView
+        android:id="@+id/border_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/horizontal_line"/>
+</RelativeLayout>
+</LinearLayout>

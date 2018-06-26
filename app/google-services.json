@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "131011112372",
+    "firebase_url": "https://sudoku-76956.firebaseio.com",
+    "project_id": "sudoku-76956",
+    "storage_bucket": "sudoku-76956.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131011112372:android:9c247012730e86ac",
+        "android_client_info": {
+          "package_name": "sudoku.newgame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "131011112372-7v8q5bnfd216dtjdrkjho2n7gc8j6jaf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sudoku.newgame",
+            "certificate_hash": "21dbdc30c5487bb1a5d9481ab0f0c31e51ff7f11"
+          }
+        },
+        {
+          "client_id": "131011112372-u3n07mna9nq6iaijfr9sihec00iglp1s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyhPvIr0E76hp5nSecRwSZoP2TjMKSjLE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "131011112372-u3n07mna9nq6iaijfr9sihec00iglp1s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
