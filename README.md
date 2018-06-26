@@ -1,16 +1,13 @@
 # Sudoku on Non Standard Fields #
 
-<table border="0">
+First version
+|||
+|:-:|:-:|
+![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/game.png "") | ![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/generator.png "")
+Game | Generator
+|![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/history.png "") | ![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/statistics.png "")
+History | Statistics
 
-<tr><td>![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/game.png)</td><td>![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/generator.png)</td></tr>
-
-<tr><td>Game</td><td>Generator</td></tr>
-
-<tr><td>![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/history.png)</td><td>![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/statistics.png)</td></tr>
-
-<tr><td>History</td><td>Statistics</td></tr>
-
-</table>
 
 There are three ways to work on:
 
