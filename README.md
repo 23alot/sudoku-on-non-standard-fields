@@ -1,6 +1,7 @@
 # Sudoku on Non Standard Fields #
 
 First version
+
 |||
 |:-:|:-:|
 ![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/game.png "") | ![alt text](https://raw.githubusercontent.com/boscatov/sudoku-on-non-standard-fields/master/images/generator.png "")
