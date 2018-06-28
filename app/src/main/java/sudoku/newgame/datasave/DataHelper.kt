@@ -2,23 +2,24 @@ package sudoku.newgame.datasave
 
 import sudoku.newgame.sudoku.Board
 import java.io.FileReader
+import java.io.FileWriter
 import java.io.IOException
 
 
 class DataHelper {
     fun loadData(): Board {
-        var n: Byte? = null
+        var n: Int? = null
         var input: BooleanArray? = null
         var current: ByteArray? = null
         var correct: ByteArray? = null
         var area: ByteArray? = null
         var pencil: Array<BooleanArray>? = null
         try {
-            FileReader("notes3.txt").use { reader ->
+            var reader = FileReader("notes3.txt")
                 // TODO: Проверки на корректность файла
                 // Получаем размер доски
                 var c: Int = reader.read()
-                n = c.toByte()
+                var n = c
                 // Инициализируем массивы с данными
                 input = BooleanArray(c*c)
                 correct = ByteArray(c*c)
@@ -60,11 +61,63 @@ class DataHelper {
                         c /= 10
                     }
                 }
-            }
         } catch (e: IOException) {
 
             System.out.println(e.message)
         }
-        return Board(n!!, input!!, current!!, correct!!, area!!, pencil!!)
+        return Board(n!!.toByte(), input!!, current!!, correct!!, area!!, pencil!!)
+    }
+    fun saveData(board: Board) {
+        try {
+            var writer = FileWriter("notes3.txt")
+            // TODO: Проверки на корректность файла
+            // Получаем размер доски
+            writer.write(board.N.toInt())
+            for(i in 0..board.N) {
+                var c = 0
+                for (z in 0..board.N) {
+                    c *= 10
+                    if(board.cells[i][z].isInput) c += 1
+                }
+                writer.write(c)
+            }
+            for(i in 0..board.N) {
+                var c = 0
+                for (z in 0..board.N) {
+                    c *= 10
+                    c += board.cells[i][z].correctValue
+                }
+                writer.write(c)
+            }
+            for(i in 0..board.N) {
+                var c = 0
+                for (z in 0..board.N) {
+                    c *= 10
+                    c += board.cells[i][z].value
+                    // TODO: сделать дефолт значение 0, а не -1
+                }
+                writer.write(c)
+            }
+            for(i in 0..board.N) {
+                var c = 0
+                for (z in 0..board.N) {
+                    c *= 10
+                    c += board.areas[i*board.N+z]
+                }
+                writer.write(c)
+            }
+            for(i in 0..board.N*board.N) {
+                var c = 0
+                for (z in 0..board.N) {
+                    c += if(board.cells[i/board.N][i%board.N].possibleValues[z]) 1 else 0
+                    c *= 10
+                }
+                writer.write(c)
+            }
+
+        } catch (e: IOException) {
+
+            System.out.println(e.message)
+        }
     }
 }
